@@ -1,0 +1,19 @@
+# Large dataset, audio, and document files
+*.wav
+*.mp3
+*.zip
+*.egg
+*.tar.gz
+*.csv
+*.pptx
+*.pdf
+
+# Python cache
+__pycache__/
+*.pyc
+
+# IDE / System files
+.vscode/
+.idea/
+.DS_Store
+
