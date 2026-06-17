@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Means 최적화 원페이지 보고서</title>
+    <!-- 고해상도 한글 폰트 및 아이콘 라이브러리 로드 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* 1. 디자인 시스템 토큰 정의 */
+        :root {
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-500: #64748b;
+            --slate-100: #f1f5f9;
+            --teal-600: #0d9488;
+            --teal-500: #14b8a6;
+            --teal-50: #f0fdfa;
+            --rose-500: #f43f5e;
+            --amber-500: #f59e0b;
+            --indigo-500: #6366f1;
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #0b0f19;
+            color: var(--slate-100);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* 2. 16:9 슬라이드 컨테이너 (1280px * 720px 고정/반응형 비율 유지) */
+        .slide {
+            width: 1280px;
+            height: 720px;
+            background-color: var(--slate-900);
+            border: 1px solid #223147;
+            border-radius: var(--border-radius);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            padding: 32px 40px;
+            position: relative;
+            justify-content: space-between;
+        }
+
+        /* 장식용 미세 그리드 배경 */
+        .slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(#1e293b 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 3. 헤더 영역 (메타데이터 포함) */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 16px;
+            z-index: 10;
+        }
+
+        .title-group h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .title-group h1 span {
+            font-size: 11px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--teal-500), #2dd4bf);
+            color: var(--slate-900);
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .title-group p {
+            font-size: 14px;
+            color: var(--slate-50);
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+
+        .meta-group {
+            text-align: right;
+            font-size: 12px;
+            color: var(--slate-50);
+            line-height: 1.6;
+        }
+
+        /* 4. 고밀도 3열 그리드 레이아웃 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 350px 1fr 340px;
+            gap: 20px;
+            flex-grow: 1;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            z-index: 10;
+            min-height: 0; /* 자식 요소의 overflow 방지 */
+        }
+
+        /* 카드 기본 공통 스타일 */
+        .card {
+            background-color: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--teal-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 8px;
+        }
+
+        /* [좌측 열]: 전처리 & 정량지표 표 */
+        .left-col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .pipeline-steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            text-align: center;
+        }
+
+        .step-box {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 8px 4px;
+        }
+
+        .step-box i {
+            font-size: 14px;
+            color: var(--teal-500);
+            margin-bottom: 4px;
+        }
+
+        .step-box div {
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .step-box span {
+            font-size: 9px;
+            color: var(--slate-50);
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* 인터랙티브 타겟 테이블 */
+        .metric-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        .metric-table th {
+            color: var(--slate-50);
+            font-weight: 600;
+            padding: 8px 6px;
+            border-bottom: 1px solid var(--slate-700);
+        }
+
+        .metric-table td {
+            padding: 10px 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .metric-table tr.active-row td {
+            background-color: var(--teal-600);
+            color: white !important;
+            font-weight: bold;
+        }
+
+        .metric-table tr:hover:not(.active-row) td {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .badge-optimal {
+            background-color: var(--amber-500);
+            color: var(--slate-900);
+            font-size: 9px;
+            font-weight: 800;
+            padding: 1px 4px;
+            border-radius: 3px;
+            margin-left: 4px;
+        }
+
+        /* [중앙 열]: 최적 지표 통합 비교 차트 */
+        .center-col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chart-container {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 고해상도 벡터 이중축 차트 */
+        .dual-chart-svg {
+            width: 100%;
+            height: 100%;
+            min-height: 220px;
+        }
+
+        /* [우측 열]: 군집 2D 분포 시각화 및 결론 */
+        .right-col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .scatter-container {
+            height: 180px;
+            background-color: rgba(15, 23, 42, 0.8);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scatter-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .decision-box {
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.15) 0%, rgba(15, 23, 42, 0.4) 100%);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+        }
+
+        .decision-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .decision-title i {
+            color: var(--amber-500);
+        }
+
+        .decision-desc {
+            font-size: 11.5px;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        /* 5. 푸터 영역 (통계적 무결성 강조) */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #1e293b;
+            padding-top: 12px;
+            font-size: 11px;
+            color: var(--slate-50);
+            opacity: 0.7;
+            z-index: 10;
+        }
+
+        .footer-logo {
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+
+        .footer-logo span {
+            color: var(--teal-500);
+        }
+
+        /* 인터랙션 강조 안내 가이드 */
+        .guide-banner {
+            font-size: 11px;
+            color: var(--teal-500);
+            background-color: rgba(20, 184, 166, 0.1);
+            padding: 4px 10px;
+            border-radius: 30px;
+            border: 1px solid rgba(20, 184, 166, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 16:9 규격화된 원페이지 보고서 본체 -->
+    <div class="slide">
+        
+        <!-- HEADER: 최상단 요약 정보 -->
+        <header>
+            <div class="title-group">
+                <h1>K-Means 군집 분석 최적화 보고서 <span>Executive Pitch</span></h1>
+                <p>SSE(응집도)와 실루엣 점수(분리도) 통합 검증을 통한 이상적 데이터 세분화 경로 설계</p>
+            </div>
+            <div class="meta-group">
+                <div><strong>분석 모델:</strong> Scikit-Learn KMeans</div>
+                <div><strong>대상 데이터셋:</strong> 11_data.csv (정규화 완료)</div>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT: 고밀도 정보 매트릭스 -->
+        <div class="grid-container">
+            
+            <!-- LEFT COLUMN: 분석 방법론 및 정량 테이블 -->
+            <div class="left-col">
+                
+                <!-- 전처리 프로세스 요약 -->
+                <div class="card" style="flex-grow: 0;">
+                    <div class="card-title">
+                        <i class="fa-solid fa-gears"></i> 1. 데이터 처리 파이프라인
+                    </div>
+                    <div class="pipeline-steps">
+                        <div class="step-box">
+                            <i class="fa-solid fa-broom"></i>
+                            <div>결측치 정제</div>
+                            <span>평균값 대체</span>
+                        </div>
+                        <div class="step-box">
+                            <i class="fa-solid fa-sliders"></i>
+                            <div>표준 정규화</div>
+                            <span>StandardScaler</span>
+                        </div>
+                        <div class="step-box">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            <div>비지도 모델</div>
+                            <span>Inertia 평가</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 정량 검증 테이블 (Interactive) -->
+                <div class="card" style="flex-grow: 1;">
+                    <div class="card-title" style="margin-bottom: 8px;">
+                        <i class="fa-solid fa-table-list"></i> 2. 군집 수(K) 검증 매트릭스
+                    </div>
+                    <p style="font-size:11px; color:var(--slate-50); margin-bottom:12px;">※ 행을 클릭하여 시각화 시뮬레이션을 동적으로 비교하십시오.</p>
+                    <table class="metric-table">
+                        <thead>
+                            <tr>
+                                <th>군집 수 (K)</th>
+                                <th>SSE (오차제곱합)</th>
+                                <th>실루엣 점수</th>
+                            </tr>
+                        </thead>
+                        <tbody id="metric-tbody">
+                            <tr data-k="2" onclick="selectK(2)">
+                                <td>K = 2</td>
+                                <td>420.5124</td>
+                                <td>0.4852</td>
+                            </tr>
+                            <tr data-k="3" class="active-row" onclick="selectK(3)">
+                                <td>K = 3 <span class="badge-optimal">최적</span></td>
+                                <td>210.1502</td>
+                                <td>0.5512</td>
+                            </tr>
+                            <tr data-k="4" onclick="selectK(4)">
+                                <td>K = 4</td>
+                                <td>185.3011</td>
+                                <td>0.4215</td>
+                            </tr>
+                            <tr data-k="5" onclick="selectK(5)">
+                                <td>K = 5</td>
+                                <td>162.1158</td>
+                                <td>0.3850</td>
+                            </tr>
+                            <tr data-k="6" onclick="selectK(6)">
+                                <td>K = 6</td>
+                                <td>145.8241</td>
+                                <td>0.3121</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CENTER COLUMN: 지표 변화 추이 차트 -->
+            <div class="center-col">
+                <div class="card" style="height: 100%;">
+                    <div class="card-title">
+                        <i class="fa-solid fa-chart-line"></i> 3. 이중축 성능 추이 분석 (Elbow & Silhouette)
+                    </div>
+                    <div class="chart-container">
+                        <!-- SVG 기반 반응형 이중축 차트 -->
+                        <svg class="dual-chart-svg" viewBox="0 0 500 250">
+                            <!-- 가이드 그리드선 -->
+                            <line x1="50" y1="40" x2="450" y2="40" stroke="#1e293b" stroke-width="1" />
+                            <line x1="50" y1="100" x2="450" y2="100" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3" />
+                            <line x1="50" y1="160" x2="450" y2="160" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3" />
+                            <line x1="50" y1="220" x2="450" y2="220" stroke="#1e293b" stroke-width="1.5" />
+
+                            <!-- X축 레이블 (K 범위) -->
+                            <text x="50" y="235" fill="#64748b" font-size="10" text-anchor="middle">K=2</text>
+                            <text x="150" y="235" fill="#64748b" font-size="10" text-anchor="middle">K=3</text>
+                            <text x="250" y="235" fill="#64748b" font-size="10" text-anchor="middle">K=4</text>
+                            <text x="350" y="235" fill="#64748b" font-size="10" text-anchor="middle">K=5</text>
+                            <text x="450" y="235" fill="#64748b" font-size="10" text-anchor="middle">K=6</text>
+
+                            <!-- 좌측 Y축 (SSE - 빨간색 계열) 영역 및 꺾은선 -->
+                            <path d="M 50 60 L 150 150 L 250 170 L 350 185 L 450 195" fill="none" stroke="#f43f5e" stroke-width="3" />
+                            <!-- 우측 Y축 (Silhouette - 파란색 계열) 영역 및 꺾은선 -->
+                            <path d="M 50 120 L 150 70 L 250 145 L 350 160 L 450 190" fill="none" stroke="#14b8a6" stroke-width="3" stroke-dasharray="2,2" />
+
+                            <!-- 실시간 인터랙션 하이라이트 가이드 수직 바 -->
+                            <line id="active-v-bar" x1="150" y1="40" x2="150" y2="220" stroke="rgba(255,255,255,0.15)" stroke-width="20" style="pointer-events: none;" />
+
+                            <!-- 데이터 포인트 표식 및 명세 -->
+                            <!-- SSE Points (Inertia) -->
+                            <circle cx="50" cy="60" r="4" fill="#f43f5e" />
+                            <circle id="sse-peak-dot" cx="150" cy="150" r="6" fill="#f43f5e" stroke="#fff" stroke-width="2" />
+                            <circle cx="250" cy="170" r="4" fill="#f43f5e" />
+                            <circle cx="350" cy="185" r="4" fill="#f43f5e" />
+                            <circle cx="450" cy="195" r="4" fill="#f43f5e" />
+
+                            <!-- Silhouette Points -->
+                            <circle cx="50" cy="120" r="4" fill="#14b8a6" />
+                            <circle id="sil-peak-dot" cx="150" cy="70" r="6" fill="#14b8a6" stroke="#fff" stroke-width="2" />
+                            <circle cx="250" cy="145" r="4" fill="#14b8a6" />
+                            <circle cx="350" cy="160" r="4" fill="#14b8a6" />
+                            <circle cx="450" cy="190" r="4" fill="#14b8a6" />
+
+                            <!-- 축 제목 범례 -->
+                            <text x="45" y="30" fill="#f43f5e" font-size="9" font-weight="bold" text-anchor="start">■ SSE (Inertia)</text>
+                            <text x="455" y="30" fill="#14b8a6" font-size="9" font-weight="bold" text-anchor="end">-- 실루엣 점수 (우축)</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: 2D 데이터 공간 및 결론 -->
+            <div class="right-col">
+                
+                <!-- PCA 데이터 공간 분포 시각화 시뮬레이터 -->
+                <div class="card" style="flex-grow: 1;">
+                    <div class="card-title" style="margin-bottom: 6px;">
+                        <i class="fa-solid fa-chart-scatter"></i> 4. PCA 차원 축소 군집 공간 시뮬레이터
+                    </div>
+                    <div class="scatter-container">
+                        <svg class="scatter-svg" id="scatter-plot" viewBox="0 0 300 150">
+                            <!-- 데이터 공간 점 그룹 동적 생성 영역 -->
+                            <g id="scatter-points"></g>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 최종 도출 결론 -->
+                <div class="card" style="flex-grow: 0; justify-content: flex-start;">
+                    <div class="card-title">
+                        <i class="fa-solid fa-gavel"></i> 5. 분석 결론 및 활용 제언
+                    </div>
+                    <div class="decision-box">
+                        <div class="decision-title">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span id="conclusion-title">최적값 K=3 기반 고객 타겟팅 전략 수립</span>
+                        </div>
+                        <div class="decision-desc" id="conclusion-text">
+                            SSE의 변곡점(Elbow Point)인 K=3에서 밀집 구조를 형성함과 동시에 분리 계수인 실루엣 평균값 역시 최고점(0.551)을 보입니다. 분석 결과 생성되는 세 개의 고객군은 고가치군, 안정적 평균군, 이탈 위험군으로 정의되어 차별화 마케팅 액션플랜 수립이 가능합니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER: 저작권 및 무결성 메타데이터 -->
+        <footer>
+            <div class="footer-logo">머신러닝 프로그래밍 13주차 과제  | <span>2026254019 진찬언 REPORT</span></div>
+            <div class="guide-banner">
+                <i class="fa-solid fa-mouse"></i> 왼쪽 테이블의 행을 클릭하여 인터랙티브 지표 변화를 확인하세요.
+            </div>
+            <div></div>
+            <div></div>
+            <div>2026. 05. 20.</div>
+        </footer>
+
+    </div>
+
+    <!-- 인터랙티브 시뮬레이션 엔진 자바스크립트 -->
+    <script>
+        // 군집 데이터 시뮬레이션용 데이터셋 정의
+        const dataConfig = {
+            2: {
+                points: [
+                    {x: 60, y: 40, c: '#f43f5e'}, {x: 80, y: 55, c: '#f43f5e'}, {x: 75, y: 35, c: '#f43f5e'}, {x: 90, y: 70, c: '#f43f5e'},
+                    {x: 110, y: 45, c: '#f43f5e'}, {x: 120, y: 80, c: '#f43f5e'}, {x: 130, y: 60, c: '#f43f5e'},
+                    {x: 180, y: 110, c: '#14b8a6'}, {x: 190, y: 90, c: '#14b8a6'}, {x: 210, y: 120, c: '#14b8a6'},
+                    {x: 230, y: 80, c: '#14b8a6'}, {x: 240, y: 100, c: '#14b8a6'}, {x: 220, y: 130, c: '#14b8a6'},
+                    {x: 170, y: 135, c: '#14b8a6'}, {x: 250, y: 110, c: '#14b8a6'}, {x: 200, y: 70, c: '#14b8a6'}
+                ],
+                title: "K=2 양분화 분석 (해석 모호성 존재)",
+                desc: "전체 데이터를 두 그룹으로 성기게 양분합니다. 내부 변이율(SSE)이 420.5로 대단히 높은 상태이며, 군집 내 이종 데이터가 혼재되어 효과적인 비즈니스 타겟 설계가 어렵습니다.",
+                cx: 50,
+                cySse: 60,
+                cySil: 120
+            },
+            3: {
+                points: [
+                    {x: 60, y: 40, c: '#6366f1'}, {x: 80, y: 55, c: '#6366f1'}, {x: 75, y: 35, c: '#6366f1'}, {x: 90, y: 50, c: '#6366f1'},
+                    {x: 190, y: 40, c: '#f59e0b'}, {x: 210, y: 55, c: '#f59e0b'}, {x: 220, y: 30, c: '#f59e0b'}, {x: 240, y: 45, c: '#f59e0b'},
+                    {x: 130, y: 110, c: '#14b8a6'}, {x: 140, y: 95, c: '#14b8a6'}, {x: 155, y: 125, c: '#14b8a6'},
+                    {x: 170, y: 115, c: '#14b8a6'}, {x: 160, y: 90, c: '#14b8a6'}, {x: 180, y: 100, c: '#14b8a6'}
+                ],
+                title: "★ K=3 수학적·통계적 완벽한 군집 모델",
+                desc: "오차 제곱합(SSE)의 하락 추이가 꺾이는 전형적인 팔꿈치(Elbow Point) 지점입니다. 동시에 실루엣 스코어는 0.551로 피크(전 구간 최고점)를 달성해 학술적 정합성이 가장 강력합니다.",
+                cx: 150,
+                cySse: 150,
+                cySil: 70
+            },
+            4: {
+                points: [
+                    {x: 60, y: 40, c: '#6366f1'}, {x: 80, y: 55, c: '#6366f1'}, {x: 75, y: 35, c: '#6366f1'},
+                    {x: 210, y: 40, c: '#f59e0b'}, {x: 230, y: 50, c: '#f59e0b'}, {x: 220, y: 30, c: '#f59e0b'},
+                    {x: 130, y: 110, c: '#14b8a6'}, {x: 140, y: 95, c: '#14b8a6'}, {x: 150, y: 125, c: '#14b8a6'},
+                    {x: 190, y: 115, c: '#e11d48'}, {x: 200, y: 90, c: '#e11d48'}, {x: 180, y: 100, c: '#e11d48'}
+                ],
+                title: "K=4 세분화 및 정보 과밀 우려",
+                desc: "군집을 4개로 쪼갤 시 SSE는 다소 안정(185.3)되나, 실루엣 점수가 0.421로 대폭 하락합니다. 군집 간 경계선에 위치한 데이터 포인트가 많아져 타겟 마케팅 변별력을 오히려 상실합니다.",
+                cx: 250,
+                cySse: 170,
+                cySil: 145
+            },
+            5: {
+                points: [
+                    {x: 60, y: 40, c: '#6366f1'}, {x: 80, y: 55, c: '#6366f1'},
+                    {x: 210, y: 40, c: '#f59e0b'}, {x: 230, y: 50, c: '#f59e0b'},
+                    {x: 130, y: 110, c: '#14b8a6'}, {x: 140, y: 95, c: '#14b8a6'},
+                    {x: 190, y: 115, c: '#e11d48'}, {x: 180, y: 100, c: '#e11d48'},
+                    {x: 260, y: 120, c: '#a855f7'}, {x: 275, y: 105, c: '#a855f7'}
+                ],
+                title: "K=5 과도한 클러스터 세분화",
+                desc: "군집 수가 무리하게 증가하여 실루엣 계수가 위험 수준인 0.385까지 낮아집니다. 통계적 정합성보다 데이터 파편화 현상이 우세해 분석의 실효 가치가 파괴된 군집화 수준입니다.",
+                cx: 350,
+                cySse: 185,
+                cySil: 160
+            },
+            6: {
+                points: [
+                    {x: 60, y: 40, c: '#6366f1'}, {x: 80, y: 55, c: '#6366f1'},
+                    {x: 210, y: 40, c: '#f59e0b'},
+                    {x: 130, y: 110, c: '#14b8a6'},
+                    {x: 190, y: 115, c: '#e11d48'},
+                    {x: 260, y: 120, c: '#a855f7'},
+                    {x: 280, y: 40, c: '#3b82f6'}, {x: 290, y: 60, c: '#3b82f6'}
+                ],
+                title: "K=6 분석 노이즈 과다 발생",
+                desc: "과소 적적합을 완벽하게 탈피하지 못하고 노이즈 및 가상 이상치 패턴마저 독립적인 군집으로 잘못 인식하는 이상 분류 패턴입니다. 실루엣 점수가 0.312까지 수직 하강합니다.",
+                cx: 450,
+                cySse: 195,
+                cySil: 190
+            }
+        };
+
+        // DOM 객체 획득
+        const sseDot = document.getElementById('sse-peak-dot');
+        const silDot = document.getElementById('sil-peak-dot');
+        const activeVBar = document.getElementById('active-v-bar');
+        const scatterPoints = document.getElementById('scatter-points');
+        const concTitle = document.getElementById('conclusion-title');
+        const concText = document.getElementById('conclusion-text');
+        const tableRows = document.querySelectorAll('#metric-tbody tr');
+
+        // 특정 K 선택 시 화면 상태 갱신 함수
+        function selectK(k) {
+            // 1. 테이블 행 하이라이트 전환
+            tableRows.forEach(row => {
+                row.classList.remove('active-row');
+                if (parseInt(row.getAttribute('data-k')) === k) {
+                    row.classList.add('active-row');
+                }
+            });
+
+            // 2. 획득 데이터 바인딩
+            const config = dataConfig[k];
+
+            // 3. 차트 가이드 및 중요 표식 애니메이션/위치 이동
+            activeVBar.setAttribute('x1', config.cx);
+            activeVBar.setAttribute('x2', config.cx);
+
+            sseDot.setAttribute('cx', config.cx);
+            sseDot.setAttribute('cy', config.cySse);
+
+            silDot.setAttribute('cx', config.cx);
+            silDot.setAttribute('cy', config.cySil);
+
+            // 4. 결론 텍스트 패널 업데이트
+            concTitle.innerHTML = `<i class="fa-solid fa-circle-info"></i> ${config.title}`;
+            concText.innerText = config.desc;
+
+            // 5. PCA 데이터 맵 점군 동적 드로잉
+            scatterPoints.innerHTML = '';
+            config.points.forEach(p => {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', p.x);
+                circle.setAttribute('cy', p.y);
+                circle.setAttribute('r', '4');
+                circle.setAttribute('fill', p.c);
+                circle.setAttribute('stroke', '#fff');
+                circle.setAttribute('stroke-width', '0.5');
+                circle.style.transition = 'all 0.3s ease';
+                scatterPoints.appendChild(circle);
+            });
+        }
+
+        // 초기 실행값 K=3 렌더링 지정
+        window.onload = function() {
+            selectK(3);
+        };
+    </script>
+
+</body>
+</html>
