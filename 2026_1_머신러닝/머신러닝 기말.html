@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>머신러닝 시험 문제 및 해설</title>
+    
+    <!-- 수식 렌더링을 위한 MathJax 라이브러리 -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <!-- 페이지 스타일 (CSS) -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 40px;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+            font-size: 1.4em;
+        }
+        .question-box {
+            background-color: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #1a5276;
+        }
+        .answer-box {
+            padding-left: 10px;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 25px;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        ul {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        strong {
+            color: #2c3e50;
+        }
+        .note {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        /* 모바일 대응 */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            table { font-size: 0.9em; }
+            th, td { padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>머신러닝 시험 문제 및 해설</h1>
+
+    <!-- 문제 1 -->
+    <section>
+        <h2>[문제 1] 혼동행렬(Confusion Matrix)</h2>
+        <div class="question-box">
+            문제: 혼동행렬을 2x2 표로 작성하고, TP, FP, TN, FN을 사용하여 성능지표를 아는 대로 설명하시오.
+        </div>
+        <div class="answer-box">
+            <p><strong>1. 혼동행렬 (2x2 표)</strong></p>
+            <div class="table-responsive">
+                <table>
+                  <thead>
+                    <tr>
+                      <th colspan="2" rowspan="2"></th>
+                      <th colspan="2">예측 (Predicted Class)</th>
+                    </tr>
+                    <tr>
+                      <th>Positive (양성 예측)</th>
+                      <th>Negative (음성 예측)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th rowspan="2">실제<br>(Actual Class)</th>
+                      <th>Positive<br>(실제 양성)</th>
+                      <td>
+                        <strong style="color: #2b6cb0; font-size: 1.1em;">TP (True Positive)</strong><br>
+                        <span style="font-size: 0.9em; color: #555;">(실제 양성을 양성으로 맞춤)</span>
+                      </td>
+                      <td>
+                        <strong style="color: #c53030; font-size: 1.1em;">FN (False Negative)</strong><br>
+                        <span style="font-size: 0.9em; color: #555;">(실제 양성을 음성으로 틀림)</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Negative<br>(실제 음성)</th>
+                      <td>
+                        <strong style="color: #c53030; font-size: 1.1em;">FP (False Positive)</strong><br>
+                        <span style="font-size: 0.9em; color: #555;">(실제 음성을 양성으로 틀림)</span>
+                      </td>
+                      <td>
+                        <strong style="color: #2b6cb0; font-size: 1.1em;">TN (True Negative)</strong><br>
+                        <span style="font-size: 0.9em; color: #555;">(실제 음성을 음성으로 맞춤)</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+
+            <p><strong>2. 성능 지표 설명</strong></p>
+            <ul>
+                <li><strong>정확도 (Accuracy):</strong> 전체 예측 데이터 중 올바르게 예측한 비율.<br> $Accuracy = \frac{TP + TN}{TP + FP + FN + TN}$</li>
+                <li><strong>정밀도 (Precision):</strong> 모델이 '양성(Positive)'으로 예측한 것 중 실제 '양성'인 비율. (FP를 줄이는 것이 중요할 때 사용, 예: 스팸 메일 분류)<br> $Precision = \frac{TP}{TP + FP}$</li>
+                <li><strong>재현율 (Recall / Sensitivity / True Positive Rate):</strong> 실제 '양성(Positive)'인 것 중 모델이 '양성'으로 올바르게 예측한 비율. (FN을 줄이는 것이 중요할 때 사용, 예: 암 진단)<br> $Recall = \frac{TP}{TP + FN}$</li>
+                <li><strong>F1-Score:</strong> 정밀도와 재현율의 조화평균. 데이터 클래스 비율이 불균형할 때 모델의 성능을 정확하게 평가하기 위해 사용.<br> $F1 = 2 \times \frac{Precision \times Recall}{Precision + Recall}$</li>
+                <li><strong>특이도 (Specificity / True Negative Rate):</strong> 실제 '음성'인 것 중 모델이 '음성'으로 올바르게 예측한 비율.<br> $Specificity = \frac{TN}{TN + FP}$</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 문제 2 -->
+    <section>
+        <h2>[문제 2] 선형회귀 모델 평가 (SSE)</h2>
+        <div class="question-box">
+            문제: 선형회귀 모델 평가를 위해 4개의 데이터포인트 실제 정답 $y = [3, -0.5, 2, 7]$와 모델 예측 $\hat{y} = [2.5, 0.0, 2, 8]$가 주어졌다. 오차제곱합(SSE)을 구하는 과정과 결과값을 구하시오.
+            <br><span style="font-size:0.85em; font-weight:normal;">(참고: 문제에서 '평균제곱오차(SSE)'라고 명시되었으나, 기호 SSE는 오차제곱합을 의미하므로 SSE를 기준으로 계산합니다.)</span>
+        </div>
+        <div class="answer-box">
+            <p><strong>1. SSE (Sum of Squared Errors, 오차제곱합) 계산식</strong></p>
+            <p>$$SSE = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</p>
+            
+            <p><strong>2. 계산 과정</strong></p>
+            <p>각 데이터 포인트에 대해 (실제값 - 예측값)의 제곱을 구합니다.</p>
+            <ul>
+                <li>1번째 데이터: $(3 - 2.5)^2 = (0.5)^2 = 0.25$</li>
+                <li>2번째 데이터: $(-0.5 - 0.0)^2 = (-0.5)^2 = 0.25$</li>
+                <li>3번째 데이터: $(2 - 2)^2 = (0)^2 = 0$</li>
+                <li>4번째 데이터: $(7 - 8)^2 = (-1)^2 = 1$</li>
+            </ul>
+
+            <p><strong>3. 결과값</strong></p>
+            <p>$$SSE = 0.25 + 0.25 + 0 + 1 = \mathbf{1.5}$$</p>
+            <p class="note">※ 참고: 만약 평균제곱오차(MSE, Mean Squared Error)를 구해야 한다면, SSE를 데이터 개수인 4로 나누어 $1.5 / 4 = 0.375$ 가 됩니다.</p>
+        </div>
+    </section>
+
+    <!-- 문제 3 -->
+    <section>
+        <h2>[문제 3] 시그모이드 함수와 임계치</h2>
+        <div class="question-box">
+            문제: 시그모이드 함수를 작성하고, 입력이 0일 때 이진 분류에서 임계치(Threshold) 관점에서의 물리적 의미를 쓰시오.
+        </div>
+        <div class="answer-box">
+            <p><strong>1. 시그모이드 함수 (Sigmoid Function)</strong></p>
+            <p>$$\sigma(x) = \frac{1}{1 + e^{-x}}$$</p>
+            
+            <p><strong>2. 입력이 0일 때의 물리적 의미</strong></p>
+            <p>입력 $x = 0$을 함수에 대입하면 $\sigma(0) = \frac{1}{1 + e^0} = \frac{1}{1 + 1} = 0.5$ 가 됩니다.</p>
+            <p>이진 분류(Binary Classification)에서 출력값 0.5는 <strong>분류를 결정짓는 기준선인 임계치(Decision Boundary)</strong> 역할을 합니다. 즉, 모델이 양성(Class 1)과 음성(Class 0)일 확률을 정확히 50:50으로 판단하여 가장 불확실성이 높은 지점이며, 입력값이 0보다 커지면 양성으로, 0보다 작아지면 음성으로 분류가 전환되는 <strong>물리적인 분기점(전환점)</strong>을 의미합니다.</p>
+        </div>
+    </section>
+
+    <!-- 문제 4 -->
+    <section>
+        <h2>[문제 4] KNN에서의 K 선택과 모델 성능</h2>
+        <div class="question-box">
+            문제: KNN(K-Nearest Neighbor)에서 임의값 K를 선택할 때, K를 1로 설정할 때와 K를 큰 값으로 설정할 때 과적합(Overfitting), 과소적합(Underfitting)을 넣어 설명하시오.
+        </div>
+        <div class="answer-box">
+            <ul>
+                <li><strong>$K=1$로 설정할 때 (과적합 - Overfitting):</strong><br>
+                가장 가까운 이웃 단 1개의 데이터만 보고 클래스를 결정합니다. 이는 학습 데이터의 노이즈(이상치)까지 모두 학습하게 되어 결정 경계(Decision Boundary)가 매우 복잡해집니다. 학습 데이터에는 완벽하게 동작하지만 새로운 데이터에 대한 예측력은 떨어지는 <strong>과적합(Overfitting)</strong> 상태가 됩니다. (High Variance)</li>
+                <br>
+                <li><strong>$K$를 매우 큰 값으로 설정할 때 (과소적합 - Underfitting):</strong><br>
+                주변의 수많은 데이터를 고려하므로 결정 경계가 지나치게 단순해지고 부드러워집니다. 만약 K가 전체 데이터 개수와 같다면 무조건 가장 데이터가 많은 클래스로만 예측하게 됩니다. 이는 데이터의 세부적인 지역적 패턴을 무시하게 되어 학습 데이터조차 제대로 맞추지 못하는 <strong>과소적합(Underfitting)</strong> 상태가 됩니다. (High Bias)</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 문제 5 -->
+    <section>
+        <h2>[문제 5] SVM 마진(Margin) 산식</h2>
+        <div class="question-box">
+            문제: SVM(서포트 벡터 머신)에서 놈(Norm) $||w||^2$를 활용해서 마진을 표현하는 산식을 쓰시오.
+        </div>
+        <div class="answer-box">
+            <p>SVM에서 초평면(Hyperplane)의 방정식이 $w^T x + b = 0$일 때, 양성 클래스와 음성 클래스를 가르는 서포트 벡터 사이의 총 거리인 <strong>마진(Margin)</strong>의 기하학적 너비는 다음과 같이 표현됩니다.</p>
+            <p>$$Margin = \frac{2}{||w||}$$</p>
+            <p>SVM은 이 마진을 <strong>최대화(Maximize)</strong>하는 것이 목적입니다. $\frac{2}{||w||}$를 최대화하는 것은 수학적으로 $\frac{1}{2} ||w||^2$를 <strong>최소화(Minimize)</strong>하는 최적화 문제로 변환하여 풉니다. 따라서 $||w||^2$를 활용한 목적 함수(Objective Function) 산식은 다음과 같습니다.</p>
+            <p>$$\min \frac{1}{2} ||w||^2$$</p>
+        </div>
+    </section>
+
+    <!-- 문제 6 -->
+    <section>
+        <h2>[문제 6] 엔트로피와 지니 계수</h2>
+        <div class="question-box">
+            문제: 의사결정나무(Decision Tree)에서 불순도를 측정하는 엔트로피 함수, 지니 함수 수학적 계산식을 작성하시오.
+        </div>
+        <div class="answer-box">
+            <p class="note">(※ $c$는 클래스의 개수, $p_i$는 해당 노드에서 $i$번째 클래스가 차지하는 비율(확률)을 의미합니다.)</p>
+            <p><strong>1. 엔트로피 (Entropy) 함수</strong></p>
+            <p>$$Entropy(S) = -\sum_{i=1}^{c} p_i \log_2(p_i)$$</p>
+            
+            <p><strong>2. 지니 불순도 (Gini Impurity) 함수</strong></p>
+            <p>$$Gini(S) = 1 - \sum_{i=1}^{c} (p_i)^2$$</p>
+        </div>
+    </section>
+
+    <!-- 문제 7 -->
+    <section>
+        <h2>[문제 7] PCA와 LDA (지도/비지도 학습)</h2>
+        <div class="question-box">
+            문제: PCA, LDA에 대한 설명 및 목적, 그리고 어느 것이 지도학습인지 쓰시오.
+        </div>
+        <div class="answer-box">
+            <ul>
+                <li><strong>PCA (Principal Component Analysis, 주성분 분석)</strong>
+                    <ul>
+                        <li><strong>설명 및 목적:</strong> 데이터의 분산(Variance)을 최대한 보존하는 새로운 직교 축(주성분)을 찾아 고차원의 데이터를 저차원으로 축소하는 기법입니다. 데이터의 전반적인 구조를 파악하고 노이즈를 제거하는 데 목적이 있습니다.</li>
+                        <li><strong>학습 유형:</strong> 정답(Label) 데이터 없이 특징량만 사용하므로 <strong>비지도 학습(Unsupervised Learning)</strong>입니다.</li>
+                    </ul>
+                </li>
+                <br>
+                <li><strong>LDA (Linear Discriminant Analysis, 선형 판별 분석)</strong>
+                    <ul>
+                        <li><strong>설명 및 목적:</strong> 클래스 간 분산(Between-class scatter)은 최대화하고, 클래스 내부 분산(Within-class scatter)은 최소화하는 축을 찾아 데이터를 투영시킵니다. 즉, 데이터가 어떤 클래스에 속하는지 가장 잘 분류(구분)할 수 있는 차원으로 축소하는 것이 목적입니다.</li>
+                        <li><strong>학습 유형:</strong> 차원 축소를 위해 데이터의 정답(Class Label) 정보를 활용해야 하므로 <strong>지도 학습(Supervised Learning)</strong>입니다.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 문제 8 -->
+    <section>
+        <h2>[문제 8] 군집화 모델 평가 (MSE와 엘보우 포인트)</h2>
+        <div class="question-box">
+            문제: K-Means 클러스터링 등에서 쓰이는 MSE와 엘보우 포인트(Elbow Point) 개념을 쓰시오.
+        </div>
+        <div class="answer-box">
+            <ul>
+                <li><strong>MSE (Mean Squared Error, 평균제곱오차 / 응집도):</strong><br>
+                군집화에서 MSE는 <strong>각 데이터 포인트와 자신이 속한 군집의 중심점(Centroid) 간의 거리의 제곱의 평균</strong>을 의미합니다. (오차제곱합인 SSE를 전체 데이터 개수로 나눈 값과 같습니다.) MSE 값이 작을수록 데이터들이 군집의 중심에 촘촘하게 모여 있음(군집이 잘 형성됨)을 뜻합니다.</li>
+                <br>
+                <li><strong>엘보우 포인트 (Elbow Point):</strong><br>
+                군집의 개수($K$)를 늘려가며 MSE(또는 SSE)를 계산하여 그래프로 그렸을 때, 오차값이 급격하게 감소하다가 <strong>감소 폭이 완만해지며 꺾이는 지점(마치 팔꿈치 모양)</strong>을 말합니다. 이 지점의 $K$ 값이 군집화의 성능과 계산 비용을 타협하는 <strong>최적의 군집 개수(Optimal K)</strong>로 간주됩니다.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 문제 9 -->
+    <section>
+        <h2>[문제 9] 파라미터와 하이퍼파라미터</h2>
+        <div class="question-box">
+            문제: 파라미터(Parameter)와 하이퍼파라미터(Hyperparameter)의 개념을 설명하고 예시를 각 하나씩 쓰시오.
+        </div>
+        <div class="answer-box">
+            <ul>
+                <li><strong>파라미터 (Parameter - 매개변수)</strong>
+                    <ul>
+                        <li><strong>개념:</strong> 모델 <strong>내부</strong>에 존재하며, <strong>학습 데이터로부터 모델이 스스로 학습하여 업데이트하고 찾아내는 값</strong>입니다. 사용자가 직접 수동으로 설정할 수 없습니다.</li>
+                        <li><strong>예시:</strong> 인공신경망의 가중치(Weight, $W$) 및 편향(Bias, $b$), 선형 회귀의 회귀 계수.</li>
+                    </ul>
+                </li>
+                <br>
+                <li><strong>하이퍼파라미터 (Hyperparameter - 초매개변수)</strong>
+                    <ul>
+                        <li><strong>개념:</strong> 모델 <strong>외부</strong>에 존재하며, 모델을 학습시키기 <strong>전에 사용자가 직접 경험이나 휴리스틱에 의해 수동으로 설정해 주어야 하는 값</strong>입니다. 모델의 학습 과정이나 구조를 제어합니다.</li>
+                        <li><strong>예시:</strong> KNN의 $K$ 개수, 학습률(Learning Rate), 에포크(Epoch) 수, 신경망의 은닉층(Hidden Layer) 개수.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 문제 10 -->
+    <section>
+        <h2>[문제 10] 앙상블 학습 (Ensemble)</h2>
+        <div class="question-box">
+            문제: 앙상블의 보팅(Voting) 다수결 결과값 개념과, Major voting(Hard voting) 계산법, Weight voting(Soft/Weighted voting) 계산법을 쓰시오.
+        </div>
+        <div class="answer-box">
+            <p><strong>10-1. 보팅 (Voting) 및 다수결 결과값 개념</strong></p>
+            <p>보팅은 서로 다른 알고리즘을 가진 여러 개의 머신러닝 모델(분류기)을 결합하여 같은 데이터에 대해 예측하게 한 뒤, 각 모델의 예측 결과를 투표(Voting)를 통해 최종 예측 결과로 선정하는 방식입니다. 단일 모델보다 일반화 성능을 높이는 데 목적이 있습니다.</p>
+
+            <p><strong>10-2. 계산 방법</strong></p>
+            <ul>
+                <li><strong>Major Voting (Hard Voting - 다수결 투표):</strong>
+                    <ul>
+                        <li><strong>계산법:</strong> 각 모델이 예측한 결과(클래스 레이블) 중 <strong>가장 많이 득표한 클래스(최빈값)</strong>를 최종 결과로 선정합니다.</li>
+                        <li><span class="note">(예: 모델 A&rarr;클래스1, 모델 B&rarr;클래스1, 모델 C&rarr;클래스2 예측 시, 다수결에 의해 '클래스 1'로 최종 결정)</span></li>
+                    </ul>
+                </li>
+                <br>
+                <li><strong>Weight Voting (가중치 투표 - Weighted/Soft Voting 유사 개념):</strong>
+                    <ul>
+                        <li><strong>계산법:</strong> 각 모델의 성능이나 신뢰도에 따라 <strong>가중치(Weight)</strong>를 부여합니다. 각 클래스별로 모델들의 투표수에 가중치를 곱하여 합산한 뒤, 가장 높은 가중치 합을 얻은 클래스를 최종 결과로 선정합니다.</li>
+                        <li><span class="note">(예: 성능이 좋은 모델A 가중치 0.6, 모델B 0.2, 모델C 0.2 일 때, 모델 A가 클래스2, B와 C가 클래스1을 예측하면. 클래스1 점수 = $0.2+0.2=0.4$, 클래스2 점수 = $0.6$. 따라서 '클래스 2'로 최종 결정)</span></li>
+                    </ul>
+                </li>
+            </ul>
+            <p class="note">※ 참고: 실무에서는 모델들이 예측한 클래스별 '확률값'을 평균 내는 Soft Voting 방식을 가장 널리 사용합니다.</p>
+        </div>
+    </section>
+
+</div>
+
+</body>
+</html>
