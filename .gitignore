@@ -5,8 +5,9 @@
 *.egg
 *.tar.gz
 *.csv
-*.pptx
-*.pdf
+
+# Exclude specific files exceeding 100MB limit
+*Connected Vehicle.pptx
 
 # Python cache
 __pycache__/
