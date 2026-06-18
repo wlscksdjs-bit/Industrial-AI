@@ -21,4 +21,5 @@
 | **11주_차원축소** | `강의 자료/11주차_차원축소.pdf`<br>`강의 자료/11주차_머신러닝 관련학회.pdf` | [실습/11주_차원축소_실습](실습/11주_차원축소_실습/) (`차원 축소(1.형상 선택).py`, `차원 축소(형상 추출).py`, `차원 축소(형상추출_PCA_scree plot) copy.py`, `차원 축소(형상추출_PCA_scree plot).py`, `차원축소(형상추출3D).py`, `11_data.csv`) |
 | **12주_군집화** | `강의 자료/12주차_군집화.pdf` | [실습/12주_군집화_실습](실습/12주_군집화_실습/) (`12_DBSCAN.py`, `12_K-Means.py`) |
 | **13주_이상탐지** | `강의 자료/13주차_이상탐지_.pdf` | (실습 코드 없음) |
-| **해당 없음 (강의 외 코드)** | (해당 자료 없음) | [실습/해당 없음](실습/해당 없음/) (`Medterm evaluation-5.py`, `Midterm evaluation-2.py`, `Midterm evaluation-3.py`, `Midterm evaluation-4.py`, `Midterm evaluation-6.py`, `Midterm evaluation.py`, `midterm_project.py`, `steel.py`, `smart_factory.py`, `충북대학교 산업인공지능학과 텀프로젝트.py`, `Action History.csv`, `Raw Data.csv`, `Steel_industry_data.csv`) |
+| **해당 없음 (강의 외 코드)** | (해당 자료 없음) | [2026_1_머신러닝_텀프로젝트](../2026_1_머신러닝_텀프로젝트/) (`Medterm evaluation-5.py`, `Midterm evaluation-2.py`, `Midterm evaluation-3.py`, `Midterm evaluation-4.py`, `Midterm evaluation-6.py`, `Midterm evaluation.py`, `midterm_project.py`, `smart_factory.py`, `steel.py`, `충북대학교 산업인공지능학과 텀프로젝트.py` 및 관련 PPTX 보고서군) |
+
