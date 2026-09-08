@@ -9,12 +9,13 @@
 # Exclude specific files exceeding 100MB limit
 *Connected Vehicle.pptx
 
-# Python cache
+# Python cache & Jupyter
 __pycache__/
 *.pyc
+.ipynb_checkpoints/
 
-# IDE / System files
+# IDE / System / Tool files
 .vscode/
 .idea/
 .DS_Store
-
+.bkit/
