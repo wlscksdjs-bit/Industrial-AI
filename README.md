@@ -38,8 +38,13 @@
 │   │   │   ├── 📄 manufacturing_ai_lab2_2.ipynb      # 실습 2-2: 제약 조건과 일반화(Generalization) 비교
 │   │   │   ├── 📊 cwru_normal.mat                    # CWRU 베어링 정상 구동 신호
 │   │   │   └── 📊 cwru_fault.mat                     # CWRU 베어링 내륜 결함(Inner Race Fault) 신호
+│   │   ├── 📁 3주_과제                               # 3주차 주피터 노트북 신경망 기초 실습 과제
+│   │   │   ├── 📄 linear_regression.ipynb            # 실습 3-1: TensorFlow 선형회귀 및 SGD 최적화
+│   │   │   ├── 📄 logistic_regression.ipynb          # 실습 3-2: Iris 로지스틱 회귀 이진 분류 및 결정 경계
+│   │   │   └── 📄 mnist_nn_classification.ipynb      # 실습 3-3: MNIST 다층 퍼셉트론(MLP) 분류 및 과적합 분석
 │   │   ├── 📕 제조AI실제(1주차).pdf                    # 1주차 강의 자료: 제조 AI 개요 및 산업 도메인
 │   │   ├── 📕 제조AI실제(2주차).pdf                    # 2주차 강의 자료: 패턴인식, 특징 추출, 일반화
+│   │   ├── 📕 제조AI실제(3주차).pdf                    # 3주차 강의 자료: 인공신경망 기초, 손실함수, 역전파, 과적합
 │   │   └── 📄 README.md                              # 제조 AI 실제 교과 안내
 │   │
 │   ├── 📁 지능형 IoT 네트워크                           # 산업용 IoT 프로토콜, 무선 센서망, 엣지 컴퓨팅
@@ -92,7 +97,16 @@
 * **주요 강의 자료**:
   * [제조AI실제(1주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(1주차).pdf): 스마트 제조 인공지능 개요, 산업 도메인 적용 및 센서 데이터 특성
   * [제조AI실제(2주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(2주차).pdf): 패턴인식 및 좋은 특징(Good Feature)의 정의, 일반화(Generalization)와 제약 조건(Constraints)
-* **실습 과제 ([2주_과제 폴더](./1학년%202학기/제조%20AI%20실제/2주_과제/))**:
+  * [제조AI실제(3주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(3주차).pdf): 인공신경망 기초, 선형/로지스틱 회귀, 역전파 알고리즘 및 과적합 문제
+* **실습 과제**:
+  * **[2주_과제 폴더](./1학년%202학기/제조%20AI%20실제/2주_과제/)**:
+    * 📓 [`manufacturing_ai_lab2_1.ipynb`](./1학년%202학기/제조%20AI%20실제/2주_과제/manufacturing_ai_lab2_1.ipynb): CWRU 진동 실데이터 좋은 특징 정의 및 Fisher Separability 비교
+    * 📓 [`manufacturing_ai_lab2_2.ipynb`](./1학년%202학기/제조%20AI%20실제/2주_과제/manufacturing_ai_lab2_2.ipynb): 데이터·모델·작업 제약 조건과 일반화(Generalization) 비교
+    * 📊 실데이터셋: [`cwru_normal.mat`](./1학년%202학기/제조%20AI%20실제/2주_과제/cwru_normal.mat), [`cwru_fault.mat`](./1학년%202학기/제조%20AI%20실제/2주_과제/cwru_fault.mat)
+  * **[3주_과제 폴더](./1학년%202학기/제조%20AI%20실제/3주_과제/)**:
+    * 📓 [`linear_regression.ipynb`](./1학년%202학기/제조%20AI%20실제/3주_과제/linear_regression.ipynb): TensorFlow 기반 선형회귀 및 SGD 최적화, 샘플 수 및 잡음 영향 고찰
+    * 📓 [`logistic_regression.ipynb`](./1학년%202학기/제조%20AI%20실제/3주_과제/logistic_regression.ipynb): Iris 데이터셋 로지스틱 회귀 이진 분류, 결정 경계 시각화 및 학습률 분석
+    * 📓 [`mnist_nn_classification.ipynb`](./1학년%202학기/제조%20AI%20실제/3주_과제/mnist_nn_classification.ipynb): MNIST 손글씨 다층 퍼셉트론(MLP) 분류 및 과적합(Overfitting) 징후 분석
   * 📓 [`manufacturing_ai_lab2_1.ipynb`](./1학년%202학기/제조%20AI%20실제/2주_과제/manufacturing_ai_lab2_1.ipynb):
     * CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 결함) 분석
     * 나쁜 특징(단순 평균 등)과 좋은 특징(RMS, 첨도, 피크값 등)의 클래스 분리성(Separability) 시각화 비교

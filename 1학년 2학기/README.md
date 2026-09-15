@@ -20,11 +20,16 @@
 ### 1. 🏭 [제조 AI 실제 (Manufacturing AI in Practice)](./제조%20AI%20실제/)
 * **주요 내용**: 스마트 제조 공정 및 회전기계(베어링 등) 센서 데이터를 바탕으로 결함 진단 및 예지보전을 위한 AI 기술을 실습합니다.
 * **주요 산출물**:
-  * 강의자료: 1주차(개요), 2주차(패턴 및 특징 추출, 제약 조건)
-  * 실습 과제: [2주차 실습 과제 (`2주_과제/`)](./제조%20AI%20실제/2주_과제/)
-    * `manufacturing_ai_lab2_1.ipynb`: 좋은 특징(Good Feature) 정의 및 분리도(Fisher Separability) 비교
-    * `manufacturing_ai_lab2_2.ipynb`: 제약 조건(환경, 모델, 작업 제약)과 일반화(Generalization) 비교
-    * `cwru_normal.mat`, `cwru_fault.mat`: CWRU 베어링 진동 실데이터셋
+  * 강의자료: 1주차(개요), 2주차(패턴 및 특징 추출, 제약 조건), 3주차(인공신경망 기초, 선형/로지스틱 회귀, MLP)
+  * 실습 과제:
+    * **[2주차 실습 과제 (`2주_과제/`)](./제조%20AI%20실제/2주_과제/)**:
+      * `manufacturing_ai_lab2_1.ipynb`: 좋은 특징(Good Feature) 정의 및 분리도(Fisher Separability) 비교
+      * `manufacturing_ai_lab2_2.ipynb`: 제약 조건(환경, 모델, 작업 제약)과 일반화(Generalization) 비교
+      * `cwru_normal.mat`, `cwru_fault.mat`: CWRU 베어링 진동 실데이터셋
+    * **[3주차 실습 과제 (`3주_과제/`)](./제조%20AI%20실제/3주_과제/)**:
+      * `linear_regression.ipynb`: TensorFlow 선형회귀 및 경사하강법 최적화 실습
+      * `logistic_regression.ipynb`: Iris 데이터셋 로지스틱 회귀 이진 분류 및 결정 경계 시각화
+      * `mnist_nn_classification.ipynb`: MNIST 다층 퍼셉트론(MLP) 분류 및 과적합(Overfitting) 징후 분석
 
 ### 2. 🌐 [지능형 IoT 네트워크 (Intelligent IoT Network)](./지능형%20IoT%20네트워크/)
 * **주요 내용**: 산업 인공지능 인프라를 뒷받침하는 차세대 센서 네트워크 및 IIoT 통신 아키텍처 학습.
