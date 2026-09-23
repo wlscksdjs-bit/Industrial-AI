@@ -42,9 +42,15 @@
 │   │   │   ├── 📄 linear_regression.ipynb            # 실습 3-1: TensorFlow 선형회귀 및 SGD 최적화
 │   │   │   ├── 📄 logistic_regression.ipynb          # 실습 3-2: Iris 로지스틱 회귀 이진 분류 및 결정 경계
 │   │   │   └── 📄 mnist_nn_classification.ipynb      # 실습 3-3: MNIST 다층 퍼셉트론(MLP) 분류 및 과적합 분석
+│   │   ├── 📁 4주_과제                               # 4주차 주피터 노트북 신경망 심화 및 도전과제 극복
+│   │   │   ├── 📄 lab4_1_regression_activation_and_loss.ipynb     # 실습 4-1: 회귀 활성화 함수 및 손실 함수(MSE vs MAE)
+│   │   │   ├── 📄 lab4_2_classification_activation_and_loss.ipynb # 실습 4-2: 분류 활성화 함수 및 손실 함수(BCE vs MSE)
+│   │   │   ├── 📄 lab4_3_challenging_problems.ipynb                # 실습 4-3: 4대 도전과제(기울기 소실/과적합/불균형)
+│   │   │   └── 📄 lab4_4_techniques_for_challenging_problems.ipynb # 실습 4-4: 도전과제 극복 기법(ResNet/규제/Dropout)
 │   │   ├── 📕 제조AI실제(1주차).pdf                    # 1주차 강의 자료: 제조 AI 개요 및 산업 도메인
 │   │   ├── 📕 제조AI실제(2주차).pdf                    # 2주차 강의 자료: 패턴인식, 특징 추출, 일반화
 │   │   ├── 📕 제조AI실제(3주차).pdf                    # 3주차 강의 자료: 인공신경망 기초, 손실함수, 역전파, 과적합
+│   │   ├── 📕 제조AI실제(4주차).pdf                    # 4주차 강의 자료: 활성화/손실함수 및 4대 도전과제 극복 기법
 │   │   └── 📄 README.md                              # 제조 AI 실제 교과 안내
 │   │
 │   ├── 📁 지능형 IoT 네트워크                           # 산업용 IoT 프로토콜, 무선 센서망, 엣지 컴퓨팅
@@ -121,6 +127,17 @@
 
 ### 3. 🚀 [어프렌티스 프로젝트 (Apprentice Project)](./1학년%202학기/어프렌티스%20프로젝트/)
 * **강의 요약**: 산학 협력 프로젝트를 기반으로 산업체 현장 문제를 발굴하고, 인공지능 알고리즘 설계 및 실증 검증을 수행하는 종합 연구 프로젝트.
+
+#### 🏆 2학기 주요 실습 및 과제 산출물 일람
+
+| 과목명 | 주차 / 주제 | 핵심 산출물 및 소스코드 | 주요 학습 내용 및 해결 기법 |
+| :--- | :--- | :--- | :--- |
+| **제조 AI 실제** | **1주차: 스마트 제조 AI 개요** | 📕 [제조AI실제(1주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(1주차).pdf) | 스마트 제조 AI 개요, 산업 도메인 센서 데이터 특성 분석 |
+| | **2주차: CWRU 베어링 신호 분석** | 💻 [2주_과제/](./1학년%202학기/제조%20AI%20실제/2주_과제/) ([lab2_1.ipynb](./1학년%202학기/제조%20AI%20실제/2주_과제/manufacturing_ai_lab2_1.ipynb), [lab2_2.ipynb](./1학년%202학기/제조%20AI%20실제/2주_과제/manufacturing_ai_lab2_2.ipynb))<br>📊 CWRU 진동 실데이터셋 ([정상](./1학년%202학기/제조%20AI%20실제/2주_과제/cwru_normal.mat), [내륜결함](./1학년%202학기/제조%20AI%20실제/2주_과제/cwru_fault.mat)) | 시간영역 통계 특징(RMS, Kurtosis 등), Fisher Separability 계산, 모델/데이터 제약과 일반화 |
+| | **3주차: 인공신경망 기초 및 최적화** | 💻 [3주_과제/](./1학년%202학기/제조%20AI%20실제/3주_과제/) ([선형회귀](./1학년%202학기/제조%20AI%20실제/3주_과제/linear_regression.ipynb), [로지스틱 회귀](./1학년%202학기/제조%20AI%20실제/3주_과제/logistic_regression.ipynb), [MNIST MLP](./1학년%202학기/제조%20AI%20실제/3주_과제/mnist_nn_classification.ipynb))<br>📕 [제조AI실제(3주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(3주차).pdf) | 단일 노드 Dense Layer, SGD 최적화, 2D 결정 경계 컨투어 플롯, 4~5 에폭 과적합(Overfitting) 징후 분석 |
+| | **4주차: 활성화/손실함수 및 4대 도전과제** | 💻 [4주_과제/](./1학년%202학기/제조%20AI%20실제/4주_과제/) ([lab4_1](./1학년%202학기/제조%20AI%20실제/4주_과제/lab4_1_regression_activation_and_loss.ipynb), [lab4_2](./1학년%202학기/제조%20AI%20실제/4주_과제/lab4_2_classification_activation_and_loss.ipynb), [lab4_3](./1학년%202학기/제조%20AI%20실제/4주_과제/lab4_3_challenging_problems.ipynb), [lab4_4](./1학년%202학기/제조%20AI%20실제/4주_과제/lab4_4_techniques_for_challenging_problems.ipynb))<br>📕 [제조AI실제(4주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(4주차).pdf) | Sigmoid/ReLU/Tanh 비교, MSE vs MAE/BCE, 20층 기울기 소실 체감, ResNet Skip Connection, L1/L2 규제, Dropout, Class Weighting |
+| **지능형 IoT 네트워크** | **1주차: IIoT 오리엔테이션** | 📕 [지능형 IoT 네트워크(1주차).pdf](./1학년%202학기/지능형%20IoT%20네트워크/지능형%20IoT%20네트워크(1주차%20-%20오리엔테이션).pdf) | 산업 사물인터넷(IIoT) 프로토콜 및 무선 센서망 구조 |
+| **어프렌티스 프로젝트** | **산학 연구 과제 진행** | 📁 [어프렌티스 프로젝트 폴더](./1학년%202학기/어프렌티스%20프로젝트/) | 산업체 현장 밀착형 AI 알고리즘 기획 및 현장 실증 |
 
 ---
 
