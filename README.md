@@ -93,29 +93,26 @@
 > 상세 내역은 [**1학년 2학기 폴더**](./1학년%202학기/) 및 각 하위 폴더의 README에서 확인하실 수 있습니다.
 
 ### 1. 🏭 [제조 AI 실제 (Manufacturing AI in Practice)](./1학년%202학기/제조%20AI%20실제/)
-* **강의 요약**: 제조 현장의 기계 설비 상태 모니터링, 신호 분석(Signal Processing), 특징 공학(Feature Engineering), 결함 탐지 및 기계학습 모델 적용 실무를 체계적으로 다룹니다.
+* **강의 요약**: 제조 현장의 기계 설비 상태 모니터링, 신호 분석(Signal Processing), 특징 공학(Feature Engineering), 결함 탐지 및 기계학습/딥러닝 모델 적용 실무를 체계적으로 다룹니다.
 * **주요 강의 자료**:
   * [제조AI실제(1주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(1주차).pdf): 스마트 제조 인공지능 개요, 산업 도메인 적용 및 센서 데이터 특성
   * [제조AI실제(2주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(2주차).pdf): 패턴인식 및 좋은 특징(Good Feature)의 정의, 일반화(Generalization)와 제약 조건(Constraints)
   * [제조AI실제(3주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(3주차).pdf): 인공신경망 기초, 선형/로지스틱 회귀, 역전파 알고리즘 및 과적합 문제
+  * [제조AI실제(4주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(4주차).pdf): 활성화 함수 및 손실 함수 특성, 4대 도전과제(기울기 소실/과적합/불균형) 및 ResNet/규제/가중치 해결 기법
 * **실습 과제**:
   * **[2주_과제 폴더](./1학년%202학기/제조%20AI%20실제/2주_과제/)**:
-    * 📓 [`manufacturing_ai_lab2_1.ipynb`](./1학년%202학기/제조%20AI%20실제/2주_과제/manufacturing_ai_lab2_1.ipynb): CWRU 진동 실데이터 좋은 특징 정의 및 Fisher Separability 비교
-    * 📓 [`manufacturing_ai_lab2_2.ipynb`](./1학년%202학기/제조%20AI%20실제/2주_과제/manufacturing_ai_lab2_2.ipynb): 데이터·모델·작업 제약 조건과 일반화(Generalization) 비교
-    * 📊 실데이터셋: [`cwru_normal.mat`](./1학년%202학기/제조%20AI%20실제/2주_과제/cwru_normal.mat), [`cwru_fault.mat`](./1학년%202학기/제조%20AI%20실제/2주_과제/cwru_fault.mat)
+    * 📓 [manufacturing_ai_lab2_1.ipynb](./1학년%202학기/제조%20AI%20실제/2주_과제/manufacturing_ai_lab2_1.ipynb): CWRU 진동 실데이터 좋은 특징 정의 및 Fisher Separability 비교
+    * 📓 [manufacturing_ai_lab2_2.ipynb](./1학년%202학기/제조%20AI%20실제/2주_과제/manufacturing_ai_lab2_2.ipynb): 데이터·모델·작업 제약 조건과 일반화(Generalization) 비교
+    * 📊 실데이터셋: [cwru_normal.mat](./1학년%202학기/제조%20AI%20실제/2주_과제/cwru_normal.mat), [cwru_fault.mat](./1학년%202학기/제조%20AI%20실제/2주_과제/cwru_fault.mat)
   * **[3주_과제 폴더](./1학년%202학기/제조%20AI%20실제/3주_과제/)**:
-    * 📓 [`linear_regression.ipynb`](./1학년%202학기/제조%20AI%20실제/3주_과제/linear_regression.ipynb): TensorFlow 기반 선형회귀 및 SGD 최적화, 샘플 수 및 잡음 영향 고찰
-    * 📓 [`logistic_regression.ipynb`](./1학년%202학기/제조%20AI%20실제/3주_과제/logistic_regression.ipynb): Iris 데이터셋 로지스틱 회귀 이진 분류, 결정 경계 시각화 및 학습률 분석
-    * 📓 [`mnist_nn_classification.ipynb`](./1학년%202학기/제조%20AI%20실제/3주_과제/mnist_nn_classification.ipynb): MNIST 손글씨 다층 퍼셉트론(MLP) 분류 및 과적합(Overfitting) 징후 분석
-  * 📓 [`manufacturing_ai_lab2_1.ipynb`](./1학년%202학기/제조%20AI%20실제/2주_과제/manufacturing_ai_lab2_1.ipynb):
-    * CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 결함) 분석
-    * 나쁜 특징(단순 평균 등)과 좋은 특징(RMS, 첨도, 피크값 등)의 클래스 분리성(Separability) 시각화 비교
-    * Fisher Separability 지표 산출 및 로지스틱 회귀 기반 분류 성능 평가
-  * 📓 [`manufacturing_ai_lab2_2.ipynb`](./1학년%202학기/제조%20AI%20실제/2주_과제/manufacturing_ai_lab2_2.ipynb):
-    * 데이터/환경 제약(노이즈 필터링 및 데이터 정형화 전후 분리도 비교)
-    * 모델 제약(과적합 고차 다항 모델 vs 정규화 단순 모델 비교)
-    * 작업 제약(복잡한 연속 회귀 예측 vs 이진 분류 문제 전환에 따른 일반화 난이도 비교)
-  * 📊 실데이터셋: [`cwru_normal.mat`](./1학년%202학기/제조%20AI%20실제/2주_과제/cwru_normal.mat), [`cwru_fault.mat`](./1학년%202학기/제조%20AI%20실제/2주_과제/cwru_fault.mat)
+    * 📓 [linear_regression.ipynb](./1학년%202학기/제조%20AI%20실제/3주_과제/linear_regression.ipynb): TensorFlow 기반 선형회귀 및 SGD 최적화, 샘플 수 및 잡음 영향 고찰
+    * 📓 [logistic_regression.ipynb](./1학년%202학기/제조%20AI%20실제/3주_과제/logistic_regression.ipynb): Iris 데이터셋 로지스틱 회귀 이진 분류, 결정 경계 시각화 및 학습률 분석
+    * 📓 [mnist_nn_classification.ipynb](./1학년%202학기/제조%20AI%20실제/3주_과제/mnist_nn_classification.ipynb): MNIST 손글씨 다층 퍼셉트론(MLP) 분류 및 과적합(Overfitting) 징후 분석
+  * **[4주_과제 폴더](./1학년%202학기/제조%20AI%20실제/4주_과제/)**:
+    * 📓 [lab4_1_regression_activation_and_loss.ipynb](./1학년%202학기/제조%20AI%20실제/4주_과제/lab4_1_regression_activation_and_loss.ipynb): 회귀 활성화 함수 및 손실 함수(MSE vs MAE) 비교
+    * 📓 [lab4_2_classification_activation_and_loss.ipynb](./1학년%202학기/제조%20AI%20실제/4주_과제/lab4_2_classification_activation_and_loss.ipynb): 분류 활성화 함수(Sigmoid/Tanh/ReLU) 및 손실 함수(BCE vs MSE) 비교
+    * 📓 [lab4_3_challenging_problems.ipynb](./1학년%202학기/제조%20AI%20실제/4주_과제/lab4_3_challenging_problems.ipynb): 4대 도전과제(기울기 소실, 과적합, 데이터 부족, 클래스 불균형) 체감 실습
+    * 📓 [lab4_4_techniques_for_challenging_problems.ipynb](./1학년%202학기/제조%20AI%20실제/4주_과제/lab4_4_techniques_for_challenging_problems.ipynb): 도전과제 극복 기법(ResNet, L1/L2 규제, Dropout, Class Weighting, Data Augmentation)
 
 ### 2. 🌐 [지능형 IoT 네트워크 (Intelligent IoT Network)](./1학년%202학기/지능형%20IoT%20네트워크/)
 * **강의 요약**: 산업용 사물인터넷(IIoT), 산업 통신 프로토콜, 무선/유선 센서 네트워크, 엣지-클라우드 연계 지능형 네트워크 아키텍처 학습.
