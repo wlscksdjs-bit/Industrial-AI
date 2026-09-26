@@ -1,13 +1,18 @@
-# Large dataset, audio, and document files
+# Large dataset, audio, and network packet files
 *.wav
 *.mp3
-*.zip
 *.egg
 *.tar.gz
-*.csv
+*.pcap
+*.pcapng
 
-# Exclude specific files exceeding 100MB limit
+# Exclude massive raw zip files exceeding GitHub 100MB limit
+NonVPN-PCAPs-01.zip
+VPN-PCAPS-01.zip
 *Connected Vehicle.pptx
+
+# Temporary office files
+~$*
 
 # Python cache & Jupyter
 __pycache__/
@@ -19,3 +24,5 @@ __pycache__/
 .idea/
 .DS_Store
 .bkit/
+.castra/
+.gastra/
