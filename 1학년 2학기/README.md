@@ -8,9 +8,9 @@
 
 ```
 📁 1학년 2학기
-├── 📁 제조 AI 실제          # CWRU 모터 베어링 신호처리, 특징공학, 딥러닝 4대 도전과제 극복
+├── 📁 제조 AI 실제          # CWRU 베어링 진동 신호처리, 특징공학, 딥러닝 4대 도전과제 극복, 생성형 AI(AE/VAE/GAN/DDPM)
 ├── 📁 지능형 IoT 네트워크    # ISCXVPN2016 트래픽 분류, TDF-Net 딥러닝 모델링 (RF 성능 상회)
-└── 📁 어프렌티스 프로젝트    # AI4I 2020 설비 고장 예측 머신러닝 5단계 실증 캡스톤 프로젝트
+└── 📁 어프렌티스 프로젝트    # AI4I 2020 설비 고장 예측 머신러닝 5단계 실증 캡스톤 프로젝트 & 5분 발표대본
 ```
 
 ---
@@ -19,27 +19,23 @@
 
 ### 1. 🏭 [제조 AI 실제 (Manufacturing AI in Practice)](./제조%20AI%20실제/)
 * **담당 교수**: 조경록 교수님
-* **주요 내용**: 스마트 제조 공정 및 회전기계(베어링 등) 센서 데이터를 바탕으로 결함 진단 및 예지보전을 위한 AI 기술을 실습합니다.
+* **주요 내용**: 스마트 제조 공정 및 회전기계(베어링 등) 센서 데이터를 바탕으로 결함 진단 및 예지보전을 위한 AI 기술과 비지도 이상치 탐지/데이터 증강을 위한 생성 모델(Generative Models)을 실습합니다.
 * **주요 산출물**:
   * **강의 자료**:
     * [`제조AI실제(1주차).pdf`](./제조%20AI%20실제/제조AI실제(1주차).pdf): 제조 AI 개요 및 스마트팩토리 발전 단계
     * [`제조AI실제(2주차).pdf`](./제조%20AI%20실제/제조AI실제(2주차).pdf): 패턴인식과 특징(Feature) 정의, 제약 조건과 일반화
     * [`제조AI실제(3주차).pdf`](./제조%20AI%20실제/제조AI실제(3주차).pdf): 인공신경망 기초, 선형/로지스틱 회귀, 다층 퍼셉트론(MLP)
     * [`제조AI실제(4주차).pdf`](./제조%20AI%20실제/제조AI실제(4주차).pdf): 활성화/손실 함수 비교 및 4대 도전과제 극복 테크닉
+    * [`제조AI실제(5주차).pdf`](./제조%20AI%20실제/제조AI실제(5주차).pdf): 생성 모델의 원리(AE, VAE, GAN, DDPM)와 비지도 이상치 탐지
   * **실습 과제**:
-    * **[2주차 실습 과제 (`2주_과제/`)](./제조%20AI%20실제/2주_과제/)**:
-      * `manufacturing_ai_lab2_1.ipynb`: CWRU 베어링 진동 좋은 특징(Good Feature) 정의 및 분리도(Fisher Separability) 비교
-      * `manufacturing_ai_lab2_2.ipynb`: 제약 조건(환경, 모델, 작업 제약)과 일반화(Generalization) 비교
-      * `cwru_normal.mat`, `cwru_fault.mat`: CWRU 베어링 정상/내륜결함 진동 실데이터셋
-    * **[3주차 실습 과제 (`3주_과제/`)](./제조%20AI%20실제/3주_과제/)**:
-      * `linear_regression.ipynb`: TensorFlow 선형회귀 및 SGD 최적화 실습
-      * `logistic_regression.ipynb`: Iris 데이터셋 로지스틱 회귀 이진 분류 및 결정 경계 시각화
-      * `mnist_nn_classification.ipynb`: MNIST 다층 퍼셉트론(MLP) 분류 및 과적합(Overfitting) 징후 분석
-    * **[4주차 실습 과제 (`4주_과제/`)](./제조%20AI%20실제/4주_과제/)**:
-      * `lab4_1_regression_activation_and_loss.ipynb`: 회귀 활성화 함수 및 손실 함수(MSE vs MAE) 비교
-      * `lab4_2_classification_activation_and_loss.ipynb`: 분류 활성화 함수 및 손실 함수(BCE vs MSE) 비교
-      * `lab4_3_challenging_problems.ipynb`: 4대 도전과제(기울기 소실, 과적합, 데이터 부족, 클래스 불균형) 실습
-      * `lab4_4_techniques_for_challenging_problems.ipynb`: 도전과제 극복 기법(ResNet, L1/L2 규제, Dropout, Class Weighting)
+    * **[2주차 실습 과제 (`2주_과제/`)](./제조%20AI%20실제/2주_과제/)**: CWRU 베어링 진동 좋은 특징(Good Feature) 정의 및 분리도(Fisher Separability) 비교, 일반화 제약 조건 실습
+    * **[3주차 실습 과제 (`3주_과제/`)](./제조%20AI%20실제/3주_과제/)**: TensorFlow 선형회귀(SGD), Iris 로지스틱 회귀(결정 경계 시각화), MNIST 다층 퍼셉트론(MLP) 과적합 징후 분석
+    * **[4주차 실습 과제 (`4주_과제/`)](./제조%20AI%20실제/4주_과제/)**: 회귀/분류 활성화 및 손실함수 비교, 기울기 소실 체감, ResNet Skip Connection, L1/L2 규제, Dropout, Class Weighting
+    * **[5주차 실습 과제 (`5주_과제/`)](./제조%20AI%20실제/5주_과제/)**:
+      * `lab5_1_autoencoder.ipynb`: Autoencoder 구조 및 재구성 오차 기반 비지도 결함 진단, 노이즈 제거
+      * `lab5_2_vae.ipynb`: VAE 잠재 공간 매니폴드 생성, Reparameterization Trick, ELBO 손실 함수
+      * `lab5_3_gan.ipynb`: GAN 적대적 학습(Generator vs Discriminator), Minimax 최적화, MNIST 숫자 생성
+      * `lab5_4_diffusion_model.ipynb`: Denoising Diffusion Probabilistic Model (DDPM) Forward/Reverse Denoising 기초 실습
 
 ---
 
@@ -47,8 +43,7 @@
 * **담당 교수**: 이혁로 교수님
 * **주요 내용**: 산업 인공지능 인프라를 뒷받침하는 차세대 센서 네트워크, OSI 7계층 프로토콜, WSN, LPWAN 및 암호화 네트워크 트래픽 다중 분류 딥러닝 모델링.
 * **주요 산출물**:
-  * **강의 자료**:
-    * 1주차(오리엔테이션), 2주차(지능형 IoT 개요), 3주차(지능형 IoT와 OSI 7계층), 4주차(무선 통신 기술) PDF
+  * **강의 자료**: 1주차(오리엔테이션), 2주차(지능형 IoT 개요), 3주차(지능형 IoT와 OSI 7계층), 4주차(무선 통신 기술) PDF
   * **[3주차 연구 과제: 트래픽 분류 모델 성능 향상 (`3주_과제/`)](./지능형%20IoT%20네트워크/3주_과제/)**:
     * **연구 주제**: ISCXVPN2016 암호화 트래픽 다중 분류(5개 클래스)에서 머신러닝 기준 모델(Random Forest, 76.44%)을 상회하는 딥러닝 아키텍처 구축.
     * **핵심 방법론**: 30개 네트워크 물리 도메인 피처 엔지니어링 + 계층적 트리 로짓 융합(40차원) + ResBlock + 5-Seed 앙상블 **TDF-Net** 설계.
@@ -72,7 +67,9 @@
     * **검증 성과**: 고장 재현율(Recall) **86.8%** (+36.8%p 향상), F1-Score **0.868**, ROC-AUC **0.986** 달성.
     * **주요 파일**:
       * `어프렌티스프로젝트_발표자료_진찬언(2026254019).pptx`: 6장 핵심 요약 발표 자료.
-      * `프로젝트1_기획서_및_5분발표대본.md`: 3분 50초 구두 대본 및 Q&A 완벽 대비 모범 답변.
+      * `제조 가공 설비 고장 예측_5분발표_구두대본_진찬언.pdf` / `.docx`: 5분 정규 구두 발표 대본.
+      * `제조 가공 설비 고장 예측_동료 질의응답_발표_구두대본_진찬언.pdf`: 질의응답 대비 대본.
+      * `프로젝트1_기획서_및_5분발표대본.md`: 기획서 원문, 발표 대본 및 Q&A 완벽 대비 모범 답변.
       * `run_project1_experiment.py`: 5단계 전과정 재현 파이썬 스크립트.
       * `ai4i2020.csv`: 가공 설비 센서 실데이터셋.
       * 동료 연구자 교차 질의서 및 피드백 문서 일체.
@@ -83,6 +80,6 @@
 
 | 과목명 | 주요 프로젝트 / 연구 과제 | 핵심 달성 지표 | 비고 |
 | :--- | :--- | :---: | :--- |
+| **제조 AI 실제** | CWRU 진동 신호처리 & 생성형 AI(AE/VAE/GAN/DDPM) | **Fisher Separability & 생성 품질** | 5주차 생성 모델 4종 실습 완비 |
 | **지능형 IoT 네트워크** | ISCXVPN2016 암호화 트래픽 분류 TDF-Net 구현 | **Acc: 78.61% / F1: 0.7402** | RF(76.44%) 기준 모델 완벽 상회 |
 | **어프렌티스 프로젝트** | AI4I 2020 공작기계 고장 예측 5단계 실증 | **Recall: 86.8% / AUC: 0.986** | 희소 고장(3.4%) 미검출 원천 방어 |
-| **제조 AI 실제** | CWRU 베어링 진동 신호처리 & 딥러닝 4대 도전과제 극복 | **Fisher Separability 극대화** | RMS/Kurtosis/ResNet/불균형 규제 |
