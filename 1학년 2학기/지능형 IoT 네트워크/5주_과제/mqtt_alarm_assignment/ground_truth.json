@@ -1,0 +1,69 @@
+{
+  "mode": "full",
+  "seed": 2026,
+  "rate_hz": 5.0,
+  "n_samples": 3000,
+  "n_warmup": 600,
+  "events": [
+    {
+      "type": "spike",
+      "start": 686,
+      "end": 688
+    },
+    {
+      "type": "vib_noise",
+      "start": 787,
+      "end": 886
+    },
+    {
+      "type": "spike",
+      "start": 978,
+      "end": 978
+    },
+    {
+      "type": "drift",
+      "start": 1167,
+      "end": 1316
+    },
+    {
+      "type": "stuck",
+      "start": 1409,
+      "end": 1488
+    },
+    {
+      "type": "drift",
+      "start": 1584,
+      "end": 1733
+    },
+    {
+      "type": "vib_noise",
+      "start": 1884,
+      "end": 1983
+    },
+    {
+      "type": "stuck",
+      "start": 2118,
+      "end": 2197
+    },
+    {
+      "type": "stuck",
+      "start": 2345,
+      "end": 2424
+    },
+    {
+      "type": "vib_noise",
+      "start": 2478,
+      "end": 2577
+    },
+    {
+      "type": "drift",
+      "start": 2697,
+      "end": 2846
+    },
+    {
+      "type": "spike",
+      "start": 2929,
+      "end": 2931
+    }
+  ]
+}

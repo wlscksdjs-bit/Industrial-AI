@@ -1,0 +1,102 @@
+{
+  "user_id": "2026254019",
+  "mode": "full",
+  "passed": 8,
+  "total": 8,
+  "items": [
+    {
+      "check": "[1] 알람 토픽이 .../alarm/{유형}이고 payload의 type과 일치",
+      "pass": true
+    },
+    {
+      "check": "[2] 알람 payload에 seq, ts, type, score 포함",
+      "pass": true
+    },
+    {
+      "check": "[3] 알람을 QoS 1로 발행",
+      "pass": true
+    },
+    {
+      "check": "[4] 이상 이벤트 알람 (12/12건, 11건 이상이면 통과)",
+      "pass": true
+    },
+    {
+      "check": "[5] 이벤트당 알람 1건 (전체 알람 12건, 초과 0건, 2건 이하면 통과)",
+      "pass": true
+    },
+    {
+      "check": "[6] health가 retain으로 보관되고 종료 시점 상태가 NORMAL",
+      "pass": true
+    },
+    {
+      "check": "[7] 서비스 상태 ONLINE이 retain으로 보관됨",
+      "pass": true
+    },
+    {
+      "check": "[8] 서비스 비정상 종료 시 OFFLINE Will 메시지 발행",
+      "pass": true
+    }
+  ],
+  "events": [
+    {
+      "type": "spike",
+      "start": 686,
+      "alarms": 1
+    },
+    {
+      "type": "vib_noise",
+      "start": 787,
+      "alarms": 1
+    },
+    {
+      "type": "spike",
+      "start": 978,
+      "alarms": 1
+    },
+    {
+      "type": "drift",
+      "start": 1167,
+      "alarms": 1
+    },
+    {
+      "type": "stuck",
+      "start": 1409,
+      "alarms": 1
+    },
+    {
+      "type": "drift",
+      "start": 1584,
+      "alarms": 1
+    },
+    {
+      "type": "vib_noise",
+      "start": 1884,
+      "alarms": 1
+    },
+    {
+      "type": "stuck",
+      "start": 2118,
+      "alarms": 1
+    },
+    {
+      "type": "stuck",
+      "start": 2345,
+      "alarms": 1
+    },
+    {
+      "type": "vib_noise",
+      "start": 2478,
+      "alarms": 1
+    },
+    {
+      "type": "drift",
+      "start": 2697,
+      "alarms": 1
+    },
+    {
+      "type": "spike",
+      "start": 2929,
+      "alarms": 1
+    }
+  ]
+}

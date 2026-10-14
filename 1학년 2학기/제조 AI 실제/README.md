@@ -9,8 +9,8 @@
 * **담당 교수**: 조경록 교수님
 * **소속**: 충북대학교 일반대학원 산업인공지능학과 (석사과정)
 * **연구자**: 진찬언 (학번: 2026254019)
-* **주요 내용**: 스마트 제조 현장에서 수집되는 다양한 센서 및 신호 데이터(진동, 음향, 온도, 압력 등)를 바탕으로 산업 인공지능 기법(신호처리, 특징 공학, 패턴인식, 신경망 모델링, 결함 진단, 예지보전 및 생성형 AI 기반 비지도 이상치 탐지/데이터 증강)을 적용하는 실무 역량을 함양합니다.
-* **주요 도메인 데이터**: CWRU (Case Western Reserve University) 모터 베어링 진동 데이터셋, MNIST 손글씨 데이터셋, 비선형 합성 신호 데이터셋 등
+* **주요 내용**: 스마트 제조 현장에서 수집되는 다양한 센서 및 신호 데이터(진동, 음향, 온도, 압력 등)를 바탕으로 산업 인공지능 기법(신호처리, 특징 공학, 패턴인식, 신경망 모델링, 결함 진단, 예지보전, 생성형 AI 기반 비지도 이상치 탐지/데이터 증강 및 합성곱 신경망 CNN/전이학습)을 적용하는 실무 역량을 함양합니다.
+* **주요 도메인 데이터**: CWRU (Case Western Reserve University) 모터 베어링 진동 데이터셋, MNIST 손글씨 데이터셋, CIFAR-10 객체 데이터셋, 비선형 합성 신호 데이터셋 등
 
 ---
 
@@ -23,6 +23,8 @@
 | **3주차** | [`제조AI실제(3주차).pdf`](./제조AI실제(3주차).pdf) | [`3주_과제/`](./3주_과제/) | • 인공신경망(ANN) 기초 및 발전사<br>• 선형회귀(Linear Regression)와 MSE 손실 함수 경사하강법(SGD) 최적화<br>• 로지스틱 회귀(Logistic Regression)와 이진 크로스엔트로피(Log Loss)<br>• 다층 퍼셉트론(MLP) 기반 MNIST 손글씨 분류 및 과적합(Overfitting) 징후 분석 |
 | **4주차** | [`제조AI실제(4주차).pdf`](./제조AI실제(4주차).pdf) | [`4주_과제/`](./4주_과제/) | • 활성화 함수(Activation Function): Sigmoid, ReLU, Tanh, Leaky ReLU 비교<br>• 손실 함수(Loss Function): MSE, MAE, Binary/Categorical Cross-Entropy<br>• 기울기 소실(Vanishing Gradient) 문제 및 ReLU를 통한 해결<br>• 과적합(Overfitting) / 과소적합(Underfitting) 진단<br>• 클래스 불균형(Class Imbalance) 문제와 평가 지표(F1, Recall)<br>• ResNet(Skip Connection), Regularization(L1/L2), Dropout, Class Weighting |
 | **5주차** | [`제조AI실제(5주차).pdf`](./제조AI실제(5주차).pdf) | [`5주_과제/`](./5주_과제/) | • 생성 모델(Generative Models)의 원리와 산업 도메인 적용<br>• 오토인코더(Autoencoder) 구조 및 재구성 오차 기반 비지도 이상치 탐지<br>• 변이형 오토인코더(VAE)와 잠재 공간(Latent Space) 매니폴드 형성<br>• 적대적 생성 신경망(GAN) 기반 이미지 합성 및 Minimax 목적함수<br>• 확산 모델(Diffusion Model, DDPM)의 Forward/Reverse Denoising 과정 |
+| **6주차** | [`제조AI실제_6주차_글로벌제조트렌드.pdf`](./제조AI실제_6주차_글로벌제조트렌드.pdf) | - | • 글로벌 제조 패러다임 변화 및 디지털 트윈, 자율 제조 트렌드<br>• 지속가능 제조(ESG) 및 공급망 복원력을 위한 인공지능 전략 |
+| **7주차** | [`제조AI실제(7주차).pdf`](./제조AI실제(7주차).pdf) | [`7주_과제/`](./7주_과제/) | • 합성곱 신경망(CNN) 동작 원리(Convolution, Stride, Padding, Pooling)<br>• 고전 CNN 모델 아키텍처: LeNet-5, VGG16<br>• 고급 CNN 및 전이학습: GoogLeNet(InceptionV3), ResNet50, Fine-tuning |
 
 ---
 
@@ -63,90 +65,90 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
 
 ## 🔬 3주차 과제 상세 안내 (`3주_과제/`)
 
-신경망의 기본 빌딩 블록(선형회귀, 로지스틱 회귀, 다층 퍼셉트론)의 수식적 원리를 이해하고 TensorFlow로 구현·실습한 3종의 주피터 노트북 과제입니다.
+인공신경망의 수학적 기초인 선형회귀, 로지스틱 회귀 및 다층 퍼셉트론(MLP)을 직접 구현하고 학습 과정을 분석하는 3종의 주피터 노트북 실습 과제입니다.
 
 ### 1. [`linear_regression.ipynb`](./3주_과제/linear_regression.ipynb)
-* **주제**: TensorFlow를 활용한 선형회귀 및 경사하강법(SGD) 최적화
-* **주요 내용**:
-  * $y = 3x + 2 + \text{noise}$ 합성 데이터 생성 및 산점도 시각화
-  * 단일 노드 Dense Layer 정의, MSE 손실 함수 및 SGD(lr=0.01) 컴파일
-  * 200 Epoch 학습 진행 및 손실 곡선(Loss Curve) 수렴 확인
-  * 학습된 가중치(기울기 $W$, 절편 $b$) 확인 및 원본 데이터 대비 회귀선 시각화
+* **주제**: 선형회귀(Linear Regression)와 경사하강법(Gradient Descent)
+* **핵심 내용**:
+  * 합성 선형 데이터셋 생성 및 정규화
+  * MSE(Mean Squared Error) 손실 함수 정의 및 확률적 경사하강법(SGD) 가중치/편향 업데이트 구현
+  * 학습률(Learning Rate)에 따른 수렴 속도 및 손실 감소 곡선 시각화
 
 ### 2. [`logistic_regression.ipynb`](./3주_과제/logistic_regression.ipynb)
-* **주제**: Iris 데이터셋 기반 로지스틱 회귀 이진 분류 및 결정 경계 시각화
-* **주요 내용**:
-  * Iris 붓꽃 꽃받침 길이·너비(2개 특성) 추출 및 표준화(StandardScaler)
-  * Setosa($y=1$) vs Others($y=0$) 이진 레이블링 및 8:2 Train/Test 분리
-  * Dense(1, activation='sigmoid') 모델 정의 및 Binary Crossentropy 손실 함수 설정
-  * 100 Epoch 학습 진행, Train/Val 손실 곡선 및 정확도 곡선 도출, 테스트셋 정확도 100% 달성
-  * 2D 메쉬그리드 상의 로지스틱 결정 경계(Decision Boundary) 컨투어 플롯 시각화
+* **주제**: 로지스틱 회귀(Logistic Regression)와 이진 분류 결정 경계
+* **핵심 내용**:
+  * Iris 붓꽃 데이터셋 이진 분류 태스크 구성
+  * 시그모이드(Sigmoid) 함수 및 Binary Cross-Entropy (Log Loss) 구현
+  * 2차원 특징 공간에서의 선형 결정 경계(Decision Boundary) 시각화
 
 ### 3. [`mnist_nn_classification.ipynb`](./3주_과제/mnist_nn_classification.ipynb)
-* **주제**: MNIST 손글씨 데이터셋 다층 퍼셉트론(MLP) 분류 및 과적합(Overfitting) 징후 분석
-* **주요 내용**:
-  * MNIST 손글씨 데이터(60,000장) 로드, [0, 1] 정규화 및 784차원 1D 벡터 변환
-  * Sequential MLP 모델 설계: Dense(256, ReLU) -> Dense(128, ReLU) -> Dense(10, Softmax)
-  * 테스트셋 평가(정확도 ~97.9%) 및 정상 분류/오분류 이미지 시각화
-  * Train/Val 손실 및 정확도 곡선의 일반화 격차(Generalization Gap) 관찰, 4~5 에폭 이후의 과적합 징후 분석
+* **주제**: 다층 퍼셉트론(MLP) 기반 MNIST 손글씨 숫자 분류 및 과적합 분석
+* **핵심 내용**:
+  * 28x28 이미지 평탄화(Flatten) 및 다층 밀집층(Dense Layer) 모델 구축
+  * Categorical Cross-Entropy 손실 함수 및 Adam 옵티마이저 학습
+  * 훈련 손실 vs 검증 손실 곡선을 통한 과적합(Overfitting) 징후 분석 및 혼동 행렬(Confusion Matrix) 도출
 
 ---
 
 ## 🔬 4주차 과제 상세 안내 (`4주_과제/`)
 
-신경망 학습의 핵심 구성 요소인 활성화 함수와 손실 함수의 특성을 비교하고, 실제 딥러닝 학습 시 마주하는 4대 도전과제(기울기 소실, 과적합, 데이터 부족, 클래스 불균형) 및 이를 해결하기 위한 현대적 딥러닝 테크닉을 실습한 4종의 주피터 노트북 과제입니다.
+신경망 학습 과정에서 마주하는 4대 기술적 난제(기울기 소실, 과적합/과소적합, 클래스 불균형, 비선형 한계)를 진단하고 극복하는 4종 주피터 노트북 실습 과제입니다.
 
 ### 1. [`lab4_1_regression_activation_and_loss.ipynb`](./4주_과제/lab4_1_regression_activation_and_loss.ipynb)
-* **주제**: 회귀(Regression) 문제에서의 활성화 함수 및 손실 함수 비교
-* **핵심 내용**: 비선형 출력 회귀에서 Linear vs ReLU 출력층 비교, 이상치 존재 시 MSE vs MAE 손실 함수의 강건성(Robustness) 비교
+* **주제**: 회귀(Regression) 모델에서의 활성화 함수와 손실 함수 최적 조합 실습
+* **핵심 내용**:
+  * 비선형 사인파/다항식 데이터셋 생성
+  * 활성화 함수(Linear, ReLU, Tanh)에 따른 비선형 함수 근사 능력 비교
+  * 손실 함수(MSE, MAE, Huber Loss)의 이상치(Outlier) 민감도 비교
 
 ### 2. [`lab4_2_classification_activation_and_loss.ipynb`](./4주_과제/lab4_2_classification_activation_and_loss.ipynb)
-* **주제**: 분류(Classification) 문제에서의 활성화 함수 및 손실 함수 비교
-* **핵심 내용**: Sigmoid vs Tanh vs ReLU 은닉층 활성화 함수 비교, Binary Cross-Entropy vs MSE 손실 함수의 그래디언트 소실 방지 효과 체감
+* **주제**: 분류(Classification) 모델에서의 출력층 활성화 함수 및 크로스엔트로피 손실 함수
+* **핵심 내용**:
+  * 이진 분류: Sigmoid + Binary Cross-Entropy
+  * 다중 분류: Softmax + Categorical Cross-Entropy의 확률 분포 출력 해석
+  * 잘못된 손실 함수 조합 시 학습 정체 및 발산 현상 실증
 
 ### 3. [`lab4_3_challenging_problems.ipynb`](./4주_과제/lab4_3_challenging_problems.ipynb)
-* **주제**: 딥러닝 학습 시 직면하는 4대 도전과제 체감 실습
+* **주제**: 심층 신경망의 4대 도전과제 직접 체감 및 문제점 가시화
 * **핵심 내용**:
-  * **기울기 소실(Vanishing Gradient)**: 20층 깊은 신경망에서 Sigmoid vs ReLU 역전파 그래디언트 소멸 비교
-  * **과적합(Overfitting)**: 데이터 대비 과도한 파라미터 용량으로 인한 일반화 성능 저하
-  * **데이터 부족(Data Scarcity)**: 소량 샘플 학습 시 높은 분산과 예측 불안정성
-  * **클래스 불균형(Class Imbalance)**: 다수 클래스 편향 학습 및 소수 클래스 F1/Recall 폭락 현상
+  * 깊은 신경망(10층 이상)에서 Sigmoid 활성화 함수 사용 시 초기 레이어로 전달되는 그래디언트 소실(Vanishing Gradient) 현상 시각화
+  * 소수 샘플 대비 과도한 파라미터로 인한 극단적 과적합(Overfitting) 재현
+  * 불균형 데이터셋(99:1) 학습 시 정확도 착시(Accuracy Paradox) 현상 입증
 
 ### 4. [`lab4_4_techniques_for_challenging_problems.ipynb`](./4주_과제/lab4_4_techniques_for_challenging_problems.ipynb)
-* **주제**: 4대 도전과제를 극복하기 위한 현대적 딥러닝 기법 실습
+* **주제**: 도전과제 극복을 위한 현대 딥러닝 핵심 기법 적용 실습
 * **핵심 내용**:
-  * **ResNet (Skip Connection)**: 잔차 연결을 통한 초심층 신경망 기울기 소실 해결
-  * **정규화(Regularization) & Dropout**: L1/L2 Weight Decay 및 드롭아웃을 통한 과적합 억제
-  * **데이터 증강(Data Augmentation)**: 회전, 이동 등 기하 변환을 통한 데이터 부족 극복
-  * **클래스 가중치(Class Weighting)**: 손실 함수 역빈도 가중치를 통한 희소 클래스 검출력 회복
+  * **기울기 소실 극복**: ReLU/Leaky ReLU 도입 및 He/Xavier 가중치 초기화, 배치 정규화(Batch Normalization), ResNet Skip Connection
+  * **과적합 방지**: L1/L2 가중치 규제(Weight Decay), 드롭아웃(Dropout 0.3~0.5), 조기 종료(Early Stopping)
+  * **클래스 불균형 완화**: Class Weighting, Focal Loss, 층화 샘플링 및 F1-Score/PR-AUC 중심 평가 체계 전환
 
 ---
 
 ## 🔬 5주차 과제 상세 안내 (`5주_과제/`)
 
-산업 인공지능 현장에서 결함 데이터가 절대적으로 부족한 문제를 해결하기 위해, 비지도 표현 학습 및 데이터 증강의 핵심 축을 담당하는 **생성 모델(Generative Models)** 4종을 단계별로 심층 실습한 과제입니다.
+생성형 AI(Generative AI)의 4대 핵심 아키텍처(AE, VAE, GAN, DDPM)의 수학적 원리를 이해하고 구현하는 4종 주피터 노트북 실습 과제입니다.
 
 ### 1. [`lab5_1_autoencoder.ipynb`](./5주_과제/lab5_1_autoencoder.ipynb)
-* **주제**: Autoencoder 종합 실습 및 비지도 이상치 탐지
+* **주제**: 기본 Autoencoder 구조 및 재구성 오차 기반 비지도 결함 진단
 * **핵심 내용**:
-  * **인코더(Encoder)-디코더(Decoder) 아키텍처**: 고차원 입력 신호를 저차원 병목 계층(Bottleneck Latent Space)으로 압축 후 원본 복원
-  * **재구성 오차(Reconstruction Error)**: 정상 데이터로만 학습된 모델이 이상치(Anomaly) 입력 시 높은 재구성 오차를 발생시키는 원리를 활용한 비지도 결함 진단 실습
-  * **노이즈 제거 오토인코더(Denoising Autoencoder)**: 가우시안 노이즈가 주입된 센서 신호의 노이즈 필터링 및 강건한 특징 추출
+  * **인코더-디코더 구조**: 차원 축소(Bottleneck)를 통한 핵심 잠재 표현(Latent Representation) 압축
+  * **비지도 이상치 탐지(Anomaly Detection)**: 정상 데이터로만 학습 후, 결함 신호 입력 시 발생하는 높은 재구성 오차(MSE)를 임계값 기준으로 탐지
+  * **노이즈 제거 오토인코더(Denoising Autoencoder)**: 가우시안 노이즈가 주입된 센서 신호의 원본 복원 성능 검증
 
 ### 2. [`lab5_2_vae.ipynb`](./5주_과제/lab5_2_vae.ipynb)
-* **주제**: Variational Autoencoder (VAE)를 활용한 잠재 공간 매니폴드 생성
+* **주제**: 변이형 오토인코더(Variational Autoencoder)와 잠재 공간 매니폴드 형성
 * **핵심 내용**:
-  * **확률론적 잠재 표현**: 고정된 점이 아닌 평균($\mu$)과 분산($\sigma^2$)의 가우시안 분포 매개변수를 출력
-  * **재매개변수화 트릭(Reparameterization Trick)**: 확률적 샘플링 $z = \mu + \sigma \odot \epsilon$ ($\epsilon \sim \mathcal{N}(0, I)$)을 통해 역전파 그래디언트 전파 보장
-  * **ELBO 손실 함수**: 재구성 손실(Reconstruction Loss) + 정규화 손실(KL Divergence)의 균형 제어
-  * **2D 잠재 공간 매니폴드(Latent Manifold) 시각화**: 연속적인 잠재 공간 보간(Interpolation)을 통한 부드러운 합성 데이터 생성
+  * **확률적 잠재 변수 모델링**: 잠재 벡터를 단일 점이 아닌 평균($\mu$)과 분산($\sigma^2$)의 정규분포로 추정
+  * **Reparameterization Trick**: 역전파(Backpropagation)가 가능하도록 확률적 샘플링 과정을 분리 ($z = \mu + \sigma \odot \epsilon$)
+  * **ELBO (Evidence Lower Bound) 손실 함수**: 재구성 손실(Reconstruction Loss) + KL 발산(KL Divergence) 정규화
+  * 잠재 공간 2차원 매니폴드 시각화 및 부드러운 보간(Interpolation)을 통한 신규 샘플 생성
 
 ### 3. [`lab5_3_gan.ipynb`](./5주_과제/lab5_3_gan.ipynb)
-* **주제**: GAN (Generative Adversarial Network) 기반 데이터 생성 실습
+* **주제**: 적대적 생성 신경망(Generative Adversarial Network) 기반 이미지 합성
 * **핵심 내용**:
-  * **적대적 학습(Adversarial Training)**: 잠재 벡터 $z$로부터 가짜 샘플을 만드는 생성자(Generator)와 진짜/가짜를 판별하는 판별자(Discriminator)의 Minimax Zero-Sum 게임
-  * **손실 함수 최적화**: 판별자 손실($\mathcal{L}_D$)과 생성자 손실($\mathcal{L}_G$)의 교대 훈련
-  * **생성 품질 모니터링**: 훈련 에폭 경과에 따른 노이즈에서 실제 데이터 분포로의 수렴 과정 시각화
+  * **생성자(Generator) vs 판별자(Discriminator)**: Minimax 게임 이론 기반 제로섬 경쟁 학습 체계 구축
+  * **이진 크로스엔트로피 기반 적대적 손실**: $\min_G \max_D V(D, G)$ 최적화
+  * MNIST 손글씨 데이터셋 대상 숫자 이미지 생성 실습
   * **모드 붕괴(Mode Collapse)** 및 학습 불안정성 문제와 안정화 테크닉 고찰
 
 ### 4. [`lab5_4_diffusion_model.ipynb`](./5주_과제/lab5_4_diffusion_model.ipynb)
@@ -156,6 +158,43 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
   * **역방향 디노이징 과정(Reverse Process)**: 신경망(U-Net / MLP)을 통해 각 스텝에 주입된 노이즈를 예측하고 제거하여 원본 데이터 복원
   * **노이즈 스케줄러(Beta Schedule)**: Linear / Cosine 스케줄러에 따른 확산 강도 제어
   * **현대 생성형 AI 기술 체계화**: GAN 대비 안정적인 학습과 VAE 대비 고품질 합성 샘플 생성의 원리 비교
+
+---
+
+## 📖 6주차 강의 자료 안내
+* **강의 자료**: [`제조AI실제_6주차_글로벌제조트렌드.pdf`](./제조AI실제_6주차_글로벌제조트렌드.pdf)
+* **주요 내용**:
+  * 글로벌 제조업의 스마트화·디지털 전환(DX) 동향 및 미래 제조 트렌드
+  * 인공지능 기반 자율 공정 제어 및 예측 유지보수 실증 사례
+  * 탄소 중립 및 제조 지속가능성을 위한 AI 최적화 방향
+
+---
+
+## 🔬 7주차 과제 상세 안내 (`7주_과제/`)
+
+합성곱 신경망(CNN)의 핵심 메커니즘 체감, 고전 CNN 모델 구현, 사전학습 가중치를 활용한 전이학습(Transfer Learning) 및 미세조정(Fine-tuning)을 실습하는 3종 주피터 노트북입니다.
+
+### 1. [`Lab7_1.cnn_mnist_convolution_pooling.ipynb`](./7주_과제/Lab7_1.cnn_mnist_convolution_pooling.ipynb)
+* **주제**: Convolution & Pooling 동작 원리 실습 및 MNIST 기본 CNN 모델 구축
+* **핵심 내용**:
+  * **Convolution 파라미터 시각화**: 커널 크기(Kernel Size), Stride(보폭), Padding(`valid` vs `same`), Dilation, Filter 개수 및 Bias에 따른 특징맵(Feature Map) 변화 분석
+  * **Pooling 연산 비교**: MaxPooling2D(주요 피처 보존) vs AveragePooling2D(평균 평활화)의 출력 특성 비교
+  * **기본 CNN 모델 구축 및 학습**: MNIST 6만 장 데이터 대상 Conv2D + MaxPooling + Dense 구조 학습 (3 Epochs 무오류 검증 완료)
+
+### 2. [`Lab7_2.classic_cnn.ipynb`](./7주_과제/Lab7_2.classic_cnn.ipynb)
+* **주제**: 고전 CNN 대표 모델(LeNet-5, VGG16) 구조 실습 및 비교
+* **핵심 내용**:
+  * **LeNet-5 구현 및 학습**: Yann LeCun의 고전 구조(Conv-Pool-Conv-Pool-FC) 구현 및 MNIST 분류 5 에포크 학습 → **테스트 정확도 98.17%** 달성
+  * **VGG16 ImageNet 사전학습 가중치 추론**: 1억 3,800만 파라미터의 깊은 3x3 Conv 적층 모델 로드 및 코끼리 이미지 추론 테스트
+  * **모델 파라미터 비교**: LeNet-5 (61,706개) vs VGG16 (138,357,544개)의 크기 및 연산 복잡도 분석
+
+### 3. [`Lab7_3.inception_resnet_finetuning_transfer.ipynb`](./7주_과제/Lab7_3.inception_resnet_finetuning_transfer.ipynb)
+* **주제**: GoogLeNet(InceptionV3) & ResNet50 전이학습(Transfer Learning) 및 미세조정(Fine-tuning)
+* **핵심 내용**:
+  * **InceptionV3 & ResNet50 사전학습 모델 로드**: Top-3 추론 검증 (`African_elephant` 65.5%, `tusker` 24.4%, `Indian_elephant` 10.1%)
+  * **InceptionV3 미세조정(Fine-tuning)**: Feature Extractor 고정 후 상위 30개 레이어 가중치 동결 해제(Unfreeze) 및 낮은 학습률(1e-5) 기반 미세조정 파이프라인 구성
+  * **ResNet50 기반 CIFAR-10 전이학습(Transfer Learning)**: ResNet50 백본 고정 + GlobalAveragePooling2D + Dense 분류기 결합 후 CIFAR-10 대상 3 에포크 학습
+  * **4종 모델 파라미터 종합 비교**: InceptionV3 (23.8M), ResNet50 (25.6M), Fine-tuned Inception (21.9M), Transfer ResNet50 (24.1M)
 
 ---
 
@@ -170,6 +209,8 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
 ├── 제조AI실제(3주차).pdf
 ├── 제조AI실제(4주차).pdf
 ├── 제조AI실제(5주차).pdf
+├── 제조AI실제_6주차_글로벌제조트렌드.pdf
+├── 제조AI실제(7주차).pdf
 ├── 2주_과제/
 │   ├── cwru_fault.mat
 │   ├── cwru_normal.mat
@@ -184,11 +225,15 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
 │   ├── lab4_2_classification_activation_and_loss.ipynb
 │   ├── lab4_3_challenging_problems.ipynb
 │   └── lab4_4_techniques_for_challenging_problems.ipynb
-└── 5주_과제/
-    ├── lab5_1_autoencoder.ipynb
-    ├── lab5_2_vae.ipynb
-    ├── lab5_3_gan.ipynb
-    └── lab5_4_diffusion_model.ipynb
+├── 5주_과제/
+│   ├── lab5_1_autoencoder.ipynb
+│   ├── lab5_2_vae.ipynb
+│   ├── lab5_3_gan.ipynb
+│   └── lab5_4_diffusion_model.ipynb
+└── 7주_과제/
+    ├── Lab7_1.cnn_mnist_convolution_pooling.ipynb
+    ├── Lab7_2.classic_cnn.ipynb
+    └── Lab7_3.inception_resnet_finetuning_transfer.ipynb
 ```
 
 ---
@@ -199,7 +244,7 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
 | :--- | :--- |
 | OS | Windows 10/11 / macOS / Linux |
 | Python | 3.10+ |
-| TensorFlow / Keras | 2.12+ |
+| TensorFlow / Keras | 2.12+ (Keras 3.x 호환) |
 | PyTorch | 2.0+ |
 | scikit-learn | 1.2+ |
 | NumPy | 1.24+ |
@@ -208,4 +253,4 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
 
 ---
 
-*최종 업데이트: 2026-09-29*
+*최종 업데이트: 2026-10-14*

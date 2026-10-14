@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>과제 결과보고서 — MQTT 기반 실시간 설비 이상 알람 서비스 (Darkmorphism Edition) | 진찬언</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ld-surface-page: #22252b;
+  --ld-surface-card: #22252b;
+  --ld-shadow-light: #2b3038;
+  --ld-shadow-dark: #16181d;
+  --ld-text-strong: #edf2f7;
+  --ld-text-soft: #c8cdd6;
+  --ld-text-mute: #7e8796;
+  --ld-accent-primary: #4fd1c5;
+  --ld-accent-teal: #38b2ac;
+  --ld-accent-secondary: #63b3ed;
+  --ld-accent-emerald: #48bb78;
+  --ld-accent-amber: #ecc94b;
+  --ld-accent-rose: #f56565;
+  --ld-accent-purple: #b794f4;
+  --ld-font-body: 'Inter', 'Noto Sans KR', sans-serif;
+  --ld-font-mono: 'JetBrains Mono', monospace;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  background: var(--ld-surface-page);
+  color: var(--ld-text-strong);
+  font-family: var(--ld-font-body);
+  overflow: hidden;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+.stage {
+  position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.slide {
+  width: 1920px; height: 1080px; position: absolute;
+  background-color: var(--ld-surface-page);
+  border-radius: 20px; overflow: hidden;
+  display: none; padding: 64px 88px;
+  flex-direction: column; justify-content: space-between;
+  box-shadow: -10px -10px 24px var(--ld-shadow-light), 10px 10px 24px var(--ld-shadow-dark);
+}
+.slide.active {
+  display: flex;
+}
+
+/* Darkmorphic Eyebrow */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--ld-font-mono); font-size: 13.5px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ld-accent-primary);
+  background: var(--ld-surface-page);
+  box-shadow: -3px -3px 7px var(--ld-shadow-light), 3px 3px 7px var(--ld-shadow-dark);
+  padding: 7px 18px; border-radius: 30px; width: fit-content;
+  margin-bottom: 14px;
+}
+.title-row {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 28px;
+}
+.slide-title {
+  font-size: 40px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.2;
+  color: var(--ld-text-strong); margin: 0;
+}
+.slide-title span {
+  color: var(--ld-accent-primary);
+  text-shadow: 0 0 16px rgba(79, 209, 197, 0.35);
+}
+.slide-desc {
+  font-size: 17px; color: var(--ld-text-mute); font-family: var(--ld-font-mono);
+  margin-top: 6px;
+}
+.content-area {
+  flex: 1; display: flex; flex-direction: column; gap: 24px; min-height: 0;
+}
+.grid-2 {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1;
+}
+.grid-3 {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; flex: 1;
+}
+.grid-4 {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; flex: 1;
+}
+
+/* Darkmorphic Cards (Raised Extrusion) */
+.card {
+  background: var(--ld-surface-card);
+  border-radius: 18px; padding: 26px 28px;
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+  box-shadow: -6px -6px 14px var(--ld-shadow-light), 6px 6px 16px var(--ld-shadow-dark);
+  transition: all 0.2s ease;
+}
+.card.inset {
+  box-shadow: inset -5px -5px 10px var(--ld-shadow-light), inset 5px 5px 10px var(--ld-shadow-dark);
+}
+.card-title {
+  font-size: 21px; font-weight: 700; color: var(--ld-text-strong);
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+/* Darkmorphic Badges */
+.card-badge {
+  font-family: var(--ld-font-mono); font-size: 12px; font-weight: 600;
+  padding: 5px 12px; border-radius: 20px;
+  background: var(--ld-surface-page);
+  color: var(--ld-accent-primary);
+  box-shadow: inset -2px -2px 4px var(--ld-shadow-light), inset 2px 2px 4px var(--ld-shadow-dark);
+}
+.badge-pass {
+  color: var(--ld-accent-emerald);
+}
+.badge-warn {
+  color: var(--ld-accent-amber);
+}
+.badge-rose {
+  color: var(--ld-accent-rose);
+}
+.badge-purple {
+  color: var(--ld-accent-purple);
+}
+
+.card-body {
+  font-size: 15.5px; line-height: 1.65; color: var(--ld-text-soft); flex: 1;
+}
+.card-body ul {
+  margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;
+}
+.card-body li {
+  color: var(--ld-text-soft);
+}
+.card-body li strong {
+  color: #ffffff;
+}
+
+/* Darkmorphic Inset Code Box */
+.code-box {
+  background: #1a1c22;
+  box-shadow: inset -3px -3px 6px var(--ld-shadow-light), inset 3px 3px 6px var(--ld-shadow-dark);
+  border-radius: 10px; padding: 12px 16px; font-family: var(--ld-font-mono);
+  font-size: 13.5px; color: #4fd1c5; line-height: 1.5; margin: 10px 0;
+}
+.code-box .kw { color: #f56565; font-weight: 600; }
+.code-box .fn { color: #63b3ed; }
+.code-box .str { color: #48bb78; }
+.code-box .com { color: #7e8796; font-style: italic; }
+
+/* Darkmorphic Inset Tile */
+.tile-box {
+  background: var(--ld-surface-page);
+  box-shadow: inset -3px -3px 6px var(--ld-shadow-light), inset 3px 3px 6px var(--ld-shadow-dark);
+  border-radius: 12px; padding: 12px 16px;
+}
+
+/* Darkmorphic Table */
+.table-wrap {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  border-radius: 16px; overflow: hidden;
+  box-shadow: -6px -6px 14px var(--ld-shadow-light), 6px 6px 16px var(--ld-shadow-dark);
+}
+.table-wrap th {
+  background: #1c1f24; padding: 15px 20px; font-size: 15px; font-weight: 700;
+  color: var(--ld-accent-primary); text-align: left;
+  font-family: var(--ld-font-mono); border-bottom: 1px solid #16181d;
+}
+.table-wrap td {
+  padding: 13px 20px; font-size: 15px; color: var(--ld-text-soft);
+  background: var(--ld-surface-page); border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+.table-wrap tr:last-child td { border-bottom: none; }
+.table-wrap tr:hover td { background: #262930; }
+
+/* Cover Slide Specifics */
+.cover-wrap {
+  display: flex; flex-direction: column; justify-content: center; height: 100%;
+  padding: 0 40px;
+}
+.cover-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--ld-font-mono); font-size: 15px; font-weight: 700;
+  color: var(--ld-accent-primary); background: var(--ld-surface-page);
+  box-shadow: -4px -4px 9px var(--ld-shadow-light), 4px 4px 9px var(--ld-shadow-dark);
+  padding: 8px 20px; border-radius: 30px; margin-bottom: 30px; width: fit-content;
+}
+.cover-title {
+  font-size: 64px; font-weight: 900; line-height: 1.15; letter-spacing: -0.035em;
+  color: #ffffff; margin: 0 0 24px 0;
+}
+.cover-title span {
+  color: var(--ld-accent-primary);
+  text-shadow: 0 0 25px rgba(79, 209, 197, 0.4);
+}
+.cover-sub {
+  font-size: 23px; font-weight: 500; color: #a0aec0; line-height: 1.5;
+  margin: 0 0 50px 0; max-width: 1400px;
+}
+.cover-meta-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  background: var(--ld-surface-page);
+  box-shadow: -8px -8px 18px var(--ld-shadow-light), 8px 8px 18px var(--ld-shadow-dark);
+  border-radius: 18px; padding: 26px 36px;
+}
+.meta-item { display: flex; flex-direction: column; gap: 6px; }
+.meta-label { font-family: var(--ld-font-mono); font-size: 13px; color: var(--ld-text-mute); text-transform: uppercase; }
+.meta-val { font-size: 18px; font-weight: 700; color: #edf2f7; }
+
+/* Laser Pointer */
+#laser-pointer {
+  position: fixed; width: 14px; height: 14px; border-radius: 50%;
+  pointer-events: none; transform: translate(-50%, -50%); z-index: 999999; display: none;
+}
+#laser-pointer.laser-red {
+  display: block; background: radial-gradient(circle, #ffffff 15%, #ff2a55 55%, #e11d48 100%);
+  box-shadow: 0 0 6px #fff, 0 0 14px #ff2a55, 0 0 28px #e11d48, 0 0 42px rgba(255, 42, 85, 0.85);
+}
+#laser-pointer.laser-purple {
+  display: block; background: radial-gradient(circle, #ffffff 15%, #c084fc 55%, #9333ea 100%);
+  box-shadow: 0 0 6px #fff, 0 0 14px #c084fc, 0 0 28px #9333ea, 0 0 42px rgba(168, 85, 247, 0.85);
+}
+body.laser-active, body.laser-active * { cursor: none !important; }
+
+/* Footer Bar & Darkmorphic HUD */
+.footer-bar {
+  position: fixed; bottom: 20px; left: 32px; right: 32px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--ld-font-mono); font-size: 13px;
+  color: var(--ld-text-mute); pointer-events: none; z-index: 1000;
+}
+.footer-left {
+  display: flex; align-items: center; gap: 16px; pointer-events: auto;
+}
+.laser-badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+  border-radius: 20px; background: var(--ld-surface-page);
+  box-shadow: -3px -3px 7px var(--ld-shadow-light), 3px 3px 7px var(--ld-shadow-dark);
+  cursor: pointer; pointer-events: auto; font-size: 12.5px; font-weight: 700;
+  color: var(--ld-text-soft); transition: all 0.2s ease; user-select: none;
+}
+.laser-badge:hover { color: var(--ld-accent-primary); }
+.laser-badge:active {
+  box-shadow: inset -2px -2px 5px var(--ld-shadow-light), inset 2px 2px 5px var(--ld-shadow-dark);
+}
+.laser-badge.mode-red {
+  color: #fc8181;
+  box-shadow: inset -2px -2px 5px var(--ld-shadow-light), inset 2px 2px 5px var(--ld-shadow-dark), 0 0 10px rgba(245, 101, 101, 0.3);
+}
+.laser-badge.mode-purple {
+  color: #b794f4;
+  box-shadow: inset -2px -2px 5px var(--ld-shadow-light), inset 2px 2px 5px var(--ld-shadow-dark), 0 0 10px rgba(183, 148, 244, 0.3);
+}
+.controls {
+  position: fixed; right: 32px; bottom: 20px; display: flex; gap: 12px; pointer-events: auto; z-index: 1000;
+}
+.btn {
+  background: var(--ld-surface-page);
+  box-shadow: -4px -4px 8px var(--ld-shadow-light), 4px 4px 8px var(--ld-shadow-dark);
+  border: none; color: var(--ld-text-strong); padding: 8px 16px; border-radius: 10px; cursor: pointer;
+  font-family: var(--ld-font-mono); font-size: 12.5px; font-weight: 600;
+  transition: all 0.15s ease;
+}
+.btn:hover { color: var(--ld-accent-primary); }
+.btn:active {
+  box-shadow: inset -2px -2px 5px var(--ld-shadow-light), inset 2px 2px 5px var(--ld-shadow-dark);
+}
+.counter-box {
+  line-height: 34px; padding: 0 12px; font-family: var(--ld-font-mono); font-size: 13px;
+  color: var(--ld-accent-primary); font-weight: 700;
+}
+.progress-line {
+  position: fixed; top: 0; left: 0; height: 3.5px;
+  background: linear-gradient(90deg, #4fd1c5, #63b3ed, #b794f4);
+  z-index: 9999; transition: width 0.3s ease;
+}
+</style>
+</head>
+<body>
+<div class="progress-line" id="progress-line"></div>
+<div id="laser-pointer"></div>
+
+<div class="stage" id="stage">
+
+  <!-- SLIDE 1: COVER -->
+  <div class="slide active" id="slide-1">
+    <div class="cover-wrap">
+      <div class="cover-badge">MQTT INDUSTRIAL IoT NETWORK · DARKMORPHISM EDITION</div>
+      <h1 class="cover-title">MQTT 기반 실시간 설비 이상 알람 서비스<br><span>구현 및 검증 결과보고서</span></h1>
+      <p class="cover-sub">Pub/Sub 텔레메트리 수집 · 선형회귀 잔차 이상탐지 · 2상태 전이 제어 · Retained Health · LWT Will 메시지</p>
+      <div class="cover-meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">소속</span>
+          <span class="meta-val">충북대학교 일반대학원 산업인공지능학과</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">과목 및 학기</span>
+          <span class="meta-val">지능형 IoT 네트워크 (2학기 5주차)</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">발표자 (수행자)</span>
+          <span class="meta-val">진찬언 (학번: 2026254019)</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">MQTT USER_ID / 제출</span>
+          <span class="meta-val" style="color:var(--ld-accent-primary)">진찬언 · 2026-09-30</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: 1. 시스템 아키텍처 -->
+  <div class="slide" id="slide-2">
+    <div>
+      <div class="eyebrow">STEP 1 · SYSTEM ARCHITECTURE</div>
+      <div class="title-row">
+        <div>
+          <h2 class="slide-title">1. 시스템 아키텍처 및 <span>프로세스 구성</span></h2>
+          <div class="slide-desc">가상 프레스 설비 텔레메트리 생성부터 모델 판정, 알람 브로커링, 자동 검사 파이프라인</div>
+        </div>
+      </div>
+    </div>
+    <div class="content-area">
+      <div class="grid-3">
+        <!-- Simulator -->
+        <div class="card">
+          <div class="card-title">
+            <span>센서 시뮬레이터</span>
+            <span class="card-badge">sensor_simulator.py</span>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li><strong>설비 대상</strong>: 프레스 1호기(<code>press01</code>) 3채널 센서 생성</li>
+              <li><strong>채널 구성</strong>: 전류(<code>current</code>), 온도(<code>temp</code>), 진동(<code>vib_rms</code>)</li>
+              <li><strong>동작 모드</strong>:
+                <br>• <strong>quick</strong>: 10Hz, 900개 (학습 300, 이상 4건, 약 1.5분)
+                <br>• <strong>full</strong>: 5Hz, 3,000개 (학습 600, 이상 12건, 약 10분)
+              </li>
+              <li><strong>제어 프로토콜</strong>: <code>.../sim</code> 토픽으로 START/END 제어 신호 발행 및 <code>ground_truth.json</code> 정답 자동 생성</li>
+            </ul>
+          </div>
+        </div>
+        <!-- Alarm Service -->
+        <div class="card">
+          <div class="card-title">
+            <span style="color:var(--ld-accent-primary)">알람 서비스 (핵심 구현)</span>
+            <span class="card-badge badge-pass">alarm_service.py</span>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li><strong>수행 역할</strong>: 텔레메트리 수신, 이상 판정, 상태 머신 관리, 알람 및 생명주기 관리</li>
+              <li><strong>TODO 1</strong>: telemetry, sim 신호 QoS 1 구독</li>
+              <li><strong>TODO 2</strong>: NORMAL ↔ ALARM 2상태 전이 머신 (CLEAR_COUNT=10 회복 필터링)</li>
+              <li><strong>TODO 3</strong>: 유형별 알람 발행 (alarm/{type}, QoS 1)</li>
+              <li><strong>TODO 4</strong>: 설비 건강도 Retained 발행 (health)</li>
+              <li><strong>TODO 5</strong>: ONLINE 발행 및 비정상 대비 LWT OFFLINE</li>
+              <li><strong>연동 모델</strong>: <code>anomaly_model.py</code> (선형회귀 모델)</li>
+            </ul>
+          </div>
+        </div>
+        <!-- Inspector -->
+        <div class="card">
+          <div class="card-title">
+            <span>검사기 및 모니터</span>
+            <span class="card-badge badge-purple">check_alarms.py</span>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li><strong>수행 역할</strong>: 브로커를 통한 알람 서비스 무결성 자동 검증 및 실시간 관제 모니터링</li>
+              <li><strong>8대 검사항목 전수 평가</strong>:
+                <br>① 토픽 계층 및 type 일치
+                <br>② 필수 필드 (seq, ts, type, score)
+                <br>③ QoS 1 신뢰성 보장
+                <br>④ 12개 이상 이벤트 탐지율 (11건 이상)
+                <br>⑤ 이벤트당 1건 알람 (중복 방지)
+                <br>⑥ Retained health 상태 보관
+                <br>⑦ Retained status ONLINE 보관
+                <br>⑧ LWT OFFLINE 대리 발행 검증
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: 2. 토픽 설계 및 4대 이상 사양 -->
+  <div class="slide" id="slide-3">
+    <div>
+      <div class="eyebrow">STEP 2 · TOPIC SPEC & ANOMALY MECHANISM</div>
+      <div class="title-row">
+        <div>
+          <h2 class="slide-title">2. MQTT 토픽 설계 및 <span>4대 설비 이상 사양</span></h2>
+          <div class="slide-desc">계층형 토픽 네임스페이스 구조 및 물리적 이상 징후 판정 알고리즘</div>
+        </div>
+      </div>
+    </div>
+    <div class="content-area">
+      <div class="grid-2">
+        <!-- Topic Specs -->
+        <div class="card">
+          <div class="card-title">
+            <span>MQTT 토픽 계층 및 메시지 사양</span>
+            <span class="card-badge">Prefix: 진찬언/factory/line1/</span>
+          </div>
+          <div class="card-body">
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div>
+                <strong style="color:var(--ld-accent-primary)">1. 센서 텔레메트리 (Sub)</strong>
+                <div class="code-box">.../press01/telemetry | QoS 1, 5Hz<br>payload: { seq, ts, temp, vib_rms, current }</div>
+              </div>
+              <div>
+                <strong style="color:var(--ld-accent-emerald)">2. 시뮬레이터 제어 (Sub)</strong>
+                <div class="code-box">.../press01/sim | QoS 1<br>payload: { event: 'START'|'END', n_warmup, ... }</div>
+              </div>
+              <div>
+                <strong style="color:var(--ld-accent-amber)">3. 이상 알람 (Pub)</strong>
+                <div class="code-box">.../press01/alarm/{유형} | QoS 1, retain=False<br>유형: spike | drift | vib_noise | stuck</div>
+              </div>
+              <div>
+                <strong style="color:var(--ld-accent-purple)">4. 설비 상태 (Pub) & 서비스 생명주기</strong>
+                <div class="code-box">.../press01/health | QoS 1, retain=True<br>.../alarm_service/status | QoS 1, retain=True (LWT)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 4 Anomaly Types -->
+        <div class="card">
+          <div class="card-title">
+            <span>4대 설비 이상 유형 및 판정 메커니즘</span>
+            <span class="card-badge badge-warn">4 Failure Modes</span>
+          </div>
+          <div class="card-body">
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div class="tile-box" style="border-left: 4px solid var(--ld-accent-rose);">
+                <strong style="color:var(--ld-accent-rose)">■ spike (순간 충격)</strong>
+                <div style="font-size:14.5px; margin-top:4px;">이물 충격 또는 순간 과부하 발생 시 <strong>진동 잔차(vib_res) > 16σ(표준편차)</strong> 순간 이상 감지</div>
+              </div>
+              <div class="tile-box" style="border-left: 4px solid var(--ld-accent-amber);">
+                <strong style="color:var(--ld-accent-amber)">■ drift (온도 점진 상승)</strong>
+                <div style="font-size:14.5px; margin-top:4px;">베어링 과열 진행 등으로 <strong>온도 잔차(temp_res) > 5σ</strong> 지속 상승 감지</div>
+              </div>
+              <div class="tile-box" style="border-left: 4px solid var(--ld-accent-purple);">
+                <strong style="color:var(--ld-accent-purple)">■ vib_noise (체결부 풀림)</strong>
+                <div style="font-size:14.5px; margin-top:4px;">볼트/너트 체결부 풀림으로 최근 15개 윈도우 <strong>진동 산포(vib_spread) > 정상 2.5배</strong> 감지</div>
+              </div>
+              <div class="tile-box" style="border-left: 4px solid var(--ld-accent-primary);">
+                <strong style="color:var(--ld-accent-primary)">■ stuck (센서 고착)</strong>
+                <div style="font-size:14.5px; margin-top:4px;">온도 센서 하드웨어 고착으로 최근 15개 윈도우 <strong>온도 표준편차 비율 < 0.15</strong> 극도 고정 감지</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: 3. 알람 서비스 핵심 구현 -->
+  <div class="slide" id="slide-4">
+    <div>
+      <div class="eyebrow">STEP 3 · CORE IMPLEMENTATION</div>
+      <div class="title-row">
+        <div>
+          <h2 class="slide-title">3. 알람 서비스(alarm_service.py) <span>핵심 구현 상세</span></h2>
+          <div class="slide-desc">TODO 1 ~ 5 단계별 QoS 보장, 상태 전이 제어, Retained 상태 보존 및 LWT 등록</div>
+        </div>
+      </div>
+    </div>
+    <div class="content-area">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">
+            <span>TODO 1: 신호 구독 & TODO 3: 토픽 알람</span>
+            <span class="card-badge">Step 1 & Step 2</span>
+          </div>
+          <div class="card-body">
+            <strong style="color:var(--ld-accent-primary)">[TODO 1] QoS 1 다중 토픽 안전 구독</strong>
+            <div class="code-box"><span class="com"># on_connect 콜백에서 센서 및 시뮬레이터 신호 동시 구독</span><br>client.subscribe([<br>&nbsp;&nbsp;(TOPIC_TELEMETRY, <span class="kw">1</span>),<br>&nbsp;&nbsp;(TOPIC_SIM, <span class="kw">1</span>)<br>])</div>
+            <strong style="color:var(--ld-accent-amber)">[TODO 3] 이상 유형별 서브토픽 알람 발행</strong>
+            <div class="code-box">topic = <span class="str">f"{TOPIC_ALARM}/{result['type']}"</span><br>payload = {<br>&nbsp;&nbsp;<span class="str">'seq'</span>: sample[<span class="str">'seq'</span>], <span class="str">'ts'</span>: sample[<span class="str">'ts'</span>],<br>&nbsp;&nbsp;<span class="str">'type'</span>: result[<span class="str">'type'</span>], <span class="str">'score'</span>: result[<span class="str">'score'</span>]<br>}<br>client.publish(topic, json.dumps(payload), qos=<span class="kw">1</span>)</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>TODO 2: 상태 전이 & TODO 4/5: Retained & LWT</span>
+            <span class="card-badge badge-pass">State Machine & Lifecycle</span>
+          </div>
+          <div class="card-body">
+            <strong style="color:var(--ld-accent-emerald)">[TODO 2] 2상태 머신 및 히스테리시스 필터링</strong>
+            <div class="code-box"><span class="kw">if</span> result[<span class="str">'anomaly'</span>]:<br>&nbsp;&nbsp;normal_run = <span class="kw">0</span><br>&nbsp;&nbsp;<span class="kw">if</span> state == <span class="str">'NORMAL'</span>: state = <span class="str">'ALARM'</span>; publish_alarm()<br><span class="kw">else</span>:<br>&nbsp;&nbsp;normal_run += <span class="kw">1</span><br>&nbsp;&nbsp;<span class="kw">if</span> state == <span class="str">'ALARM'</span> <span class="kw">and</span> normal_run >= <span class="kw">10</span>:<br>&nbsp;&nbsp;&nbsp;&nbsp;state = <span class="str">'NORMAL'</span>; publish_health(<span class="str">'NORMAL'</span>)</div>
+            <strong style="color:var(--ld-accent-purple)">[TODO 4 & 5] Retained Health 동기화 및 LWT 생명주기</strong>
+            <div class="code-box"><span class="com"># 브로커에 최신 상태 영구 보관 (신규 관제 즉시 파악)</span><br>client.publish(TOPIC_HEALTH, json.dumps(payload), qos=<span class="kw">1</span>, retain=<span class="kw">True</span>)<br><span class="com"># 비정상 종료 시 브로커 대리 발행 유언장 등록</span><br>client.will_set(TOPIC_STATUS, OFFLINE_PAYLOAD, qos=<span class="kw">1</span>, retain=<span class="kw">True</span>)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: 4. 과제 분석 질문 답변 Q1 & Q2 -->
+  <div class="slide" id="slide-5">
+    <div>
+      <div class="eyebrow">STEP 4 · ANALYSIS Q&A (Q1 & Q2)</div>
+      <div class="title-row">
+        <div>
+          <h2 class="slide-title">4. 과제 분석 질문 답변 <span>(Q1 & Q2)</span></h2>
+          <div class="slide-desc">토픽 와일드카드 선별 라우팅 및 Retained 메시지 누락 시 발생하는 치명적 암전 분석</div>
+        </div>
+      </div>
+    </div>
+    <div class="content-area">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">
+            <span>Q1. 토픽 필터 구독 설계</span>
+            <span class="card-badge">Wildcard Routing</span>
+          </div>
+          <div class="card-body">
+            <p style="font-size:15px; margin-bottom:12px; color:var(--ld-text-mute);">
+              <strong>Q.</strong> stuck 알람만 받으려면, 그리고 모든 유형의 알람을 받으려면 각각 어떤 토픽 필터를 구독해야 하는가?
+            </p>
+            <div class="tile-box" style="margin-bottom:12px;">
+              <strong style="color:var(--ld-accent-primary)">1. stuck 알람만 선별 수신:</strong>
+              <div class="code-box">진찬언/factory/line1/press01/alarm/stuck</div>
+              <div style="font-size:14px; color:var(--ld-text-soft);">• 리프 레벨을 'stuck'으로 명시하여 브로커가 다른 이상(spike, drift, vib_noise)은 배제하고 고착 알람만 정확히 라우팅 전달.</div>
+            </div>
+            <div class="tile-box">
+              <strong style="color:var(--ld-accent-secondary)">2. 모든 유형의 알람 수신 (와일드카드):</strong>
+              <div class="code-box">진찬언/factory/line1/press01/alarm/+ (단일 레벨)<br>진찬언/factory/line1/press01/alarm/# (다중 레벨)</div>
+              <div style="font-size:14px; color:var(--ld-text-soft);">• '+'는 단일 계층의 모든 이상 유형을 수신하며, '#'은 하위 계층 전체를 포괄 구독.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>Q2. Retained 누락 시의 문제점</span>
+            <span class="card-badge badge-rose">Critical Blind Spot</span>
+          </div>
+          <div class="card-body">
+            <p style="font-size:15px; margin-bottom:12px; color:var(--ld-text-mute);">
+              <strong>Q.</strong> health를 retain 없이 발행하면, 이상 발생 후 늦게 켜진 관제 화면에서 어떤 문제가 생기는가?
+            </p>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div class="tile-box" style="border-left: 4px solid var(--ld-accent-rose);">
+                <strong style="color:var(--ld-accent-rose)">1. 설비 상태 '암전(Blind Spot)' 발생</strong>
+                <div style="font-size:14px; margin-top:4px;">retain=False 메시지는 발행 순간 접속자에게만 전달되고 브로커에 보관되지 않음. 이상 발생 후 늦게 켜진 관제는 다음 이벤트까지 상태를 전혀 모르는 치명적 공백 발생.</div>
+              </div>
+              <div class="tile-box" style="border-left: 4px solid var(--ld-accent-amber);">
+                <strong style="color:var(--ld-accent-amber)">2. 안전사고 및 골든타임 상실</strong>
+                <div style="font-size:14px; margin-top:4px;">관제사가 설비 상태를 정상으로 잘못 인지하여 설비 파손이나 화재에 대한 긴급 차단 시점을 놓침.</div>
+              </div>
+              <div class="tile-box" style="border-left: 4px solid var(--ld-accent-primary);">
+                <strong style="color:var(--ld-accent-primary)">3. 불필요한 Polling 오버헤드 유발</strong>
+                <div style="font-size:14px; margin-top:4px;">상태 확인을 위해 별도 REST API 주기적 질의가 필요해 네트워크 및 시스템 리소스 낭비.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: 5. 과제 분석 질문 답변 Q3 & Q4 -->
+  <div class="slide" id="slide-6">
+    <div>
+      <div class="eyebrow">STEP 5 · ANALYSIS Q&A (Q3 & Q4)</div>
+      <div class="title-row">
+        <div>
+          <h2 class="slide-title">5. 과제 분석 질문 답변 <span>(Q3 & Q4)</span></h2>
+          <div class="slide-desc">알람 QoS 1 무손실 전송 당위성 및 상태 머신(State Machine) 부재 시 알람 홍수 분석</div>
+        </div>
+      </div>
+    </div>
+    <div class="content-area">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">
+            <span>Q3. 알람에 QoS 1을 사용하는 이유</span>
+            <span class="card-badge badge-pass">Zero Loss Tolerance</span>
+          </div>
+          <div class="card-body">
+            <p style="font-size:15px; margin-bottom:12px; color:var(--ld-text-mute);">
+              <strong>Q.</strong> 센서 텔레메트리와 달리 설비 이상 알람에 QoS 0 대신 QoS 1을 사용하는 이유는?
+            </p>
+            <div style="display:flex; flex-direction:column; gap:14px;">
+              <div class="tile-box" style="border-left: 4px solid var(--ld-accent-emerald);">
+                <strong style="color:var(--ld-accent-emerald)">1. 알람 메시지의 치명성과 무손실 보장</strong>
+                <div style="font-size:14px; margin-top:5px;">주기적 텔레메트리(5Hz)는 1~2개 누락돼도 다음 패킷이 즉시 오지만, 이상 알람은 단 1회 발행되는 핵심 이벤트 신호입니다. 이 신호가 유실되면 설비 과열 전소나 대형 화재로 직결됩니다.</div>
+              </div>
+              <div class="tile-box" style="border-left: 4px solid var(--ld-accent-primary);">
+                <strong style="color:var(--ld-accent-primary)">2. 산업용 무선 환경의 패킷 드롭 극복 (PUBACK)</strong>
+                <div style="font-size:14px; margin-top:5px;">공장은 대형 모터 EMI 노이즈 및 금속 차폐물로 패킷 손실이 빈번합니다. QoS 0은 확인 없이 버려지지만(Fire-and-Forget), QoS 1은 브로커로부터 PUBACK을 받을 때까지 재전송(Retry)하므로 최소 1회 전달을 100% 보장합니다.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>Q4. 상태 전이 부재 시의 문제점</span>
+            <span class="card-badge badge-warn">Alarm Flood Prevention</span>
+          </div>
+          <div class="card-body">
+            <p style="font-size:15px; margin-bottom:12px; color:var(--ld-text-mute);">
+              <strong>Q.</strong> 상태 전이(TODO 2) 없이 매 이상 판정마다 알람을 발행하면 어떤 문제가 발생하는가?
+            </p>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div class="tile-box" style="border-left: 4px solid var(--ld-accent-amber);">
+                <strong style="color:var(--ld-accent-amber)">1. 알람 홍수(Alarm Flood) 및 경보 피로(Fatigue)</strong>
+                <div style="font-size:14px; margin-top:4px;">drift나 vib_noise는 100~150개 샘플(20~30초) 동안 지속됩니다. 매 샘플마다 보내면 1회 이상에 수백 건의 알람이 쏟아져 관제사가 알람을 무시하게 되는 치명적 결과를 초래합니다.</div>
+              </div>
+              <div class="tile-box" style="border-left: 4px solid var(--ld-accent-rose);">
+                <strong style="color:var(--ld-accent-rose)">2. 센서 노이즈에 의한 채터링(Chattering) 방지</strong>
+                <div style="font-size:14px; margin-top:4px;">임계치 경계선에서 정상/비정상이 초 단위로 교차할 때, 히스테리시스(CLEAR_COUNT=10)가 없으면 알람 발생과 해제가 수십 번 반복되어 시스템이 극도로 불안정해집니다.</div>
+              </div>
+              <div class="tile-box" style="border-left: 4px solid var(--ld-accent-purple);">
+                <strong style="color:var(--ld-accent-purple)">3. 브로커 및 네트워크 트래픽 과부하 방지</strong>
+                <div style="font-size:14px; margin-top:4px;">이벤트 단위로 1건만 발행하여 네트워크 대역폭과 DB 기록 부하를 대폭 절감합니다.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: 6. Full 모드 검사 결과 -->
+  <div class="slide" id="slide-7">
+    <div>
+      <div class="eyebrow">STEP 6 · AUTOMATED VERIFICATION</div>
+      <div class="title-row">
+        <div>
+          <h2 class="slide-title">6. Full 모드 자동 검사<span>(check_alarms.py) 결과</span></h2>
+          <div class="slide-desc">3,000개 샘플(12개 이상 이벤트) 전수 검사 결과 8개 전 항목 완벽 통과 (8 / 8 PASS)</div>
+        </div>
+      </div>
+    </div>
+    <div class="content-area">
+      <table class="table-wrap">
+        <thead>
+          <tr>
+            <th style="width:70px;">항목</th>
+            <th>검사 상세 내용</th>
+            <th style="width:220px;">관련 구현 (TODO)</th>
+            <th style="width:180px; text-align:center;">판정 결과</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>[1]</strong></td>
+            <td>알람 토픽이 <code>.../alarm/{유형}</code>이고 payload의 type과 정확히 일치</td>
+            <td>TODO 3 (토픽 계층 명세)</td>
+            <td style="text-align:center;"><span class="card-badge badge-pass">PASS (100%)</span></td>
+          </tr>
+          <tr>
+            <td><strong>[2]</strong></td>
+            <td>알람 payload에 <code>seq, ts, type, score</code> 4대 필수 필드 누락 없이 포함</td>
+            <td>TODO 3 (페이로드 사양)</td>
+            <td style="text-align:center;"><span class="card-badge badge-pass">PASS (100%)</span></td>
+          </tr>
+          <tr>
+            <td><strong>[3]</strong></td>
+            <td>알람 메시지를 신뢰성 높은 <code>QoS 1</code> (PUBACK 확인)로 발행</td>
+            <td>TODO 3 (QoS 보장)</td>
+            <td style="text-align:center;"><span class="card-badge badge-pass">PASS (100%)</span></td>
+          </tr>
+          <tr>
+            <td><strong>[4]</strong></td>
+            <td>이상 이벤트 12건 중 11건 이상 탐지 기준 충족 <strong>(12 / 12건 100% 탐지)</strong></td>
+            <td>TODO 1, 2 (모델 연동/전이)</td>
+            <td style="text-align:center;"><span class="card-badge badge-pass">PASS (12 / 12)</span></td>
+          </tr>
+          <tr>
+            <td><strong>[5]</strong></td>
+            <td>이벤트당 알람 1건 발행 <strong>(중복 알람 0건</strong>, 허용 한도 2건 이하)</td>
+            <td>TODO 2 (중복 알람 방지)</td>
+            <td style="text-align:center;"><span class="card-badge badge-pass">PASS (초과 0건)</span></td>
+          </tr>
+          <tr>
+            <td><strong>[6]</strong></td>
+            <td>설비 health가 <code>retain=True</code>로 보관되고 종료 시점 상태 <code>NORMAL</code> 복귀</td>
+            <td>TODO 4 (Retained Health)</td>
+            <td style="text-align:center;"><span class="card-badge badge-pass">PASS (NORMAL)</span></td>
+          </tr>
+          <tr>
+            <td><strong>[7]</strong></td>
+            <td>서비스 상태 <code>ONLINE</code>이 <code>retain=True</code>로 브로커에 보관됨</td>
+            <td>TODO 5 (Retained Status)</td>
+            <td style="text-align:center;"><span class="card-badge badge-pass">PASS (ONLINE)</span></td>
+          </tr>
+          <tr>
+            <td><strong>[8]</strong></td>
+            <td>서비스 비정상 종료 시 <code>OFFLINE</code> Will 메시지 브로커 대리 발행 검증</td>
+            <td>TODO 5 (LWT Will Set)</td>
+            <td style="text-align:center;"><span class="card-badge badge-pass">PASS (OFFLINE)</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="card inset" style="padding:16px 26px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <span style="color:var(--ld-accent-emerald); font-weight:800; font-size:18px;">★ 최종 평가 결과: 8개 항목 전체 통과 (8 / 8 PASS)</span>
+          <span style="color:var(--ld-text-soft); font-size:15px; margin-left:16px;">실행 모드: full (3,000 샘플, 약 10분) · 정답 대조 완벽 일치</span>
+        </div>
+        <span class="card-badge badge-pass" style="font-size:14px; padding:6px 16px;">check_result.json 저장 완료</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: 7. 실습 요약 및 시사점 -->
+  <div class="slide" id="slide-8">
+    <div>
+      <div class="eyebrow">STEP 7 · SUMMARY & INDUSTRIAL IMPLICATIONS</div>
+      <div class="title-row">
+        <div>
+          <h2 class="slide-title">7. MQTT 4단계 실습 요약 및 <span>산업 IoT 시사점</span></h2>
+          <div class="slide-desc">Step 1~4 점진적 학습 과정과 스마트 팩토리 예지보전 통신 아키텍처 결론</div>
+        </div>
+      </div>
+    </div>
+    <div class="content-area">
+      <div class="grid-4" style="margin-bottom:8px;">
+        <div class="card">
+          <div class="card-title" style="font-size:18px;">Step 1. Pub/Sub 기본</div>
+          <div class="card-body" style="font-size:14.5px;">
+            • <code>pub_step1_basic.py</code><br>
+            • <code>sub_console.py</code><br><br>
+            1초 주기 가상 온도(25~28°C) 발행 및 브로커 중계를 통한 JSON 수신 검증
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="font-size:18px;">Step 2. 와일드카드 검증</div>
+          <div class="card-body" style="font-size:14.5px;">
+            • <code>pub_step2_wildcard.py</code><br><br>
+            단일(+) 특정 공정 선별 구독과 다중(#) 라인 전체 수신 범위 비교 검증 완료
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="font-size:18px;">Step 3. Retained 보관</div>
+          <div class="card-body" style="font-size:14.5px;">
+            • <code>pub_step3_retained.py</code><br><br>
+            운전 상태(RUNNING) retain 발행으로 관제 콘솔 재기동 시 즉시 상태 동기화 확인
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="font-size:18px;">Step 4. LWT 장애 감지</div>
+          <div class="card-body" style="font-size:14.5px;">
+            • <code>pub_step4_lwt.py</code><br><br>
+            비정상 종료(os._exit) 시 브로커 대리 OFFLINE 유언장 발행 무결성 완벽 확인
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:22px 28px;">
+        <div class="card-title" style="color:var(--ld-accent-primary); margin-bottom:8px; font-size:20px;">
+          ■ 스마트 팩토리 산업용 IoT 종합 결론
+        </div>
+        <div style="font-size:16px; line-height:1.65; color:var(--ld-text-soft);">
+          MQTT 프로토콜의 <strong>경량 Pub/Sub</strong>, 계층형 <strong>토픽 와일드카드 라우팅</strong>, <strong>QoS 1 무손실 전송</strong>, <strong>Retained 상태 보존</strong>, 그리고 <strong>LWT(Last Will and Testament) 이상 감지 메커니즘</strong>을 유기적으로 결합함으로써, 신호 간섭과 EMI 노이즈가 심한 열악한 산업 현장 무선 통신 환경에서도 <strong>고신뢰성 실시간 설비 예지보전 시스템</strong>을 완벽히 구축할 수 있음을 성공적으로 실증 검증하였습니다.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER CONTROLS & DARKMORPHIC LASER HUD -->
+<div class="footer-bar">
+  <div class="footer-left">
+    <span style="font-weight:700; color:var(--ld-text-strong);">MQTT IoT 알람 서비스 결과보고서</span>
+    <span style="color:var(--ld-text-mute);">|</span>
+    <span>진찬언 (2026254019)</span>
+    <span style="color:var(--ld-text-mute);">|</span>
+    <span style="color:var(--ld-text-mute);">← → 이동 · [F] 전체화면</span>
+    <span id="laser-indicator" class="laser-badge" onclick="cycleLaser()" title="클릭하거나 [L] 키를 눌러 레이저 포인터를 켜고 끕니다 (레드 → 퍼플 → 오프)">
+      ● [L] 레이저: <span id="laser-text">OFF</span>
+    </span>
+  </div>
+  <div class="controls">
+    <button class="btn" onclick="prev()">◀ 이전 [←]</button>
+    <span class="counter-box" id="counter">01 / 08</span>
+    <button class="btn" onclick="next()">다음 [→] ▶</button>
+    <button class="btn" onclick="toggleFS()">전체화면 [F]</button>
+  </div>
+</div>
+
+<script>
+let cur = 0;
+const slides = document.querySelectorAll('.slide');
+const counter = document.getElementById('counter');
+const progLine = document.getElementById('progress-line');
+const total = slides.length;
+
+function fit() {
+  const stage = document.getElementById('stage');
+  const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+  slides.forEach(s => {
+    s.style.transform = 'scale(' + scale + ')';
+    s.style.transformOrigin = 'center center';
+  });
+}
+window.addEventListener('resize', fit);
+window.addEventListener('load', fit);
+
+function show(idx) {
+  if (idx < 0) idx = 0;
+  if (idx >= total) idx = total - 1;
+  cur = idx;
+  slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+  if (counter) counter.innerText = String(cur + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+  if (progLine) progLine.style.width = ((cur + 1) / total * 100) + '%';
+  history.replaceState(null, '', '#' + (cur + 1));
+}
+
+function next() { show(cur + 1); }
+function prev() { show(cur - 1); }
+function toggleFS() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+// Laser Pointer: 0: OFF -> 1: RED -> 2: PURPLE -> 0: OFF
+let laserState = 0;
+const laserEl = document.getElementById('laser-pointer');
+const laserBadge = document.getElementById('laser-indicator');
+const laserText = document.getElementById('laser-text');
+
+function updateLaserUI() {
+  if (laserState === 1) { // RED
+    document.body.classList.add('laser-active');
+    laserEl.className = 'laser-red';
+    laserBadge.className = 'laser-badge mode-red';
+    laserText.textContent = '🔴 RED';
+  } else if (laserState === 2) { // PURPLE
+    document.body.classList.add('laser-active');
+    laserEl.className = 'laser-purple';
+    laserBadge.className = 'laser-badge mode-purple';
+    laserText.textContent = '🟣 PURPLE';
+  } else { // OFF
+    document.body.classList.remove('laser-active');
+    laserEl.className = '';
+    laserBadge.className = 'laser-badge';
+    laserText.textContent = 'OFF';
+  }
+}
+
+function cycleLaser() {
+  laserState = (laserState + 1) % 3;
+  updateLaserUI();
+}
+
+window.addEventListener('mousemove', (e) => {
+  if (laserState !== 0) {
+    laserEl.style.left = e.clientX + 'px';
+    laserEl.style.top = e.clientY + 'px';
+  }
+});
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'l' || e.key === 'L') {
+    e.preventDefault();
+    cycleLaser();
+  } else if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+    next();
+  } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+    prev();
+  } else if (e.key.toLowerCase() === 'f') {
+    toggleFS();
+  } else if (e.key === 'Home') {
+    show(0);
+  } else if (e.key === 'End') {
+    show(total - 1);
+  }
+});
+
+// Click left 1/4 to go prev, right 3/4 to go next (ignore clicks on footer)
+window.addEventListener('click', (e) => {
+  if (e.target.closest('.footer-bar') || e.target.closest('.controls')) return;
+  if (e.clientX < window.innerWidth / 4) prev();
+  else next();
+});
+
+// Hash support
+const hashIdx = parseInt(location.hash.slice(1));
+if (!isNaN(hashIdx) && hashIdx >= 1 && hashIdx <= total) {
+  cur = hashIdx - 1;
+}
+
+fit();
+show(cur);
+</script>
+</body>
+</html>
