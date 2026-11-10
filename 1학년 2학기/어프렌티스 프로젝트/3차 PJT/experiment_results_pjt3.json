@@ -1,0 +1,106 @@
+{
+    "metadata": {
+        "project_name": "Apprentice Project 3 - Multivariate Anomaly Detection",
+        "student_name": "진찬언 (2026254019)",
+        "benchmark": "SKAB (Skoltech Anomaly Benchmark)",
+        "learning_type": "Unsupervised / One-Class Anomaly Detection (100% Normal Data for Training)",
+        "test_scenarios_count": 30,
+        "test_windows_count": 32857
+    },
+    "model_comparison": {
+        "model_a_isolation_forest": {
+            "name": "모델 A (Isolation Forest)",
+            "category": "비모수 앙상블 트리 머신러닝",
+            "train_time_sec": 0.15,
+            "threshold": 0.17048,
+            "f1_raw": 0.4343,
+            "precision_raw": 0.3435,
+            "recall_raw": 0.5901,
+            "auprc": 0.3468,
+            "auroc": 0.5120,
+            "f1_pa": 0.4755,
+            "precision_pa": 0.3705,
+            "recall_pa": 0.6636
+        },
+        "model_b_base_lstm_ae": {
+            "name": "모델 B (기본 LSTM-AE)",
+            "category": "순환 신경망 딥러닝 (재구성 오차 기반)",
+            "train_time_sec": 83.34,
+            "threshold": 566.87,
+            "f1_raw": 0.4935,
+            "precision_raw": 0.3945,
+            "recall_raw": 0.6588,
+            "auprc": 0.7009,
+            "auroc": 0.7210,
+            "f1_pa": 0.5249,
+            "precision_pa": 0.4144,
+            "recall_pa": 0.7155
+        },
+        "sota_usad_kdd2020": {
+            "name": "SOTA 1: USAD (Audibert et al., ACM KDD 2020)",
+            "category": "2단계 적대적 이중 오토인코더 (Dual Adversarial AutoEncoders)",
+            "train_time_sec": 19.42,
+            "f1_raw": 0.4944,
+            "precision_raw": 0.3949,
+            "recall_raw": 0.6610,
+            "auprc": 0.6156,
+            "auroc": 0.6551,
+            "f1_pa": 0.5053,
+            "precision_pa": 0.4018,
+            "recall_pa": 0.6806
+        },
+        "sota_anomaly_transformer_iclr2022": {
+            "name": "SOTA 2: Anomaly Transformer (Xu et al., ICLR 2022)",
+            "category": "어텐션 연관 불일치도 (Association Discrepancy Transformer)",
+            "train_time_sec": 25.11,
+            "f1_raw": 0.4861,
+            "precision_raw": 0.4076,
+            "recall_raw": 0.6018,
+            "auprc": 0.6440,
+            "auroc": 0.6854,
+            "f1_pa": 0.5364,
+            "precision_pa": 0.4290,
+            "recall_pa": 0.7155
+        },
+        "model_y_optimized_lstm_ae": {
+            "name": "★ 최종 고도화 개선 모델 y (물리가중+롤링필터)",
+            "category": "도메인 물리 가중치 + 시간적 롤링 필터(k=5) 결합 하이브리드 AE",
+            "train_time_sec": 83.34,
+            "threshold": 10850.57,
+            "f1_raw": 0.5876,
+            "precision_raw": 0.5519,
+            "recall_raw": 0.6283,
+            "auprc": 0.7397,
+            "auroc": 0.7402,
+            "f1_pa": 0.6213,
+            "precision_pa": 0.5716,
+            "recall_pa": 0.6806
+        }
+    },
+    "ablation_temporal_smoothing": {
+        "k_1": {
+            "f1_raw": 0.4933,
+            "prec_raw": 0.3944,
+            "rec_raw": 0.6584,
+            "auprc": 0.7333
+        },
+        "k_3": {
+            "f1_raw": 0.5601,
+            "prec_raw": 0.4983,
+            "rec_raw": 0.6395,
+            "auprc": 0.7387
+        },
+        "k_5_optimal": {
+            "f1_raw": 0.5876,
+            "prec_raw": 0.5519,
+            "rec_raw": 0.6283,
+            "auprc": 0.7397
+        },
+        "k_9": {
+            "f1_raw": 0.5870,
+            "prec_raw": 0.5518,
+            "rec_raw": 0.6280,
+            "auprc": 0.7398
+        }
+    }
+}

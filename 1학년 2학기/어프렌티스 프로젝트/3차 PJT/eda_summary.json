@@ -1,0 +1,80 @@
+{
+    "dataset_name": "SKAB (Skoltech Anomaly Benchmark)",
+    "normal_samples": 9405,
+    "anomaly_benchmark_files": 34,
+    "total_test_samples": 37401,
+    "total_anomaly_points": 13067,
+    "anomaly_rate_pct": 34.94,
+    "sensor_features": [
+        "Accelerometer1RMS",
+        "Accelerometer2RMS",
+        "Current",
+        "Pressure",
+        "Temperature",
+        "Thermocouple",
+        "Voltage",
+        "Volume Flow RateRMS"
+    ],
+    "normal_vs_anom_comparison": {
+        "Normal Mean": {
+            "Accelerometer1RMS": 0.21260435832004254,
+            "Accelerometer2RMS": 0.26840719330143537,
+            "Current": 2.403010107177034,
+            "Pressure": 0.11126576703880912,
+            "Temperature": 89.47230753854332,
+            "Thermocouple": 28.474309590643276,
+            "Voltage": 228.64717267410953,
+            "Volume Flow RateRMS": 125.23747091972353
+        },
+        "Anom Mean": {
+            "Accelerometer1RMS": 0.1365805584296319,
+            "Accelerometer2RMS": 0.16743780606872272,
+            "Current": 1.4711232821611695,
+            "Pressure": 0.06941714555751129,
+            "Temperature": 76.61051506849314,
+            "Thermocouple": 26.136306765133543,
+            "Voltage": 229.74453355781742,
+            "Volume Flow RateRMS": 61.30871087456953
+        },
+        "Mean Shift (%)": {
+            "Accelerometer1RMS": -35.758343297993164,
+            "Accelerometer2RMS": -37.617987144450346,
+            "Current": -38.77997925829002,
+            "Pressure": -37.61140450823543,
+            "Temperature": -14.375165704843361,
+            "Thermocouple": -8.21092015329114,
+            "Voltage": 0.47993634507957195,
+            "Volume Flow RateRMS": -51.046032445854294
+        },
+        "Normal Std": {
+            "Accelerometer1RMS": 0.004740343130058344,
+            "Accelerometer2RMS": 0.003988507344715989,
+            "Current": 0.4864685694620369,
+            "Pressure": 0.2533319998359574,
+            "Temperature": 0.6671086219507447,
+            "Thermocouple": 0.7307343244723277,
+            "Voltage": 10.980578463069307,
+            "Volume Flow RateRMS": 1.6053267980675276
+        },
+        "Anom Std": {
+            "Accelerometer1RMS": 0.18576200965108433,
+            "Accelerometer2RMS": 0.20668520492955703,
+            "Current": 0.744240220534028,
+            "Pressure": 0.25990648526231536,
+            "Temperature": 8.722247328730424,
+            "Thermocouple": 2.8271586636460984,
+            "Voltage": 10.909425399519604,
+            "Volume Flow RateRMS": 43.12977895363815
+        },
+        "Std Ratio": {
+            "Accelerometer1RMS": 39.18737793460505,
+            "Accelerometer2RMS": 51.82005920154134,
+            "Current": 1.5298834332878166,
+            "Pressure": 1.0259520122649135,
+            "Temperature": 13.074703145760557,
+            "Thermocouple": 3.868928186722777,
+            "Voltage": 0.9935200978960979,
+            "Volume Flow RateRMS": 26.86666586323145
+        }
+    }
+}
