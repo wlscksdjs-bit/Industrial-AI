@@ -29,6 +29,9 @@
     * [`제조AI실제(5주차).pdf`](./제조%20AI%20실제/제조AI실제(5주차).pdf): 생성 모델의 원리(AE, VAE, GAN, DDPM)와 비지도 이상치 탐지
     * [`제조AI실제_6주차_글로벌제조트렌드.pdf`](./제조%20AI%20실제/제조AI실제_6주차_글로벌제조트렌드.pdf): 글로벌 제조 DX 패러다임 및 자율 제조 트렌드
     * [`제조AI실제(7주차).pdf`](./제조%20AI%20실제/제조AI실제(7주차).pdf): 합성곱 신경망(CNN) 구조, 고전 모델 및 최신 전이학습
+    * [`제조AI실제(8주차).pdf`](./제조%20AI%20실제/제조AI실제(8주차).pdf): 객체 검출(Object Detection) 및 분할(Segmentation) 원리
+    * [`제조AI실제(10주차).pdf`](./제조%20AI%20실제/제조AI실제(10주차).pdf): 비지도 이상 탐지(Anomaly Detection) 개요 및 제조 도메인 적용
+    * [`제조AI실제(11주차).pdf`](./제조%20AI%20실제/제조AI실제(11주차).pdf): Anomalib 프레임워크 및 PatchCore 비지도 이상치 탐지
   * **실습 과제**:
     * **[2주차 실습 과제 (`2주_과제/`)](./제조%20AI%20실제/2주_과제/)**: CWRU 베어링 진동 좋은 특징 정의 및 분리도(Fisher Separability) 비교, 일반화 제약 조건 실습
     * **[3주차 실습 과제 (`3주_과제/`)](./제조%20AI%20실제/3주_과제/)**: TensorFlow 선형회귀(SGD), Iris 로지스틱 회귀, MNIST 다층 퍼셉트론(MLP) 과적합 징후 분석
@@ -42,6 +45,8 @@
       * `Lab7_1.cnn_mnist_convolution_pooling.ipynb`: Convolution 연산(Stride, Padding, Filter, Bias) 및 Pooling(Max vs Avg) 시각화, MNIST 기본 CNN 학습
       * `Lab7_2.classic_cnn.ipynb`: LeNet-5 직접 구현 및 학습(**정확도 98.17%**), VGG16 ImageNet 사전학습 가중치 추론
       * `Lab7_3.inception_resnet_finetuning_transfer.ipynb`: InceptionV3 상위 30개 레이어 Fine-tuning 및 ResNet50 기반 CIFAR-10 전이학습(Transfer Learning) 3 에포크 학습
+    * **[11주차 실습 과제 (`11주_과제/`)](./제조%20AI%20실제/11주_과제/)**:
+      * `anomalib_사용법_입문.ipynb`: Anomalib 2.2.0 기반 PatchCore 모델 구축, MVTec AD (`bottle`) 및 커스텀 데이터(`hazelnut_toy`) 대상 비지도 이상치 탐지 학습, AUROC/F1-Score 평가, 이상 부위 히트맵 시각화 및 모델 저장/복원 검증 (RTX 5070 GPU 가속 완료)
 
 ---
 
@@ -82,10 +87,10 @@
 
 | 과목명 | 주요 프로젝트 / 연구 과제 | 핵심 달성 지표 | 비고 |
 | :--- | :--- | :---: | :--- |
-| **제조 AI 실제** | 5주차 생성형 AI (AE/VAE/GAN/DDPM)<br>7주차 CNN & 전이학습 (LeNet-5/VGG16/Inception/ResNet) | **LeNet-5 Acc: 98.17%**<br>전이학습 4종 모델 구축 | 3개 노트북 무오류 실행 및 가중치 추론 완료 |
+| **제조 AI 실제** | 5주차 생성형 AI (AE/VAE/GAN/DDPM)<br>7주차 CNN & 전이학습 (LeNet-5/VGG16/Inception/ResNet)<br>11주차 비지도 이상치 탐지 (Anomalib & PatchCore) | **LeNet-5 Acc: 98.17%**<br>**MVTec AUROC: 0.9750**<br>**Hazelnut AUROC: 1.0000** | 3개 주차 실습 무오류 실행 완료<br>RTX 5070 GPU 가속 및 히트맵 시각화 |
 | **지능형 IoT 네트워크** | 3주차 ISCXVPN2016 암호화 트래픽 분류 TDF-Net<br>5주차 MQTT 기반 실시간 설비 이상 탐지 시스템 | **Acc: 78.61% / F1: 0.7402**<br>실시간 센서 이상 전주기 파이프라인 | RF(76.44%) 기준 모델 완벽 상회 달성<br>MQTT Pub/Sub 경보 서비스 완비 |
 | **어프렌티스 프로젝트** | 프로젝트 1: AI4I 2020 설비 고장 예측 5단계 실증<br>프로젝트 2: ETTh1 다변량 시계열 변압기 유온 1시간 후 예측 | **Recall: 86.8% / AUC: 0.986**<br>시계열 유온 예측 모델링 완비 | 희소 고장(3.4%) 미검출 원천 방어<br>16:9 인터랙티브 덱 및 구두 대본 완비 |
 
 ---
 
-*최종 업데이트: 2026-10-14*
+*최종 업데이트: 2026-11-10*

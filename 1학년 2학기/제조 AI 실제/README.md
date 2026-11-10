@@ -25,6 +25,9 @@
 | **5주차** | [`제조AI실제(5주차).pdf`](./제조AI실제(5주차).pdf) | [`5주_과제/`](./5주_과제/) | • 생성 모델(Generative Models)의 원리와 산업 도메인 적용<br>• 오토인코더(Autoencoder) 구조 및 재구성 오차 기반 비지도 이상치 탐지<br>• 변이형 오토인코더(VAE)와 잠재 공간(Latent Space) 매니폴드 형성<br>• 적대적 생성 신경망(GAN) 기반 이미지 합성 및 Minimax 목적함수<br>• 확산 모델(Diffusion Model, DDPM)의 Forward/Reverse Denoising 과정 |
 | **6주차** | [`제조AI실제_6주차_글로벌제조트렌드.pdf`](./제조AI실제_6주차_글로벌제조트렌드.pdf) | - | • 글로벌 제조 패러다임 변화 및 디지털 트윈, 자율 제조 트렌드<br>• 지속가능 제조(ESG) 및 공급망 복원력을 위한 인공지능 전략 |
 | **7주차** | [`제조AI실제(7주차).pdf`](./제조AI실제(7주차).pdf) | [`7주_과제/`](./7주_과제/) | • 합성곱 신경망(CNN) 동작 원리(Convolution, Stride, Padding, Pooling)<br>• 고전 CNN 모델 아키텍처: LeNet-5, VGG16<br>• 고급 CNN 및 전이학습: GoogLeNet(InceptionV3), ResNet50, Fine-tuning |
+| **8주차** | [`제조AI실제(8주차).pdf`](./제조AI실제(8주차).pdf) | - | • 컴퓨터 비전 기반 객체 검출(Object Detection) 및 분할(Segmentation) 원리<br>• 2단계 검출기(R-CNN, Fast/Faster R-CNN) 및 1단계 검출기(YOLO, SSD) 아키텍처 비교 |
+| **10주차** | [`제조AI실제(10주차).pdf`](./제조AI실제(10주차).pdf) | - | • 제조 비전 검사 자동화(Automated Visual Inspection) 요구사항 및 제약조건<br>• 지도학습 기반 결함 분류의 한계와 비지도 이상치 탐지(Anomaly Detection) 패러다임 전환 |
+| **11주차** | [`제조AI실제(11주차).pdf`](./제조AI실제(11주차).pdf) | [`11주_과제/`](./11주_과제/) | • 제조 비지도 이상 탐지 프레임워크 **Anomalib 2.2.0** 실무 활용<br>• 정상 특징 메모리 뱅크 기반 **PatchCore** 알고리즘 원리 및 구현<br>• MVTec AD (`bottle`) 및 커스텀 데이터(`hazelnut_toy`) 대상 학습, AUROC/F1 평가, 결함 부위 히트맵 시각화 및 모델 저장/복원 |
 
 ---
 
@@ -198,6 +201,42 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
 
 ---
 
+## 📖 8주차 및 10주차 강의 자료 안내
+
+* **8주차 강의 자료 ([`제조AI실제(8주차).pdf`](./제조AI실제(8주차).pdf))**:
+  * 객체 검출(Object Detection) 및 인스턴스 분할(Instance Segmentation) 메커니즘
+  * Region Proposal 기반 Two-Stage Detector(Faster R-CNN) vs Unified One-Stage Detector(YOLO) 구조 비교
+  * 제조 라인 불량 부품 위치 판별 적용 방안
+
+* **10주차 강의 자료 ([`제조AI실제(10주차).pdf`](./제조AI실제(10주차).pdf))**:
+  * 제조 현장의 극심한 클래스 불균형(정상 데이터 풍부, 결함 데이터 극소수/희귀) 환경 분석
+  * 정상 패턴만을 학습하여 미지의 결함을 탐지하는 비지도 이상 탐지(Unsupervised Anomaly Detection)의 필요성
+
+---
+
+## 🔬 11주차 과제 상세 안내 (`11주_과제/`)
+
+정상 이미지만으로 학습하여 새로운 이미지의 이상 여부 및 결함 위치(Pixel Anomaly Map)를 정밀 검출하는 **PatchCore** 알고리즘과 산업용 이상 탐지 오픈소스 라이브러리 **Anomalib 2.2.0** 실습 과제입니다.
+
+### 1. [`anomalib_사용법_입문.ipynb`](./11주_과제/anomalib_사용법_입문.ipynb)
+* **주제**: Anomalib 기반 PatchCore 모델 학습, 평가, 결함 국소화 시각화 및 체크포인트 복원
+* **핵심 내용**:
+  * **MVTec AD 표준 데이터셋 실습 (`bottle` 범주)**:
+    * `MVTecAD` DataModule을 통한 데이터 자동 다운로드 및 분할 (학습 209장, 검증 41장, 시험 42장)
+    * ResNet-18 백본 및 Coreset Subsampling(1%) 기반 PatchCore 메모리 뱅크 구축
+    * **시험 성능**: `image_AUROC`: **0.9750**, `image_F1Score`: **0.9841**, `pixel_AUROC`: **0.9605**
+    * 이상 샘플 단일 추론: 예측 이상 점수 **`0.9657`** (`True`), 1024x256 결함 히트맵/마스크 오버레이 시각화
+    * `Engine.trainer.save_checkpoint` 저장 및 가중치 복원(`load_from_checkpoint`) 예측 일치성 검증 완료
+  * **사용자 커스텀 데이터셋 실습 (`hazelnut_toy`)**:
+    * `Folder` DataModule을 활용한 로컬 디렉터리(`good`, `crack`, `colour`) 구조 연결 (학습 28장, 검증 14장, 시험 14장)
+    * 헤이즐넛 전용 신규 PatchCore 모델 학습 및 평가: `image_AUROC`: **1.0000**, `pixel_AUROC`: **0.9240**
+    * 결함 예측 점수 **`0.8113`** (`True`) 판정 및 시각화 생성, 모델 가중치 파일 저장
+  * **최신 실습 PC 환경 (NVIDIA RTX 5070 Laptop GPU) 호환성 대응**:
+    * Blackwell 아키텍처(sm_120)에 맞추어 **CUDA 12.8 빌드(`cuda_env`)** 연동으로 GPU 하드웨어 가속 달성
+    * PyTorch 2.6+ 보안 정책에 따른 `weights_only` 체크포인트 역직렬화 및 Rich 콘솔 재귀 이슈 완벽 해결
+
+---
+
 ## 📂 디렉터리 구조
 
 ```
@@ -211,6 +250,9 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
 ├── 제조AI실제(5주차).pdf
 ├── 제조AI실제_6주차_글로벌제조트렌드.pdf
 ├── 제조AI실제(7주차).pdf
+├── 제조AI실제(8주차).pdf
+├── 제조AI실제(10주차).pdf
+├── 제조AI실제(11주차).pdf
 ├── 2주_과제/
 │   ├── cwru_fault.mat
 │   ├── cwru_normal.mat
@@ -230,10 +272,12 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
 │   ├── lab5_2_vae.ipynb
 │   ├── lab5_3_gan.ipynb
 │   └── lab5_4_diffusion_model.ipynb
-└── 7주_과제/
-    ├── Lab7_1.cnn_mnist_convolution_pooling.ipynb
-    ├── Lab7_2.classic_cnn.ipynb
-    └── Lab7_3.inception_resnet_finetuning_transfer.ipynb
+├── 7주_과제/
+│   ├── Lab7_1.cnn_mnist_convolution_pooling.ipynb
+│   ├── Lab7_2.classic_cnn.ipynb
+│   └── Lab7_3.inception_resnet_finetuning_transfer.ipynb
+└── 11주_과제/
+    └── anomalib_사용법_입문.ipynb
 ```
 
 ---
@@ -253,4 +297,4 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
 
 ---
 
-*최종 업데이트: 2026-10-14*
+*최종 업데이트: 2026-11-10*
