@@ -32,7 +32,7 @@
 │   └── 📄 README.md                                  # 1학기 안내 및 인덱스
 │
 ├── 📁 1학년 2학기                                      # 2026학년도 2학기 아카이브
-│   ├── 📁 제조 AI 실제                                # CWRU 베어링 진동 신호처리, 특징공학, 생성형 AI, CNN/전이학습
+│   ├── 📁 제조 AI 실제                                # CWRU 베어링 진동 신호처리, 특징공학, 생성형 AI, CNN/전이학습, 비지도 이상치 탐지(Anomalib)
 │   │   ├── 📁 2주_과제                               # 2주차: CWRU 베어링 좋은 특징 정의 & Fisher Separability
 │   │   ├── 📁 3주_과제                               # 3주차: 선형회귀(SGD), 로지스틱 회귀, MNIST MLP 과적합 분석
 │   │   ├── 📁 4주_과제                               # 4주차: 활성화/손실함수 및 4대 도전과제 극복(ResNet/규제/Dropout)
@@ -41,9 +41,14 @@
 │   │   │   ├── 📄 Lab7_1.cnn_mnist_convolution_pooling.ipynb
 │   │   │   ├── 📄 Lab7_2.classic_cnn.ipynb           # LeNet-5(98.17%), VGG16 가중치 추론
 │   │   │   └── 📄 Lab7_3.inception_resnet_finetuning_transfer.ipynb # Inception Fine-tuning, ResNet CIFAR-10 전이학습
+│   │   ├── 📁 11주_과제                              # 11주차: Anomalib 기반 비지도 이상치 탐지(PatchCore) & MVTec/커스텀 실습
+│   │   │   └── 📄 anomalib_사용법_입문.ipynb        # PatchCore 모델 학습·평가(MVTec AUROC 0.9750), 결함 시각화, RTX 5070 GPU 가속
 │   │   ├── 📕 제조AI실제(1~5주차).pdf                 # 1~5주차 강의 자료 PDF
 │   │   ├── 📕 제조AI실제_6주차_글로벌제조트렌드.pdf      # 6주차 강의 자료: 글로벌 제조 트렌드 & DX
 │   │   ├── 📕 제조AI실제(7주차).pdf                   # 7주차 강의 자료: 합성곱 신경망 및 전이학습
+│   │   ├── 📕 제조AI실제(8주차).pdf                   # 8주차 강의 자료: 객체 검출(Object Detection) 및 분할
+│   │   ├── 📕 제조AI실제(10주차).pdf                  # 10주차 강의 자료: 비지도 이상 탐지(Anomaly Detection)
+│   │   ├── 📕 제조AI실제(11주차).pdf                  # 11주차 강의 자료: Anomalib 프레임워크 및 PatchCore
 │   │   └── 📄 README.md                              # 제조 AI 실제 교과 안내
 │   │
 │   ├── 📁 지능형 IoT 네트워크                           # 산업용 IoT 프로토콜, 무선 센서망, 엣지 컴퓨팅
@@ -93,14 +98,15 @@
 > 상세 내역은 [**1학년 2학기 폴더**](./1학년%202학기/) 및 각 하위 폴더의 README에서 확인하실 수 있습니다.
 
 ### 1. 🏭 [제조 AI 실제 (Manufacturing AI in Practice)](./1학년%202학기/제조%20AI%20실제/)
-* **강의 요약**: 제조 현장의 기계 설비 상태 모니터링, 신호 분석(Signal Processing), 특징 공학(Feature Engineering), 결함 탐지 및 기계학습/딥러닝 모델 적용 실무와 비지도 이상치 탐지/데이터 증강을 위한 생성 모델(Generative Models), 합성곱 신경망(CNN) 및 전이학습(Transfer Learning)을 체계적으로 다룹니다.
-* **주요 강의 자료**: 1~7주차 강의 자료 PDF (개요, 패턴인식, 신경망 기초, 도전과제 극복, 생성 모델, 글로벌 트렌드, CNN/전이학습)
+* **강의 요약**: 제조 현장의 기계 설비 상태 모니터링, 신호 분석(Signal Processing), 특징 공학(Feature Engineering), 결함 탐지 및 기계학습/딥러닝 모델 적용 실무와 비지도 이상치 탐지/데이터 증강을 위한 생성 모델(Generative Models), 합성곱 신경망(CNN) 및 전이학습(Transfer Learning), 그리고 최신 프레임워크 기반 비지도 이상치 탐지(Anomalib & PatchCore)를 체계적으로 다룹니다.
+* **주요 강의 자료**: 1~11주차 강의 자료 PDF (개요, 패턴인식, 신경망 기초, 도전과제 극복, 생성 모델, 글로벌 트렌드, CNN/전이학습, 객체 검출, 이상치 탐지 개요, Anomalib 및 PatchCore)
 * **실습 과제**:
   * **2주_과제**: CWRU 모터 베어링 진동 좋은 특징(RMS, Kurtosis 등) 추출 및 Fisher Separability 비교, 일반화 제약 조건 실습
   * **3주_과제**: 선형회귀(SGD), 로지스틱 회귀(결정 경계 시각화), MNIST 다층 퍼셉트론(MLP) 과적합 징후 분석
   * **4주_과제**: 회귀/분류 활성화 및 손실함수 비교, 기울기 소실 및 클래스 불균형 극복(ResNet Skip Connection, L1/L2, Dropout)
   * **5주_과제**: Autoencoder 비지도 결함 진단, VAE 잠재 공간 매니폴드 생성, GAN 적대적 숫자 합성, Diffusion Model(DDPM) Denoising 실습
   * **7주_과제**: Convolution & Pooling 연산 시각화, LeNet-5 직접 구현 및 학습(**정확도 98.17%**), VGG16 사전학습 가중치 추론, InceptionV3 Fine-tuning 및 ResNet50 기반 CIFAR-10 전이학습
+  * **11주_과제**: Anomalib 라이브러리 및 PatchCore 알고리즘을 활용한 비지도 이상치 탐지 실습. MVTec AD(`bottle`) 벤치마크 학습 및 평가(**Image AUROC 0.9750, Pixel AUROC 0.9605**), 커스텀 데이터셋(`hazelnut_toy`) 파이프라인 구축(**Image AUROC 1.0000**), 픽셀 결함 히트맵/마스크 시각화 및 모델 체크포인트 복원 검증 완비 (NVIDIA RTX 5070 Laptop GPU sm_120 Blackwell 가속 최적화)
 
 ### 2. 🌐 [지능형 IoT 네트워크 (Intelligent IoT Network)](./1학년%202학기/지능형%20IoT%20네트워크/)
 * **강의 요약**: 산업용 사물인터넷(IIoT), 산업 통신 프로토콜, 무선 센서 네트워크, OSI 7계층 분석, 산업용 메시징 프로토콜(MQTT, OPC UA) 및 암호화 트래픽 다중 분류 딥러닝 모델링.
@@ -141,6 +147,9 @@
 | | **5주차: 생성 모델(AE/VAE/GAN/DDPM)** | 💻 [5주_과제/](./1학년%202학기/제조%20AI%20실제/5주_과제/) ([lab5_1~lab5_4](./1학년%202학기/제조%20AI%20실제/5주_과제/)) | 재구성 오차 기반 비지도 결함 진단, 잠재 공간 매니폴드 형성, Minimax 게임, Denoising 과정 |
 | | **6주차: 글로벌 제조 트렌드** | 📕 [제조AI실제_6주차_글로벌제조트렌드.pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제_6주차_글로벌제조트렌드.pdf) | 스마트 제조 DX 트렌드, 자율 제조 및 탄소 중립 최적화 방향 |
 | | **7주차: CNN 및 전이학습** | 💻 [7주_과제/](./1학년%202학기/제조%20AI%20실제/7주_과제/) ([Lab7_1](./1학년%202학기/제조%20AI%20실제/7주_과제/Lab7_1.cnn_mnist_convolution_pooling.ipynb), [Lab7_2](./1학년%202학기/제조%20AI%20실제/7주_과제/Lab7_2.classic_cnn.ipynb), [Lab7_3](./1학년%202학기/제조%20AI%20실제/7주_과제/Lab7_3.inception_resnet_finetuning_transfer.ipynb)) | Convolution/Pooling 시각화, LeNet-5 직접 구현(정확도 98.17%), VGG16 추론, Inception Fine-tuning, ResNet CIFAR-10 전이학습 |
+| | **8주차: 객체 검출(Object Detection)** | 📕 [제조AI실제(8주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(8주차).pdf) | 객체 검출(Object Detection) 및 분할(Segmentation) 원리, 2단계/1단계 검출기(R-CNN, YOLO, SSD) |
+| | **10주차: 비지도 이상 탐지 개요** | 📕 [제조AI실제(10주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(10주차).pdf) | 제조 공정 비지도 이상 탐지(Anomaly Detection) 개념, MVTec AD 벤치마크 및 산업 적용 사례 |
+| | **11주차: 비지도 이상치 탐지(Anomalib)** | 💻 [11주_과제/](./1학년%202학기/제조%20AI%20실제/11주_과제/) ([anomalib_사용법_입문.ipynb](./1학년%202학기/제조%20AI%20실제/11주_과제/anomalib_사용법_입문.ipynb))<br>📕 [제조AI실제(11주차).pdf](./1학년%202학기/제조%20AI%20실제/제조AI실제(11주차).pdf) | Anomalib 프레임워크 & PatchCore 모델, MVTec AD(AUROC 0.9750) 및 커스텀 데이터(AUROC 1.0000), 픽셀 결함 히트맵 시각화, RTX 5070 GPU 가속 |
 | **지능형 IoT 네트워크** | **1~6주차 강의자료 완비** | 📕 [1~6주차 강의 PDF](./1학년%202학기/지능형%20IoT%20네트워크/) | 오리엔테이션, 지능형 IoT 개요, OSI 7계층, WSN/LPWAN 무선 통신, MQTT 수집, OPC UA 개요 |
 | | **3주차: ISCXVPN 트래픽 분류 TDF-Net** | 📊 [3주_과제/](./1학년%202학기/지능형%20IoT%20네트워크/3주_과제/) | 30개 피처 공학 + 10차원 트리 로짓 결합 + ResBlock + 앙상블 딥러닝 TDF-Net (정확도 78.61%, Macro F1 0.7402로 RF 상회) |
 | | **5주차: MQTT 기반 설비 이상 탐지** | 📡 [5주_과제/](./1학년%202학기/지능형%20IoT%20네트워크/5주_과제/) | MQTT 기반 실시간 센서 데이터 스트리밍, 이상치 탐지 서비스 및 경보 발행 전주기 파이프라인 구현 |
@@ -166,3 +175,7 @@
 * **연구원**: **진찬언** (석사과정 / Chan-Eon Jin / 학번: 2026254019)
 * **이메일**: [wlscksdjs@gmail.com](mailto:wlscksdjs@gmail.com)
 * **GitHub**: [@wlscksdjs-bit](https://github.com/wlscksdjs-bit)
+
+---
+
+*최종 업데이트: 2026-11-10*
