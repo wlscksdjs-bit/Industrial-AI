@@ -1,0 +1,22 @@
+{
+  "source_commit": "303dffbfc11612995b17b06633f8c9d0ea0e38e5",
+  "csv_path": "G:\\내 드라이브\\03_충북대_대학원_산업인공지능학과\\2학기\\제조 AI 실제\\13주_과제\\제조AI실제_13주차실습\\data\\advanced_custom\\native_custom_demo.csv",
+  "features": [
+    "Pressure",
+    "Temperature",
+    "Vibration"
+  ],
+  "time_column": "timestamp",
+  "label_column": "Label",
+  "train_end": 600,
+  "calibration_end": 800,
+  "window_size": 32,
+  "evaluation_rows": 536,
+  "boundary_exclusion_each_side": 32,
+  "thresholds": {
+    "LSTMAD": 1.7715714812278751,
+    "USAD": 1.6994793236255648,
+    "PaAno": 0.0053150483407080175
+  },
+  "scope": "offline native-model API comparison; model-specific preprocessing and score mapping"
+}

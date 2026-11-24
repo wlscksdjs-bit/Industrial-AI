@@ -18,6 +18,9 @@ VPN-PCAPS-01.zip
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+.cache/
+.venv/
+venv/
 
 # IDE / System / Tool files
 .vscode/

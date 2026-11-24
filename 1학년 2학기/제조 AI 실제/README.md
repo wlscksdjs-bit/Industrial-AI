@@ -28,6 +28,8 @@
 | **8주차** | [`제조AI실제(8주차).pdf`](./제조AI실제(8주차).pdf) | - | • 컴퓨터 비전 기반 객체 검출(Object Detection) 및 분할(Segmentation) 원리<br>• 2단계 검출기(R-CNN, Fast/Faster R-CNN) 및 1단계 검출기(YOLO, SSD) 아키텍처 비교 |
 | **10주차** | [`제조AI실제(10주차).pdf`](./제조AI실제(10주차).pdf) | - | • 제조 비전 검사 자동화(Automated Visual Inspection) 요구사항 및 제약조건<br>• 지도학습 기반 결함 분류의 한계와 비지도 이상치 탐지(Anomaly Detection) 패러다임 전환 |
 | **11주차** | [`제조AI실제(11주차).pdf`](./제조AI실제(11주차).pdf) | [`11주_과제/`](./11주_과제/) | • 제조 비지도 이상 탐지 프레임워크 **Anomalib 2.2.0** 실무 활용<br>• 정상 특징 메모리 뱅크 기반 **PatchCore** 알고리즘 원리 및 구현<br>• MVTec AD (`bottle`) 및 커스텀 데이터(`hazelnut_toy`) 대상 학습, AUROC/F1 평가, 결함 부위 히트맵 시각화 및 모델 저장/복원 |
+| **12주차** | [`제조AI실제(12주차).pdf`](./제조AI실제(12주차).pdf) | - | • 시계열 이상 탐지(Time-Series Anomaly Detection) 기초 및 딥러닝 기법<br>• 예측 오차(Forecasting) vs 재구성 오차(Reconstruction) 기반 탐지 메커니즘<br>• 기말 프로젝트 양식([`제조AI실제_기말프로젝트양식.pptx`](./제조AI실제_기말프로젝트양식.pptx)) 및 중간고사 대비 답안집([`제조AI실제_중간고사_대비_7문제_3단계_답안집.docx`](./제조AI실제_중간고사_대비_7문제_3단계_답안집.docx)) |
+| **13주차** | - | [`13주_과제/`](./13주_과제/) | • 다변량 시계열 이상치 탐지 벤치마크 프레임워크 **TSB-AD** 심화 실습<br>• 3대 시계열 이상탐지 아키텍처: **LSTMAD**(예측 기반), **USAD**(적대적 오토인코더), **PaAno**(패치 기반)<br>• **NAB** 벤치마크 평가, **커스텀 다변량 센서** 데이터 이상탐지 및 임계치 히스토그램 진단<br>• **SKAB** 수처리 테스트베드 실운용 324개 그리드 파이프라인(윈도우 64, 오탐률 0.0% 달성, 센서 기여도 분석) |
 
 ---
 
@@ -237,6 +239,46 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
 
 ---
 
+## 🔬 13주차 과제 상세 안내 (`13주_과제/`)
+
+시계열 이상 탐지 표준 벤치마크 프레임워크인 **TSB-AD (Time Series Benchmark for Anomaly Detection)**를 활용하여, 예측 기반(LSTMAD), 적대적 오토인코더(USAD), 패치 기반(PaAno-PAI) 등 3대 시계열 이상치 탐지 모델을 직접 구축하고 평가하는 3종의 심화 주피터 노트북 실습 과제입니다.
+
+### 1. [`01_tsb_ad_basic.ipynb`](./13주_과제/제조AI실제_13주차실습/01_tsb_ad_basic.ipynb)
+* **주제**: TSB-AD 기본 사용법 및 NAB(Numenta Anomaly Benchmark) 벤치마크 실습
+* **핵심 내용**:
+  * TSB-AD 벤치마크 저장소 자동 복제 및 캐싱 파이프라인
+  * NAB `001_NAB_id_1_Facility` 단변량 설비 시계열 센서 데이터(1,800 타임스텝) 로드 및 Min-Max 정규화
+  * **LSTMAD (LSTM Anomaly Detector)** 신경망 모델(PyTorch/TorchInfo) 학습 (Early Stopping 최적화)
+  * 예측 오차 기반 이상 점수 산출 및 임계값(`7.4648`) 자동 결정
+  * 표준 NAB 메트릭(NAB Score, Event Recall, Mean Time to Detect) 정량 평가 및 결과 아티팩트(`results/00_tsb_ad_basic/`) 자동 저장
+
+### 2. [`02_tsb_ad_custom_data.ipynb`](./13주_과제/제조AI실제_13주차실습/02_tsb_ad_custom_data.ipynb)
+* **주제**: 커스텀 다변량 센서 데이터셋 적용 및 3대 이상 탐지 모델 비교
+* **핵심 내용**:
+  * 실제 스마트 제조 공정 센서 환경을 모사한 3차원 다변량 시계열(`Pressure`, `Temperature`, `Vibration`) 데이터셋(`native_custom_demo.csv`) 생성
+  * **3대 모델 정면 비교**:
+    * **LSTMAD**: 예측 기반 시계열 신경망
+    * **USAD (UnSupervised Anomaly Detection)**: 두 개의 디코더를 가진 적대적 오토인코더(Adversarial Autoencoder) 구조
+    * **PaAno (Patch Anomaly)**: 시계열 패치 단위 특징 추출 및 위치 적응형 탐지 모델
+  * 정규화된 이상 점수 산출, 임계값 분위수(Quantile 95/99) 기반 알람 규칙 적용
+  * 임계값 전후 알람 위치 및 점수 히스토그램 진단 시각화(`results/00_tsb_ad_advanced/`)
+
+### 3. [`03_tsb_ad_advanced.ipynb`](./13주_과제/제조AI실제_13주차실습/03_tsb_ad_advanced.ipynb)
+* **주제**: SKAB(Skoltech Anomaly Benchmark) 기반 산업용 워터루프 실운용 이상치 탐지 파이프라인
+* **핵심 내용**:
+  * **SKAB 데이터셋 연동**: 워터루프 테스트베드 36개 시나리오(밸브 제어 결함, 펌프 이상 등) 로드
+  * **체계적 그리드 탐색 파이프라인 (324개 설정)**:
+    * 윈도우 크기($W=32, 64$), 센서 서브셋(process4 vs 전체 센서), 3대 모델(LSTMAD, USAD, PaAno), 알람 트리거(Point, Hysteresis, Smoothing) 조합 전수 평가
+  * **산업 현장 오탐 방지(False Alarm Rejection) 설계**:
+    * 개발 데이터셋에서 False Positive Rate **FPR = 0.0%**를 엄격히 만족하는 최적 레시피 선별
+    * 최종 채택 레시피: **USAD 백본 + Window 64 + process4 센서 + Quantile 0.95 Hysteresis 트리거** (Frozen Design SHA256 검증 완료)
+  * **최종 테스트 평가 및 진단**:
+    * 미지의 밸브 결함 테스트셋(`test_valve1`, `test_valve2`, `test_other`) 대상 일반화 성능 검증
+    * LSTMAD 예측 잔차 및 USAD 재구성 오차 기반 **센서별 결함 원인 역추적(Root Cause Attribution)**
+    * 테스트 라벨 진단 히스토그램 및 종합 리포트(`results/03_tsb_ad_advanced/`) 출력
+
+---
+
 ## 📂 디렉터리 구조
 
 ```
@@ -253,6 +295,9 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
 ├── 제조AI실제(8주차).pdf
 ├── 제조AI실제(10주차).pdf
 ├── 제조AI실제(11주차).pdf
+├── 제조AI실제(12주차).pdf
+├── 제조AI실제_기말프로젝트양식.pptx
+├── 제조AI실제_중간고사_대비_7문제_3단계_답안집.docx
 ├── 2주_과제/
 │   ├── cwru_fault.mat
 │   ├── cwru_normal.mat
@@ -276,8 +321,21 @@ CWRU 모터 베어링 진동 실데이터(`Normal` 정상 vs `Inner Race Fault` 
 │   ├── Lab7_1.cnn_mnist_convolution_pooling.ipynb
 │   ├── Lab7_2.classic_cnn.ipynb
 │   └── Lab7_3.inception_resnet_finetuning_transfer.ipynb
-└── 11주_과제/
-    └── anomalib_사용법_입문.ipynb
+├── 11주_과제/
+│   └── anomalib_사용법_입문.ipynb
+└── 13주_과제/
+    ├── 제조AI실제_13주차실습.zip
+    └── 제조AI실제_13주차실습/
+        ├── 01_tsb_ad_basic.ipynb
+        ├── 02_tsb_ad_custom_data.ipynb
+        ├── 03_tsb_ad_advanced.ipynb
+        ├── data/
+        │   ├── advanced_custom/
+        │   └── SKAB/
+        └── results/
+            ├── 00_tsb_ad_basic/
+            ├── 00_tsb_ad_advanced/
+            └── 03_tsb_ad_advanced/
 ```
 
 ---

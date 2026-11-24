@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>지능형 IoT 네트워크 중간고사 인터랙티브 마스터 스터디앱</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Mermaid.js for Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
+  </script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+    .spoiler-text {
+      filter: blur(6px);
+      transition: filter 0.25s ease, background-color 0.25s ease;
+      user-select: none;
+      cursor: pointer;
+    }
+    .spoiler-text.revealed {
+      filter: blur(0);
+      user-select: text;
+    }
+    .card-transition {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
+
+  <!-- TOP HEADER -->
+  <header class="bg-indigo-950 text-white sticky top-0 z-50 shadow-md border-b border-indigo-900">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-inner font-black text-lg">
+          <i class="fa-solid fa-network-wired"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-indigo-800 text-indigo-200">충북대 산업인공지능학과</span>
+            <span class="text-[11px] text-slate-400">김한진 교수님</span>
+          </div>
+          <h1 class="text-base sm:text-lg font-black text-white leading-tight">지능형 IoT 네트워크 중간고사 60문항 마스터</h1>
+        </div>
+      </div>
+
+      <!-- Quick Action Controls -->
+      <div class="flex items-center gap-2">
+        <button id="toggleAllAnswersBtn" onclick="toggleAllAnswers()" class="px-3 py-1.5 bg-indigo-800/80 hover:bg-indigo-700 text-xs font-semibold rounded-xl transition flex items-center gap-1.5 shadow-xs border border-indigo-700">
+          <i class="fa-solid fa-eye"></i>
+          <span id="toggleAllText">전체 정답 보기</span>
+        </button>
+        <button onclick="resetAllProgress()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-1 border border-slate-700" title="풀이 기록 초기화">
+          <i class="fa-solid fa-rotate-left"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- STATS & PROGRESS BAR -->
+    <div class="bg-indigo-900/60 border-t border-indigo-800/40 px-4 sm:px-6 py-2.5">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+        <!-- Stats Badges -->
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <div class="bg-indigo-950/80 px-2.5 py-1 rounded-lg border border-indigo-800/60 flex items-center gap-1.5">
+            <span class="text-indigo-400">학습 진행도:</span>
+            <span id="answeredCount" class="font-bold text-white">0</span>
+            <span class="text-indigo-400">/ 60문항</span>
+            <span id="progressPercent" class="text-indigo-300 font-mono font-bold">(0%)</span>
+          </div>
+          <div class="bg-emerald-950/80 px-2.5 py-1 rounded-lg border border-emerald-800/60 flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-check text-emerald-400"></i>
+            <span class="text-emerald-300 font-bold" id="correctCount">0</span>
+          </div>
+          <div class="bg-rose-950/80 px-2.5 py-1 rounded-lg border border-rose-800/60 flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-xmark text-rose-400"></i>
+            <span class="text-rose-300 font-bold" id="incorrectCount">0</span>
+          </div>
+          <div class="bg-amber-950/80 px-2.5 py-1 rounded-lg border border-amber-800/60 flex items-center gap-1.5">
+            <i class="fa-solid fa-star text-amber-400"></i>
+            <span class="text-amber-300 font-bold" id="bookmarkCount">0</span>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full sm:w-48 bg-indigo-950 rounded-full h-2 overflow-hidden border border-indigo-800">
+          <div id="progressBar" class="bg-gradient-to-r from-indigo-500 via-sky-400 to-emerald-400 h-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full space-y-6">
+
+    <!-- PROFESSOR EXAM NOTICE BANNER -->
+    <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-3xl p-5 sm:p-6 shadow-md border border-indigo-800 relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl text-white pointer-events-none">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
+      <div class="flex items-start gap-3.5">
+        <div class="w-10 h-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center text-lg font-bold shrink-0 mt-0.5 shadow-sm">
+          <i class="fa-solid fa-bullhorn"></i>
+        </div>
+        <div class="space-y-1.5">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="bg-amber-400 text-slate-950 text-xs font-black px-2 py-0.5 rounded-full uppercase">교수님 직강 공지</span>
+            <span class="text-xs text-indigo-200">2026.11.11 강의 세그먼트 #511~555 발언 기준</span>
+          </div>
+          <h2 class="text-base sm:text-lg font-bold text-white">중간고사 범위: 1~7주차 전체 (총 30문제 구성)</h2>
+          <p class="text-xs sm:text-sm text-indigo-100 leading-relaxed">
+            • <strong>빈칸 채우기 (15문제)</strong>: 교재의 핵심 정의어(정보 모델, 미들웨어, 캡슐화 등) 가리기 출제<br>
+            • <strong>OX 퀴즈 (10문제)</strong>: 기술 간 비교 및 특성 진위 판별 (예: TCP vs UDP, DCOM 종속성, 면허/비면허)<br>
+            • <strong>서술형/설계형 (5문제)</strong>: 배점 20~25점! 과제에서 직접 다룬 <strong>OPC UA 주소공간 설비 객체 모델링 설계</strong> 중심 출제<br>
+            <span class="text-amber-300 font-semibold">💡 본 학습앱은 실전 시험(30제)의 2배수인 총 60문항을 전수 수록하여 완벽한 만점을 대비합니다.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTER CONTROLS BAR -->
+    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3">
+      <!-- Top Row: Type Pills & Search -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <!-- Type Tabs -->
+        <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold" id="typeFilters">
+          <button onclick="setTypeFilter('all')" data-type="all" class="type-btn active px-3.5 py-2 rounded-xl bg-indigo-600 text-white shadow-xs transition">
+            전체 보기 (<span id="count-all">60</span>)
+          </button>
+          <button onclick="setTypeFilter('blank')" data-type="blank" class="type-btn px-3.5 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+            ✏️ 빈칸 채우기 (<span id="count-blank">30</span>)
+          </button>
+          <button onclick="setTypeFilter('ox')" data-type="ox" class="type-btn px-3.5 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+            ⭕❌ OX 퀴즈 (<span id="count-ox">20</span>)
+          </button>
+          <button onclick="setTypeFilter('essay')" data-type="essay" class="type-btn px-3.5 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+            📑 서술/설계형 (<span id="count-essay">10</span>)
+          </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative w-full md:w-64">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input type="text" id="searchInput" oninput="handleSearch()" placeholder="키워드 검색 (QoS, DCOM, TSN...)" class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+        </div>
+      </div>
+
+      <!-- Bottom Row: Week & Status Filters -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-slate-400 font-bold mr-1">주차별:</span>
+          <select id="weekSelect" onchange="handleWeekFilter()" class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="all">전체 주차 (1~7주차)</option>
+            <option value="1">1~2주차: IoT 개요, TSN, 디지털트윈</option>
+            <option value="3">3주차: OSI 7계층, TCP vs UDP</option>
+            <option value="4">4주차: 무선통신, 면허/비면허, 5G</option>
+            <option value="5">5주차: 데이터 수집, MQTT, QoS</option>
+            <option value="6">6~7주차: OPC UA 개요, 정보모델링</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label class="flex items-center gap-1.5 cursor-pointer text-slate-600 hover:text-indigo-600 select-none">
+            <input type="checkbox" id="onlyBookmarksCheckbox" onchange="handleBookmarkFilter()" class="rounded text-indigo-600 focus:ring-indigo-500">
+            <span class="font-bold flex items-center gap-1"><i class="fa-solid fa-star text-amber-500 text-xs"></i> 북마크만 보기</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUESTIONS LIST CONTAINER -->
+    <div id="questionsContainer" class="space-y-4">
+      <!-- Dynamic Question Cards Injected Here -->
+    </div>
+
+    <!-- NO RESULTS MESSAGE -->
+    <div id="noResults" class="hidden bg-white rounded-2xl p-12 text-center border border-slate-200 shadow-sm space-y-3">
+      <div class="text-4xl text-slate-300"><i class="fa-solid fa-filter-circle-xmark"></i></div>
+      <p class="text-sm font-bold text-slate-600">조건에 일치하는 문제가 없습니다.</p>
+      <button onclick="resetFilters()" class="text-xs text-indigo-600 font-semibold hover:underline">필터 조건 초기화</button>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 mt-12">
+    <div class="max-w-6xl mx-auto px-4 space-y-1">
+      <p class="font-bold text-slate-700">충북대학교 대학원 산업인공지능학과 | 지능형 IoT 네트워크 (김한진 교수님)</p>
+      <p>중간고사 공식 출제 기준 확인 및 2배수 60문항 적중 마스터 학습 시스템</p>
+    </div>
+  </footer>
+
+  <!-- SCRIPT DATA & APP LOGIC -->
+  <script>
+    const rawQuestions = [{"id": 1, "type": "blank", "week": "1~2주차", "topic": "지능형 IoT 개념", "question": "기존 사물인터넷(IoT)이 사물 간의 단순 연결과 데이터 수집에 중점을 두었다면, **지능형 IoT(AIoT)**는 IoT 인프라에 **[        ]** 기술을 결합하여 사람의 개입 없이 스스로 데이터를 인지, 분석, 판단하여 자율적으로 동작하는 시스템을 의미한다.", "answer": "인공지능 (AI / Artificial Intelligence)", "explanation": "지능형 IoT의 핵심 정의는 IoT(초연결) + AI(초지능)의 결합을 통한 '자율성(Autonomy)' 확보입니다."}, {"id": 2, "type": "blank", "week": "2주차", "topic": "네트워크 지능화", "question": "인공지능과 네트워크의 융합 방향 중, **[        ]** 기술은 복잡한 네트워크 트래픽 제어, 자원 할당, 장애 감지 등 네트워크 운영 자체를 AI 모델을 통해 자동화·최적화하는 기술을 의미하며, 반대로 **[        ]** 기술은 대규모 분산 AI 학습 및 실시간 추론 서비스가 원활히 동작하도록 초저지연·고대역폭 네트워크 인프라를 제공하는 기술을 의미한다.", "answer": "Network by AI`, `Network for AI", "explanation": "교재 2주차 26~27페이지 핵심 개념. 네트워크 운영 최적화는 'by AI', AI 응용 지원 인프라는 'for AI'입니다."}, {"id": 3, "type": "blank", "week": "2주차", "topic": "산업용 통신", "question": "스마트 팩토리의 정밀 모션 제어 및 로봇 공정에서 패킷 전송의 지연 시간(Latency)과 지터(Jitter)를 극도로 제한하여, 결정론적(Deterministic) 실시간 전송을 보장하기 위해 IEEE 802.1 표준을 기반으로 제정된 차세대 산업용 이더넷 기술을 **[        ]**(이)라고 부른다.", "answer": "TSN (Time-Sensitive Networking, 시간 민감형 네트워킹)", "explanation": "표준 이더넷의 비결정론적 특성을 보완하여 스마트 팩토리 제어 네트워크의 핵심으로 부상한 기술입니다."}, {"id": 4, "type": "blank", "week": "2주차", "topic": "가상화 모델링", "question": "현실 세계의 공장, 기계 설비, 공정 프로세스 등의 물리적 자산을 가상 컴퓨터 공간에 1:1로 실시간 동기화하여 똑같이 복제하고, 센서 데이터를 바탕으로 시뮬레이션 및 예지보전을 수행하는 기술을 **[        ]**(이)라고 한다.", "answer": "디지털 트윈 (Digital Twin, DT)", "explanation": "교재 2주차 28~31페이지 핵심 개념으로, 현실 자산과 가상 자산 간의 양방향 데이터 연계가 핵심입니다."}, {"id": 5, "type": "blank", "week": "3주차", "topic": "OSI 7계층", "question": "통신 네트워크에서 송신 측 상위 계층의 데이터가 하위 계층으로 전달될 때 각 계층의 제어 정보(헤더)가 덧붙여지는 과정을 **[        ]**(이)라고 하며, 반대로 수신 측 하위 계층에서 상위 계층으로 올라가면서 헤더를 순차적으로 벗겨내는 과정을 **[        ]**(이)라고 한다.", "answer": "캡슐화 (Encapsulation)`, `역캡슐화 (Decapsulation)", "explanation": "3주차 네트워크 기본 메커니즘으로 프로토콜 스택 동작의 기본 원리입니다."}, {"id": 6, "type": "blank", "week": "3주차", "topic": "계층별 데이터 단위", "question": "OSI 7계층에서 데이터 링크 계층(2계층)의 데이터 전송 단위를 **[   (A)   ]**(이)라고 부르며, 네트워크 계층(3계층)의 단위를 **[   (B)   ]**, 전송 계층(4계층)의 단위를 **[   (C)   ]**(이)라고 부른다.", "answer": "(A) 프레임 (Frame)`, `(B) 패킷 (Packet)`, `(C) 세그먼트 (Segment)", "explanation": "3주차 10~15페이지 PDU(Protocol Data Unit)의 계층별 고유 명칭입니다."}, {"id": 7, "type": "blank", "week": "3주차", "topic": "전송 계층", "question": "전송 계층(4계층)에서 호스트 내부에서 실행 중인 여러 네트워크 응용 프로세스(Application)를 고유하게 식별하기 위해 사용하는 논리적 식별자를 **[        ]**(이)라고 한다.", "answer": "포트 번호 (Port Number)", "explanation": "IP 주소가 호스트(컴퓨터)를 식별한다면, 포트 번호는 호스트 내의 특정 프로세스를 식별합니다."}, {"id": 8, "type": "blank", "week": "3주차", "topic": "TCP 동작 원리", "question": "TCP 프로토콜이 양방향 신뢰성 통신을 시작하기 위해 송신자와 수신자 간에 SYN, SYN-ACK, ACK 패킷을 주고받으며 연결을 수립하는 절차를 **[        ]**(이)라고 한다.", "answer": "3-Way Handshake (3방향 핸드셰이크)", "explanation": "3주차 TCP 연결 수립 메커니즘의 핵심 필수 용어입니다."}, {"id": 9, "type": "blank", "week": "3주차", "topic": "전송 프로토콜 비교", "question": "**[   (A)   ]** 프로토콜은 연결 지향적이며 흐름 제어, 혼잡 제어, 패킷 재전송을 통해 데이터의 무손실을 보장하지만 헤더가 무겁고 속도가 느린 반면, **[   (B)   ]** 프로토콜은 비연결형으로 오류 정정이나 확인 응답(ACK)이 없어 신뢰성은 낮지만 오버헤드가 적고 전송 속도가 빨라 실시간 스트리밍에 적합하다.", "answer": "(A) TCP`, `(B) UDP", "explanation": "3주차 전송 계층 양대 프로토콜의 특성 대비입니다."}, {"id": 10, "type": "blank", "week": "4주차", "topic": "무선 물리 계층", "question": "전자기파의 물리적 특성상 전파의 속도는 일정하므로, 주파수(Frequency)가 높아질수록 파장(Wavelength)은 **[   (A)   ]**지며, 전파의 직진성은 강해지지만 장애물을 돌아서 통과하는 **[   (B)   ]**성은 낮아진다.", "answer": "(A) 짧아`, `(B) 회절 (Diffraction)", "explanation": "4주차 무선 물리 계층 특성. 고주파수(밀리미터파 등)는 파장이 짧고 직진성이 강해 회절률이 떨어집니다."}, {"id": 11, "type": "blank", "week": "4주차", "topic": "주파수 대역", "question": "통신 사업자가 경매를 통해 정부로부터 독점적 사용 권리를 부여받아 간섭이 철저히 배제되는 주파수 대역을 **[   (A)   ]**(이)라고 하며, 산업·과학·의료용 기기 등을 위해 정부 면허 없이 누구나 자유롭게 사용할 수 있도록 개방된 주파수 대역을 **[   (B)   ]**(이)라고 한다.", "answer": "(A) 면허 대역 (Licensed Band)`, `(B) 비면허 대역 (Unlicensed Band 또는 ISM Band)", "explanation": "4주차 주파수 관리 체계의 핵심 분류 기준입니다."}, {"id": 12, "type": "blank", "week": "4주차", "topic": "ISM 대역", "question": "Wi-Fi, 블루투스(Bluetooth), 지그비(Zigbee) 등이 공통적으로 가장 널리 활용하며, 전 세계적으로 비면허로 개방되어 있으나 수많은 기기가 밀집하여 전파 간섭이 심한 대표적인 ISM 주파수 대역은 **[        ]** GHz이다.", "answer": "2.4 (또는 2.4 GHz)", "explanation": "2.4 GHz는 대표적인 글로벌 공용 비면허 ISM 대역입니다."}, {"id": 13, "type": "blank", "week": "4주차", "topic": "근거리 무선", "question": "블루투스 저전력 기술인 **[        ]**(은)는 기존 클래식 블루투스 대비 전력 소비를 획기적으로 낮추기 위해 슬립 모드를 극대화하고 소용량 데이터를 간헐적으로 송수신하도록 설계된 IoT 근거리 통신 기술이다.", "answer": "BLE (Bluetooth Low Energy)", "explanation": "4주차 근거리 무선 기술 중 저전력 비콘, 웨어러블, 스마트 센서의 핵심 기술입니다."}, {"id": 14, "type": "blank", "week": "4주차", "topic": "광역 LPWAN", "question": "넓은 서비스 커버리지(수 km 이상)와 극도의 배터리 수명(수 년)을 목표로 하는 저전력 광역 통신(LPWAN) 기술 중, 비면허 서브 기가헤르츠 대역에서 처프 확산 스펙트럼(CSS) 변조 방식을 사용하는 대표적인 기술을 **[        ]**(이)라고 한다.", "answer": "LoRa (Long Range)", "explanation": "4주차 광역 IoT 통신의 대표적인 비면허 대역 기술입니다."}, {"id": 15, "type": "blank", "week": "4주차", "topic": "5G 서비스", "question": "5G 이동통신의 3대 핵심 서비스 영역은 초광대역(eMBB), 대규모 사물통신(mMTC), 그리고 스마트 팩토리의 정밀 로봇 및 무인 운반차(AGV) 제어에 필수적인 **[        ]**(URLLC, Ultra-Reliable and Low Latency Communications)로 구성된다.", "answer": "초고신뢰 저지연 통신 (또는 초저지연 통신)", "explanation": "4주차 5G 산업용 통신의 핵심 키워드입니다."}, {"id": 16, "type": "blank", "week": "4주차", "topic": "특화망", "question": "일반 통신사의 공용 이동통신망과 분리되어 특정 공장 건물이나 제한된 부지 내에서 자사의 산업 제어 및 보안 목적으로 구축하는 독립적 5G 무선망을 국내에서는 **[        ]**(이)라고 부른다.", "answer": "이음 5G (또는 5G 특화망 / Private 5G)", "explanation": "공장 보안과 초저지연을 위해 기업이 직접 구축하는 사설 5G 인프라입니다."}, {"id": 17, "type": "blank", "week": "5주차", "topic": "미들웨어", "question": "스마트 팩토리에서 다양한 이기종 장비와 상위 IT 응용 프로그램 간의 복잡한 1:1 종속적 연결(Silo 현상)을 방지하고, 중간에서 데이터 변환 및 중계 창구를 제공하여 시스템 간 결합도를 낮추는 소프트웨어 계층을 **[        ]**(이)라고 한다.", "answer": "미들웨어 (Middleware)", "explanation": "5주차 도입부의 핵심 개념입니다."}, {"id": 18, "type": "blank", "week": "5주차", "topic": "Pub/Sub 구조", "question": "MQTT 프로토콜의 기반 아키텍처로, 송신자(Publisher)와 수신자(Subscriber)가 직접 연결되지 않고 중앙의 **[   (A)   ]**(을)를 통해 메시지를 주고받는 구조를 **[   (B)   ]**(이)라고 한다.", "answer": "(A) 메시지 브로커 (Message Broker)`, `(B) 발행/구독 모델 (Publish/Subscribe Pattern)", "explanation": "5주차 10~15페이지 핵심 구조입니다."}, {"id": 19, "type": "blank", "week": "5주차", "topic": "MQTT 토픽 와일드카드", "question": "MQTT 토픽 필터에서 **[   (A)   ]** 기호는 단일 계층(Single-level)의 와일드카드를 의미하며, **[   (B)   ]** 기호는 토픽의 하위 모든 계층(Multi-level)을 포괄하는 와일드카드를 의미한다.", "answer": "(A) +`, `(B) #", "explanation": "예: `factory/+/temp`는 단일 레벨 매칭, `factory/#`는 하위 전체 매칭."}, {"id": 20, "type": "blank", "week": "5주차", "topic": "MQTT QoS 0", "question": "MQTT의 서비스 품질(QoS) 레벨 중, 확인 응답(ACK)을 받지 않고 최대 1회만 전송하여 유실 가능성이 있지만 네트워크 오버헤드가 가장 적은 단계를 **[        ]**(이)라고 한다.", "answer": "QoS 0 (또는 At most once)", "explanation": "5주차 QoS 비교 3단계 중 첫 번째 레벨입니다."}, {"id": 21, "type": "blank", "week": "5주차", "topic": "MQTT QoS 1", "question": "MQTT의 서비스 품질(QoS) 레벨 중, 브로커가 수신 확인 응답인 **[        ]** 패킷을 송신자에게 전달할 때까지 재전송하여 '최소 1회 전송'을 보장하지만 중복 수신이 발생할 수 있는 단계를 QoS 1이라고 한다.", "answer": "PUBACK", "explanation": "QoS 1의 확인 응답 제어 패킷 명칭입니다."}, {"id": 22, "type": "blank", "week": "5주차", "topic": "MQTT QoS 2", "question": "MQTT에서 가장 높은 서비스 품질 단계로, 4단계 핸드셰이크(PUBLISH → PUBREC → PUBREL → PUBCOMP)를 통해 메시지의 손실과 중복을 모두 완벽히 방지하는 '정확히 1회 전송' 단계를 **[        ]**(이)라고 한다.", "answer": "QoS 2 (또는 Exactly once)", "explanation": "결제나 치명적 제어 명령 등에 적용되는 최고 신뢰성 등급입니다."}, {"id": 23, "type": "blank", "week": "5주차", "topic": "MQTT 생존 확인", "question": "MQTT 클라이언트와 브로커 사이에 일정 시간 동안 주고받는 데이터가 없을 때, TCP 연결이 정상적으로 살아있는지 확인하기 위해 교환하는 제어 패킷 쌍은 **[   (A)   ]**와 **[   (B)   ]**이다.", "answer": "(A) PINGREQ`, `(B) PINGRESP", "explanation": "Keep Alive 타이머 유지 메커니즘입니다."}, {"id": 24, "type": "blank", "week": "5주차", "topic": "MQTT 유언장", "question": "MQTT 클라이언트가 네트워크 단절이나 강제 종료로 비정상 연결 종료되었을 때, 브로커가 미리 등록된 대체 메시지를 지정된 토픽의 구독자들에게 즉시 대리 발행해주는 기능을 **[        ]**(LWT)라고 한다.", "answer": "유언장 메시지 (또는 Last Will and Testament, LWT)", "explanation": "클라이언트의 비정상 다운 상태를 알리는 MQTT 핵심 신뢰성 메커니즘입니다."}, {"id": 25, "type": "blank", "week": "6주차", "topic": "OPC Classic 한계", "question": "과거의 OPC Classic 규격은 마이크로소프트 윈도우 운영체제의 독점 통신 기술인 **[        ]**(Distributed Component Object Model) 기술에 절대적으로 종속되어 있어 리눅스나 임베디드 적용이 불가능하고 방화벽 설정이 극도로 어려웠다.", "answer": "DCOM", "explanation": "6주차 OPC UA 등장 배경의 가장 핵심적인 기술 한계입니다."}, {"id": 26, "type": "blank", "week": "6주차", "topic": "OPC UA 통합 아키텍처", "question": "OPC Classic의 한계를 극복하고 플랫폼 독립성, 바이너리/웹소켓 통신, 통합 보안 암호화 및 풍부한 의미론적 정보 모델링을 지원하기 위해 제정된 차세대 산업 데이터 통신 표준을 **[        ]**(이)라고 한다.", "answer": "OPC UA (OPC Unified Architecture)", "explanation": "본 교과목의 핵심 주제이자 IEC 62541 국제 표준입니다."}, {"id": 27, "type": "blank", "week": "7주차", "topic": "주소 공간과 노드", "question": "OPC UA 서버 내부에서 물리적 설비, 데이터 변수, 제어 메서드 등의 모든 정보를 객체 지향적 그래프 구조로 표현하여 외부 클라이언트에게 공개하는 논리적 가상 데이터베이스 공간을 **[   (A)   ]**(이)라고 하며, 그 내부를 구성하는 최소 기본 요소를 **[   (B)   ]**(이)라고 한다.", "answer": "(A) 주소 공간 (Address Space)`, `(B) 노드 (Node)", "explanation": "7주차 정보 모델링의 가장 기본이 되는 아키텍처 용어입니다."}, {"id": 28, "type": "blank", "week": "7주차", "topic": "노드 식별자", "question": "OPC UA 주소 공간 내의 모든 노드를 전 세계적으로 유일하게 식별하기 위해 네임스페이스 인덱스(NamespaceIndex)와 고유 식별자 값(Identifier)으로 구성되는 고유 식별 코드를 **[        ]**(이)라고 한다.", "answer": "NodeId", "explanation": "노드를 고유하게 가리키는 필수 속성(Attribute)입니다."}, {"id": 29, "type": "blank", "week": "7주차", "topic": "노드 클래스", "question": "OPC UA의 기본 8대 노드 클래스(NodeClass) 중 실제 인스턴스에 해당하는 4가지는 Object, Variable, Method, View이며, 이들의 메타 정의 템플릿 역할을 하는 타입 노드 4가지는 ObjectType, VariableType, ReferenceType, 그리고 **[        ]**이다.", "answer": "DataType", "explanation": "7주차 10~15페이지 노드 클래스 8종의 완벽 분류입니다."}, {"id": 30, "type": "blank", "week": "7주차", "topic": "구독 메커니즘", "question": "OPC UA 클라이언트가 서버의 특정 변수 노드 값이 변경될 때만 효율적으로 비동기 알림을 받기 위해, 감시 대상과 조건을 정의하는 서버 측 객체를 **[   (A)   ]**(이)라고 하며, 이들을 묶어 클라이언트에게 일괄 전달 주기를 관리하는 메커니즘을 **[   (B)   ]**(이)라고 한다.", "answer": "(A) MonitoredItem`, `(B) Subscription (구독)", "explanation": "7주차 90~100페이지 OPC UA 이벤트/데이터 통지 메커니즘입니다."}, {"id": 31, "type": "ox", "week": "2주차", "topic": "진위형 퀴즈", "question": "지능형 IoT(AIoT)는 기존 IoT와 달리 사물 스스로 환경을 인식하고 AI 추론을 통해 사람의 개입 없이 최적의 제어 판단을 자율적으로 수행한다.", "answer": "O", "explanation": "지능형 IoT의 핵심 가치는 AI 융합을 통한 자율 판단(Autonomy)입니다."}, {"id": 32, "type": "ox", "week": "2주차", "topic": "진위형 퀴즈", "question": "시간 민감형 네트워킹(TSN)은 기존 이더넷(Ethernet)과 하위 호환성이 전혀 없으므로, 공장의 모든 물리 케이블과 장비를 전면 재구축해야만 도입할 수 있다.", "answer": "X", "explanation": "TSN은 표준 이더넷(IEEE 802.3)과의 하위 호환성을 유지하면서, 실시간 트래픽을 위한 우선순위 스케줄링(IEEE 802.1Qbv 등)을 표준 규격으로 확장한 기술입니다."}, {"id": 33, "type": "ox", "week": "3주차", "topic": "진위형 퀴즈", "question": "OSI 7계층 참조 모델에서 물리 계층(1계층)은 데이터의 의미(구문/문맥)를 해석하여 패킷의 오류를 정정하는 역할을 담당한다.", "answer": "X", "explanation": "물리 계층은 전기적·기계적 비트 신호(0과 1)의 전송만을 담당하며, 데이터의 문맥이나 오류 제어는 상위 계층(데이터링크, 전송 계층 등)이 수행합니다."}, {"id": 34, "type": "ox", "week": "3주차", "topic": "진위형 퀴즈", "question": "UDP(User Datagram Protocol)는 신뢰성을 보장하지 않으므로 송신 중 패킷 손실이나 순서 역전이 발생할 수 있지만, TCP 대비 헤더 오버헤드가 적고 빠른 전송이 가능하다.", "answer": "O", "explanation": "UDP의 정확한 핵심 특징입니다."}, {"id": 35, "type": "ox", "week": "3주차", "topic": "진위형 퀴즈", "question": "데이터 통신 과정에서 수신 호스트는 수신한 비트열을 상위 계층으로 올리면서 각 계층에 해당하는 헤더 정보를 제거하는 '역캡슐화(Decapsulation)'를 수행한다.", "answer": "O", "explanation": "수신 측의 프로토콜 스택 처리 원리입니다."}, {"id": 36, "type": "ox", "week": "4주차", "topic": "진위형 퀴즈", "question": "전자기파의 주파수가 높아질수록 파장이 길어져 장애물 뒤편으로 전파가 휘어져 들어가는 회절 능력이 극대화된다.", "answer": "X", "explanation": "주파수가 높아질수록 파장은 '짧아지며', 직진성이 강해지고 회절 능력은 '감소'합니다."}, {"id": 37, "type": "ox", "week": "4주차", "topic": "진위형 퀴즈", "question": "비면허 ISM 대역(2.4 GHz 등)은 정부의 허가 없이 전 세계 누구나 사용할 수 있으므로, 동일 대역을 사용하는 다른 무선 기기(전자레인지, Wi-Fi 등)와의 전파 간섭이 상존한다.", "answer": "O", "explanation": "비면허 대역의 최대 장점은 비용 무료이지만, 최대 단점은 통제 불가능한 간섭입니다."}, {"id": 38, "type": "ox", "week": "4주차", "topic": "진위형 퀴즈", "question": "BLE(Bluetooth Low Energy)는 배터리 수명을 수개월에서 수년까지 유지하기 위해, 항상 연결을 유지하기보다는 비연결 모드(Advertising)나 간헐적 데이터 전송을 활용한다.", "answer": "O", "explanation": "BLE의 초저전력 동작 원리입니다."}, {"id": 39, "type": "ox", "week": "4주차", "topic": "진위형 퀴즈", "question": "LoRa 기술은 4K 초고화질 CCTV 영상과 같은 대용량 멀티미디어를 스마트 팩토리 전역에 실시간으로 고속 스트리밍하는 데 최적화된 통신 규격이다.", "answer": "X", "explanation": "LoRa는 저전력 광역 통신(LPWAN) 기술로, 전송 속도가 수 kbps 수준으로 극히 낮아 센서의 작은 텍스트/수치 데이터 전송에만 사용됩니다."}, {"id": 40, "type": "ox", "week": "4주차", "topic": "진위형 퀴즈", "question": "5G 특화망(이음 5G)은 공용 이동통신망을 그대로 공유하기 때문에 데이터 유출 위험이 높고 외부 트래픽 혼잡에 영향을 받는다.", "answer": "X", "explanation": "5G 특화망은 공장 내에 독점적으로 구축하는 사설망이므로 외부망과 물리적/논리적으로 완벽히 격리되어 보안성과 신뢰성이 보장됩니다."}, {"id": 41, "type": "ox", "week": "5주차", "topic": "진위형 퀴즈", "question": "MQTT 프로토콜에서 발행자(Publisher)는 자신이 발행하는 메시지를 수신할 특정 구독자(Subscriber)의 IP 주소와 포트 번호를 미리 알고 있어야만 통신할 수 있다.", "answer": "X", "explanation": "발행자와 구독자는 서로의 존재를 전혀 알지 못하며, 오직 중앙 브로커(Broker)와 논리적 '토픽(Topic)'을 통해서만 느슨하게 결합(Decoupled)됩니다."}, {"id": 42, "type": "ox", "week": "5주차", "topic": "진위형 퀴즈", "question": "MQTT 토픽이 `factory/building1/press/temperature`일 때, `factory/+/press/#`라는 토픽 필터를 구독하면 해당 메시지를 정상적으로 수신할 수 있다.", "answer": "O", "explanation": "두 번째 레벨의 `building1`은 `+`에 매칭되고, 네 번째 레벨의 `temperature`는 `#`에 매칭되므로 정상 수신됩니다."}, {"id": 43, "type": "ox", "week": "5주차", "topic": "진위형 퀴즈", "question": "MQTT QoS 0은 손실 위험이 있지만, 통신 지연 시간이 가장 짧고 네트워크 대역폭 소모가 가장 적어 주기적인 대량 센서 측정값 전송에 효과적이다.", "answer": "O", "explanation": "손실되어도 다음 주기에 최신 값이 들어오는 단순 주기 센서에 QoS 0이 주로 사용됩니다."}, {"id": 44, "type": "ox", "week": "5주차", "topic": "진위형 퀴즈", "question": "MQTT QoS 1을 사용할 경우, 네트워크 일시 단절 시 재전송 메커니즘으로 인해 구독자에게 동일한 메시지가 2회 이상 중복 수신되는 현상이 발생할 수 있다.", "answer": "O", "explanation": "QoS 1은 '최소 1회(At least once)' 보장이므로, PUBACK 수신 실패 시 재전송되어 중복 수신될 수 있습니다."}, {"id": 45, "type": "ox", "week": "5주차", "topic": "진위형 퀴즈", "question": "MQTT 브로커에 메시지를 발행할 때 'Retain' 플래그를 `True`로 설정하면, 해당 토픽을 나중에 새로 구독한 클라이언트라도 브로커에 저장된 가장 최근 메시지를 즉시 수신할 수 있다.", "answer": "O", "explanation": "Retain 메시지는 설비의 현재 상태(켜짐/꺼짐 등)를 새로 접속한 장치에 즉시 알려줄 때 필수적으로 활용됩니다."}, {"id": 46, "type": "ox", "week": "6주차", "topic": "진위형 퀴즈", "question": "OPC Classic은 윈도우 OS의 DCOM 기반이므로 엔터프라이즈 방화벽을 통과할 때 단일 정적 포트만 열어주면 완벽하게 보안 통신이 유지된다.", "answer": "X", "explanation": "DCOM은 동적 포트(Dynamic Port)를 무작위로 할당하여 방화벽을 거의 열어놓아야 하므로 심각한 보안 취약점을 유발했습니다."}, {"id": 47, "type": "ox", "week": "6주차", "topic": "진위형 퀴즈", "question": "OPC UA는 전송 계층으로 고성능 바이너리 통신 프로토콜(`opc.tcp://`)뿐만 아니라, 방화벽 통과에 유리한 HTTPS 및 웹소켓(WebSocket) 통신도 지원한다.", "answer": "O", "explanation": "6주차 플랫폼 독립성 및 전송 스택의 핵심 장점입니다."}, {"id": 48, "type": "ox", "week": "7주차", "topic": "진위형 퀴즈", "question": "OPC UA 주소 공간(Address Space)의 참조(Reference)는 오직 부모-자식 간의 수직적 계층 트리 구조로만 표현되며, 다른 설비 간의 수평적 참조 연결은 불가능하다.", "answer": "X", "explanation": "OPC UA의 참조는 방향성을 가진 양방향 그래프(Network/Mesh) 구조를 지원하므로, 계층 관계뿐만 아니라 설비 간의 수평적/논리적 참조도 완벽히 표현할 수 있습니다."}, {"id": 49, "type": "ox", "week": "7주차", "topic": "진위형 퀴즈", "question": "OPC UA에서 Variable 노드는 설비의 실제 측정 데이터 값(Value)을 저장하며, Object 노드는 하위 변수와 메서드를 논리적으로 묶어주는 그릇(Folder/Device) 역할을 한다.", "answer": "O", "explanation": "Object와 Variable의 가장 기본적인 역할 차이입니다."}, {"id": 50, "type": "ox", "week": "7주차", "topic": "진위형 퀴즈", "question": "OPC UA 클라이언트는 서버 내부의 데이터 변화를 감지하기 위해 매 밀리초마다 직접 서버의 Read 서비스를 호출하여 폴링(Polling)하는 방식만을 강제한다.", "answer": "X", "explanation": "폴링 부하를 없애기 위해 MonitoredItem과 Subscription을 통한 '이벤트/값 변경 기반 비동기 알림(Notification)' 메커니즘을 기본으로 제공합니다."}, {"id": 51, "type": "essay", "week": "2주차", "topic": "지능형 IoT(AIoT) 3대 차이점", "question": "전통적인 사물인터넷(IoT)과 인공지능이 융합된 '지능형 IoT(AIoT)'의 개념을 설명하고, 자율성, 연결성, 데이터 처리 방식 관점에서 3가지 핵심 차이점을 비교 서술하시오.", "answer": "> **1. 지능형 IoT (AIoT)의 개념**  \n> 지능형 IoT는 센서 및 디바이스를 연결하여 단순히 원격 모니터링을 수행하던 기존 사물인터넷(IoT)에 인공지능(AI)의 학습 및 추론 알고리즘을 결합한 차세대 시스템입니다. 데이터 수집 단계부터 엣지/클라우드에 이르기까지 지능화된 처리를 수행하여, 외부 제어 명령 없이도 현장 환경을 스스로 분석하고 최적의 제어를 내리는 '자율 사물(Autonomous Things)'을 지향합니다.\n>\n> **2. 3대 핵심 차이점 비교**\n> - **자율성 (Autonomy)**: 기존 IoT는 수집된 데이터를 사람이 관제 화면(대시보드)으로 보고 수동으로 제어하는 '수동적 모니터링'에 그쳤으나, 지능형 IoT는 AI 알고리즘이 설비 이상이나 패턴을 스스로 인지하고 실시간 피드백 제어를 자율적으로 수행합니다.\n> - **연결성 및 네트워킹 (Connectivity)**: 기존 IoT는 단순 센서-서버 간 데이터 업로드 중심의 단방향 통신이었으나, 지능형 IoT는 초저지연 네트워킹(TSN, 5G URLLC)을 기반으로 설비 간 실시간 협업 및 분산 AI 오케스트레이션(Network by/for AI)을 수행합니다.\n> - **데이터 처리 방식 (Data Processing)**: 기존 IoT는 모든 원천 센서 데이터를 중앙 클라우드로 전송하여 사후 분석하는 '클라우드 집중형'이었으나, 지능형 IoT는 현장 설비 인근에서 실시간 초저지연 추론을 수행하는 '엣지 AI(Edge Computing)'와 심층 학습을 수행하는 클라우드가 유기적으로 결합된 분산 협업형 구조를 취합니다.\n\n---", "explanation": "배점 20~25점 고배점 핵심 문항입니다. 구조도, 비교표, 필수 기술 키워드를 서술형 답안에 빠짐없이 작성해야 합니다.", "rendered_answer": "<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\"><strong>1. 지능형 IoT (AIoT)의 개념</strong>  </div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">지능형 IoT는 센서 및 디바이스를 연결하여 단순히 원격 모니터링을 수행하던 기존 사물인터넷(IoT)에 인공지능(AI)의 학습 및 추론 알고리즘을 결합한 차세대 시스템입니다. 데이터 수집 단계부터 엣지/클라우드에 이르기까지 지능화된 처리를 수행하여, 외부 제어 명령 없이도 현장 환경을 스스로 분석하고 최적의 제어를 내리는 '자율 사물(Autonomous Things)'을 지향합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> <strong>2. 3대 핵심 차이점 비교</strong></div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>자율성 (Autonomy)</strong>: 기존 IoT는 수집된 데이터를 사람이 관제 화면(대시보드)으로 보고 수동으로 제어하는 '수동적 모니터링'에 그쳤으나, 지능형 IoT는 AI 알고리즘이 설비 이상이나 패턴을 스스로 인지하고 실시간 피드백 제어를 자율적으로 수행합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>연결성 및 네트워킹 (Connectivity)</strong>: 기존 IoT는 단순 센서-서버 간 데이터 업로드 중심의 단방향 통신이었으나, 지능형 IoT는 초저지연 네트워킹(TSN, 5G URLLC)을 기반으로 설비 간 실시간 협업 및 분산 AI 오케스트레이션(Network by/for AI)을 수행합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>데이터 처리 방식 (Data Processing)</strong>: 기존 IoT는 모든 원천 센서 데이터를 중앙 클라우드로 전송하여 사후 분석하는 '클라우드 집중형'이었으나, 지능형 IoT는 현장 설비 인근에서 실시간 초저지연 추론을 수행하는 '엣지 AI(Edge Computing)'와 심층 학습을 수행하는 클라우드가 유기적으로 결합된 분산 협업형 구조를 취합니다.</div><br><br>---"}, {"id": 52, "type": "essay", "week": "2주차", "topic": "시간 민감형 네트워킹(TSN)과 표준 이더넷 한계", "question": "스마트 팩토리 제어 통신에서 '시간 민감형 네트워킹(TSN)'이 필수적으로 요구되는 배경을 기존 표준 이더넷(Standard Ethernet)의 구조적 한계와 연관 지어 서술하시오.", "answer": "> **1. 기존 표준 이더넷의 구조적 한계**  \n> 기존의 표준 사무용 이더넷(IEEE 802.3)은 전송 효율을 극대화하는 **최선 노력(Best-Effort)** 방식을 채택하고 있습니다. 스위치 버퍼가 가득 차거나 네트워크 트래픽이 일시적으로 집중될 경우, 패킷 전송 순서가 밀리거나 지연 시간이 불규칙하게 변하는 **지터(Jitter)** 현상이 발생하며, 심한 경우 패킷이 폐기(Drop)될 수 있습니다. 즉, 패킷이 \"정확히 몇 밀리초 이내에 도착한다\"는 **결정론적 전송(Determinism)**을 수학적으로 보장하지 못합니다.\n>\n> **2. TSN의 도입 필요성 및 해결 메커니즘**  \n> 스마트 팩토리의 정밀 가공 머신, 고속 프레스, 다축 협동 로봇 제어는 제어 주기가 수 마이크로초~수 밀리초($\\mu s \\sim ms$) 단위로 극도로 정밀하며, 패킷 하나가 정해진 골든타임을 넘겨 도착하면 설비 충돌이나 제품 파손 등 치명적 사고를 유발합니다.  \n> 이를 해결하기 위해 표준 이더넷과 하위 호환성을 유지하면서, **IEEE 802.1 표준군(TSN)**을 도입합니다:\n> - **시각 동기화 (IEEE 802.1AS)**: 네트워크 상의 모든 스위치와 장비의 시계를 나노초 단위로 완벽히 일치시킵니다.\n> - **시간 인식 셰이퍼 (IEEE 802.1Qbv, Time-Aware Shaper)**: 시간을 마이크로초 단위 타임슬롯(Time Slot)으로 분할하여, 결정론적 실시간 제어 트래픽 전용 통로(Green Wave)를 강제로 열어주고 일반 데이터 트래픽을 일시 차단함으로써 **무충돌(Zero Jitter), 초저지연 결정론적 전송**을 완벽히 보장합니다.\n\n---", "explanation": "배점 20~25점 고배점 핵심 문항입니다. 구조도, 비교표, 필수 기술 키워드를 서술형 답안에 빠짐없이 작성해야 합니다.", "rendered_answer": "<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\"><strong>1. 기존 표준 이더넷의 구조적 한계</strong>  </div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">기존의 표준 사무용 이더넷(IEEE 802.3)은 전송 효율을 극대화하는 <strong>최선 노력(Best-Effort)</strong> 방식을 채택하고 있습니다. 스위치 버퍼가 가득 차거나 네트워크 트래픽이 일시적으로 집중될 경우, 패킷 전송 순서가 밀리거나 지연 시간이 불규칙하게 변하는 <strong>지터(Jitter)</strong> 현상이 발생하며, 심한 경우 패킷이 폐기(Drop)될 수 있습니다. 즉, 패킷이 \"정확히 몇 밀리초 이내에 도착한다\"는 <strong>결정론적 전송(Determinism)</strong>을 수학적으로 보장하지 못합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> <strong>2. TSN의 도입 필요성 및 해결 메커니즘</strong>  </div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">스마트 팩토리의 정밀 가공 머신, 고속 프레스, 다축 협동 로봇 제어는 제어 주기가 수 마이크로초~수 밀리초($\\mu s \\sim ms$) 단위로 극도로 정밀하며, 패킷 하나가 정해진 골든타임을 넘겨 도착하면 설비 충돌이나 제품 파손 등 치명적 사고를 유발합니다.  </div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">이를 해결하기 위해 표준 이더넷과 하위 호환성을 유지하면서, <strong>IEEE 802.1 표준군(TSN)</strong>을 도입합니다:</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>시각 동기화 (IEEE 802.1AS)</strong>: 네트워크 상의 모든 스위치와 장비의 시계를 나노초 단위로 완벽히 일치시킵니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>시간 인식 셰이퍼 (IEEE 802.1Qbv, Time-Aware Shaper)</strong>: 시간을 마이크로초 단위 타임슬롯(Time Slot)으로 분할하여, 결정론적 실시간 제어 트래픽 전용 통로(Green Wave)를 강제로 열어주고 일반 데이터 트래픽을 일시 차단함으로써 <strong>무충돌(Zero Jitter), 초저지연 결정론적 전송</strong>을 완벽히 보장합니다.</div><br><br>---"}, {"id": 53, "type": "essay", "week": "3주차", "topic": "OSI 7계층 분리 목적과 캡슐화/역캡슐화", "question": "컴퓨터 네트워크의 OSI 7계층 참조 모델의 계층별 분리 목적과, 송신 측에서 수신 측으로 데이터가 전달될 때 일어나는 '캡슐화(Encapsulation)' 및 '역캡슐화(Decapsulation)' 과정을 단계별로 서술하시오.", "answer": "> **1. OSI 7계층 참조 모델의 분리 목적**  \n> 이기종 컴퓨터와 네트워크 장비 간의 원활한 상호 호환성을 확보하기 위해 통신 기능을 7개의 독립적인 모듈로 표준화한 것입니다. 각 계층이 독립되어 있으므로 특정 계층의 기술이나 프로토콜을 변경하더라도(예: Wi-Fi $\\rightarrow$ 이더넷 변경 시 상위 HTTP/TCP는 수정 불필요) 다른 계층에 영향을 주지 않아 유지보수와 시스템 확장이 용이합니다.\n>\n> **2. 캡슐화 (Encapsulation) 과정 (송신 측: 하향식)**  \n> 1. **응용/표현/세션 계층**: 사용자가 생성한 원본 메시지(Data)가 생성됩니다.\n> 2. **전송 계층 (Transport)**: 프로세스 식별을 위한 **출발지/목적지 포트 번호**, 순서 제어 번호를 담은 헤더를 추가하여 **세그먼트(Segment)**를 생성합니다.\n> 3. **네트워크 계층 (Network)**: 종단 간 논리적 라우팅을 위한 **출발지/목적지 IP 주소** 헤더를 추가하여 **패킷(Packet)**을 생성합니다.\n> 4. **데이터 링크 계층 (Data Link)**: 동일 물리 링크 내 전송을 위한 **출발지/목적지 MAC 주소** 헤더와 오류 검출용 트레일러(FCS)를 앞뒤로 붙여 **프레임(Frame)**을 완성합니다.\n> 5. **물리 계층 (Physical)**: 프레임을 전자기적/광학적 **비트 신호(Bits)**로 변환하여 케이블 또는 무선 매체로 방출합니다.\n>\n> **3. 역캡슐화 (Decapsulation) 과정 (수신 측: 상향식)**  \n> 수신 호스트는 물리 계층에서 수신한 비트열을 프레임으로 조립한 후, 계층을 거슬러 올라가면서 각 계층의 헤더(MAC $\\rightarrow$ IP $\\rightarrow$ Port)를 검사 및 제거하여 최종적으로 순수한 데이터만을 응용 프로세스에 전달합니다.\n\n---", "explanation": "배점 20~25점 고배점 핵심 문항입니다. 구조도, 비교표, 필수 기술 키워드를 서술형 답안에 빠짐없이 작성해야 합니다.", "rendered_answer": "<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\"><strong>1. OSI 7계층 참조 모델의 분리 목적</strong>  </div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">이기종 컴퓨터와 네트워크 장비 간의 원활한 상호 호환성을 확보하기 위해 통신 기능을 7개의 독립적인 모듈로 표준화한 것입니다. 각 계층이 독립되어 있으므로 특정 계층의 기술이나 프로토콜을 변경하더라도(예: Wi-Fi $\\rightarrow$ 이더넷 변경 시 상위 HTTP/TCP는 수정 불필요) 다른 계층에 영향을 주지 않아 유지보수와 시스템 확장이 용이합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> <strong>2. 캡슐화 (Encapsulation) 과정 (송신 측: 하향식)</strong>  </div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">1. <strong>응용/표현/세션 계층</strong>: 사용자가 생성한 원본 메시지(Data)가 생성됩니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">2. <strong>전송 계층 (Transport)</strong>: 프로세스 식별을 위한 <strong>출발지/목적지 포트 번호</strong>, 순서 제어 번호를 담은 헤더를 추가하여 <strong>세그먼트(Segment)</strong>를 생성합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">3. <strong>네트워크 계층 (Network)</strong>: 종단 간 논리적 라우팅을 위한 <strong>출발지/목적지 IP 주소</strong> 헤더를 추가하여 <strong>패킷(Packet)</strong>을 생성합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">4. <strong>데이터 링크 계층 (Data Link)</strong>: 동일 물리 링크 내 전송을 위한 <strong>출발지/목적지 MAC 주소</strong> 헤더와 오류 검출용 트레일러(FCS)를 앞뒤로 붙여 <strong>프레임(Frame)</strong>을 완성합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">5. <strong>물리 계층 (Physical)</strong>: 프레임을 전자기적/광학적 <strong>비트 신호(Bits)</strong>로 변환하여 케이블 또는 무선 매체로 방출합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> <strong>3. 역캡슐화 (Decapsulation) 과정 (수신 측: 상향식)</strong>  </div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">수신 호스트는 물리 계층에서 수신한 비트열을 프레임으로 조립한 후, 계층을 거슬러 올라가면서 각 계층의 헤더(MAC $\\rightarrow$ IP $\\rightarrow$ Port)를 검사 및 제거하여 최종적으로 순수한 데이터만을 응용 프로세스에 전달합니다.</div><br><br>---"}, {"id": 54, "type": "essay", "week": "3주차", "topic": "전송 계층 TCP vs UDP 4대 관점 비교", "question": "전송 계층(Transport Layer)의 핵심 프로토콜인 TCP와 UDP를 ① 연결 방식, ② 신뢰성 및 흐름 제어, ③ 헤더 오버헤드, ④ 제조 및 IoT 공정 적용 분야의 4가지 관점에서 상세히 비교 분석하시오.", "answer": "> **TCP와 UDP의 종합 비교 분석표**\n>\n> | 비교 항목 | TCP (Transmission Control Protocol) | UDP (User Datagram Protocol) |\n> | :--- | :--- | :--- |\n> | **① 연결 방식** | **연결 지향적 (Connection-oriented)**<br>통신 전 3-Way Handshake를 통해 가상 회선을 수립하고, 종료 시 4-Way Handshake 수행 | **비연결형 (Connectionless)**<br>사전 연결 수립 절차 없이 목적지 주소로 독립적인 데이터그램을 즉시 발송 |\n> | **② 신뢰성 및 제어** | **완전한 신뢰성 보장 (Reliable)**<br>확인 응답(ACK), 재전송(Timeout), 순서 보장 번호(Sequence No), 슬라이딩 윈도우 흐름 제어 및 혼잡 제어 탑재 | **비신뢰성 (Unreliable, Best-effort)**<br>ACK 및 재전송 메커니즘이 전혀 없음. 패킷 분실, 중복, 순서 역전이 발생할 수 있음 |\n> | **③ 헤더 오버헤드** | **최소 20바이트 이상 (무거움)**<br>복잡한 제어 필드로 인해 프로토콜 처리 지연이 발생함 | **고정 8바이트 (매우 가벼움)**<br>포트 번호, 길이, 체크섬만의 초경량 헤더로 지연이 극히 낮음 |\n> | **④ IoT/제조 적용** | **데이터 무손실이 절대적인 공정**<br>설비 설정 파라미터 전송, 펌웨어 업데이트, 데이터베이스 저장, OPC UA, MQTT 통신 | **실시간성이 우선이고 손실 용인되는 공정**<br>밀리초 주기 센서 브로드캐스트, 고속 진동 신호 모니터링, 공장 화상 감시 영상 스트리밍 |\n\n---", "explanation": "배점 20~25점 고배점 핵심 문항입니다. 구조도, 비교표, 필수 기술 키워드를 서술형 답안에 빠짐없이 작성해야 합니다.", "rendered_answer": "<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\"><strong>TCP와 UDP의 종합 비교 분석표</strong></div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> | 비교 항목 | TCP (Transmission Control Protocol) | UDP (User Datagram Protocol) |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| :--- | :--- | :--- |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>① 연결 방식</strong> | <strong>연결 지향적 (Connection-oriented)</strong><br>통신 전 3-Way Handshake를 통해 가상 회선을 수립하고, 종료 시 4-Way Handshake 수행 | <strong>비연결형 (Connectionless)</strong><br>사전 연결 수립 절차 없이 목적지 주소로 독립적인 데이터그램을 즉시 발송 |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>② 신뢰성 및 제어</strong> | <strong>완전한 신뢰성 보장 (Reliable)</strong><br>확인 응답(ACK), 재전송(Timeout), 순서 보장 번호(Sequence No), 슬라이딩 윈도우 흐름 제어 및 혼잡 제어 탑재 | <strong>비신뢰성 (Unreliable, Best-effort)</strong><br>ACK 및 재전송 메커니즘이 전혀 없음. 패킷 분실, 중복, 순서 역전이 발생할 수 있음 |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>③ 헤더 오버헤드</strong> | <strong>최소 20바이트 이상 (무거움)</strong><br>복잡한 제어 필드로 인해 프로토콜 처리 지연이 발생함 | <strong>고정 8바이트 (매우 가벼움)</strong><br>포트 번호, 길이, 체크섬만의 초경량 헤더로 지연이 극히 낮음 |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>④ IoT/제조 적용</strong> | <strong>데이터 무손실이 절대적인 공정</strong><br>설비 설정 파라미터 전송, 펌웨어 업데이트, 데이터베이스 저장, OPC UA, MQTT 통신 | <strong>실시간성이 우선이고 손실 용인되는 공정</strong><br>밀리초 주기 센서 브로드캐스트, 고속 진동 신호 모니터링, 공장 화상 감시 영상 스트리밍 |</div><br><br>---"}, {"id": 55, "type": "essay", "week": "4주차", "topic": "면허 대역 vs 비면허(ISM) 대역과 5G 특화망", "question": "산업용 무선 통신 기술에서 '면허 대역(Licensed Band)'과 '비면허 대역(Unlicensed / ISM Band)'의 특성을 비교하고, 최근 제조 공장에서 5G 특화망(이음 5G)을 독자적으로 구축하는 이유 3가지를 서술하시오.", "answer": "> **1. 면허 대역 vs 비면허 대역 비교**\n> - **면허 대역 (Licensed Band)**: 정부로부터 주파수 이용 권리를 배타적으로 할당받아 통신사가 독점 사용하는 대역(예: 공용 5G/LTE 대역). 외부 기기의 무단 전파 방사가 법적으로 금지되므로 **간섭이 전무하여 통신 품질과 신뢰성이 보장**되지만, 주파수 할당 비용 및 통신사 망 이용료가 발생합니다.\n> - **비면허 대역 (Unlicensed / ISM Band)**: 산업·과학·의료용(2.4GHz, 5GHz 등)으로 누구나 자유롭게 사용할 수 있도록 허용된 대역(Wi-Fi, Bluetooth, LoRa 등). 주파수 사용료가 없어 **구축 비용이 저렴**하지만, 동일 공간에 기기가 밀집하면 피할 수 없는 **전파 간섭과 채널 충돌이 발생하여 신뢰성 있는 실시간 제어가 불가능**합니다.\n>\n> **2. 공장에서 5G 특화망(이음 5G)을 독자적으로 구축하는 핵심 이유 3가지**\n> 1. **통제 불가능한 간섭 배제 및 초저지연(URLLC) 보장**: Wi-Fi 등 비면허 대역의 주파수 간섭을 원천 차단하고, 1ms 이하의 초저지연과 99.999% 이상의 고신뢰성을 확보하여 자율주행 AGV, 협동 로봇의 무선 제어를 안정화합니다.\n> 2. **기업 기밀 및 산업 보안 강화 (데이터 내부 완결성)**: 일반 통신사의 공용망을 거치지 않고 공장 부지 내에 독립적인 5G 코어(Core)와 기지국을 구축하므로, 공정 레시피, CAD 도면, 생산 센서 데이터가 외부로 유출되지 않는 완벽한 물리적 보안을 달성합니다.\n> 3. **맞춤형 전송 자원 할당 (업링크 특화)**: 일반 이동통신망은 다운로드(스마트폰 동영상 시청 등) 비중이 80% 이상으로 설계되지만, 스마트 팩토리는 수천 대의 센서와 비전 카메라가 서버로 데이터를 쏘아 올리는 **업링크(Uplink) 트래픽이 80% 이상**입니다. 특화망은 업링크 비중을 임의로 대폭 높이는 맞춤형 슬롯 설계가 가능합니다.\n\n---", "explanation": "배점 20~25점 고배점 핵심 문항입니다. 구조도, 비교표, 필수 기술 키워드를 서술형 답안에 빠짐없이 작성해야 합니다.", "rendered_answer": "<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\"><strong>1. 면허 대역 vs 비면허 대역 비교</strong></div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>면허 대역 (Licensed Band)</strong>: 정부로부터 주파수 이용 권리를 배타적으로 할당받아 통신사가 독점 사용하는 대역(예: 공용 5G/LTE 대역). 외부 기기의 무단 전파 방사가 법적으로 금지되므로 <strong>간섭이 전무하여 통신 품질과 신뢰성이 보장</strong>되지만, 주파수 할당 비용 및 통신사 망 이용료가 발생합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>비면허 대역 (Unlicensed / ISM Band)</strong>: 산업·과학·의료용(2.4GHz, 5GHz 등)으로 누구나 자유롭게 사용할 수 있도록 허용된 대역(Wi-Fi, Bluetooth, LoRa 등). 주파수 사용료가 없어 <strong>구축 비용이 저렴</strong>하지만, 동일 공간에 기기가 밀집하면 피할 수 없는 <strong>전파 간섭과 채널 충돌이 발생하여 신뢰성 있는 실시간 제어가 불가능</strong>합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> <strong>2. 공장에서 5G 특화망(이음 5G)을 독자적으로 구축하는 핵심 이유 3가지</strong></div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">1. <strong>통제 불가능한 간섭 배제 및 초저지연(URLLC) 보장</strong>: Wi-Fi 등 비면허 대역의 주파수 간섭을 원천 차단하고, 1ms 이하의 초저지연과 99.999% 이상의 고신뢰성을 확보하여 자율주행 AGV, 협동 로봇의 무선 제어를 안정화합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">2. <strong>기업 기밀 및 산업 보안 강화 (데이터 내부 완결성)</strong>: 일반 통신사의 공용망을 거치지 않고 공장 부지 내에 독립적인 5G 코어(Core)와 기지국을 구축하므로, 공정 레시피, CAD 도면, 생산 센서 데이터가 외부로 유출되지 않는 완벽한 물리적 보안을 달성합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">3. <strong>맞춤형 전송 자원 할당 (업링크 특화)</strong>: 일반 이동통신망은 다운로드(스마트폰 동영상 시청 등) 비중이 80% 이상으로 설계되지만, 스마트 팩토리는 수천 대의 센서와 비전 카메라가 서버로 데이터를 쏘아 올리는 <strong>업링크(Uplink) 트래픽이 80% 이상</strong>입니다. 특화망은 업링크 비중을 임의로 대폭 높이는 맞춤형 슬롯 설계가 가능합니다.</div><br><br>---"}, {"id": 56, "type": "essay", "week": "5주차", "topic": "MQTT Pub/Sub 아키텍처와 3대 디커플링 이점", "question": "스마트 팩토리 데이터 수집의 핵심 미들웨어 프로토콜인 MQTT의 '발행/구독(Publish/Subscribe)' 아키텍처를 정의하고, 전통적 1:1 클라이언트-서버 모델 대비 갖는 3대 디커플링(Decoupling) 이점을 상세히 서술하시오.", "answer": "```mermaid\nflowchart LR\n    subgraph Publishers[\"발행자 (Publishers)\"]\n        P1[\"온도 센서\"]\n        P2[\"진동 센서\"]\n    end\n    subgraph Broker[\"중앙 메시지 브로커 (MQTT Broker)\"]\n        B[\"Topic 관리 & 메시지 라우팅\"]\n    end\n    subgraph Subscribers[\"구독자 (Subscribers)\"]\n        S1[\"모니터링 대시보드\"]\n        S2[\"AI 이상탐지 서버\"]\n        S3[\"시계열 DB (InfluxDB)\"]\n    end\n\n    P1 -->|\"Publish: plant/press/temp\"| B\n    P2 -->|\"Publish: plant/press/vib\"| B\n    B -->|\"Subscribe: plant/+/temp\"| S1\n    B -->|\"Subscribe: plant/#\"| S2\n    B -->|\"Subscribe: plant/#\"| S3\n```\n\n> **1. MQTT 발행/구독(Pub/Sub) 아키텍처의 동작 구조**  \n> 데이터 송신자인 **발행자(Publisher)**와 수신자인 **구독자(Subscriber)**가 직접 IP 연결을 맺지 않고, 중앙의 **메시지 브로커(Message Broker)**를 중계자로 둡니다. 발행자는 특정 주제 분류 체계인 **토픽(Topic)**에 메시지를 게시(Publish)하고, 브로커는 해당 토픽을 사전에 구독(Subscribe)하고 있는 모든 클라이언트에게 메시지를 전달(1:N 브로드캐스트/멀티캐스트)하는 비동기 메시징 구조입니다.\n>\n> **2. 3대 디커플링 (Decoupling, 결합도 분리) 이점**\n> 1. **공간적 분리 (Space Decoupling)**: 발행자와 구독자는 서로의 IP 주소나 포트 번호를 전혀 알 필요가 없으며, 오직 브로커의 주소만 알면 됩니다. 장비의 네트워크 위치가 변경되거나 교체되어도 전체 시스템에 아무런 영향이 없습니다.\n> 2. **시간적 분리 (Time Decoupling)**: 발행자와 구독자가 동시에 네트워크에 온라인 상태로 활성화되어 있을 필요가 없습니다. 브로커가 메시지를 버퍼링(QoS 1/2 또는 Retain 메시지)하여 구독자가 추후 접속했을 때 안전하게 전달할 수 있습니다.\n> 3. **동기화 분리 (Synchronization Decoupling)**: 발행자는 메시지를 브로커로 던진 직후 구독자의 처리 완료를 기다리지 않고 곧바로 자신의 다음 작업을 비동기적으로 수행합니다. 수신 측의 처리 지연이 송신 설비의 공정 지연으로 전파되지 않습니다.\n\n---", "explanation": "배점 20~25점 고배점 핵심 문항입니다. 구조도, 비교표, 필수 기술 키워드를 서술형 답안에 빠짐없이 작성해야 합니다.", "rendered_answer": "<div class=\"mermaid\">\nflowchart LR\n    subgraph Publishers[\"발행자 (Publishers)\"]\n        P1[\"온도 센서\"]\n        P2[\"진동 센서\"]\n    end\n    subgraph Broker[\"중앙 메시지 브로커 (MQTT Broker)\"]\n        B[\"Topic 관리 & 메시지 라우팅\"]\n    end\n    subgraph Subscribers[\"구독자 (Subscribers)\"]\n        S1[\"모니터링 대시보드\"]\n        S2[\"AI 이상탐지 서버\"]\n        S3[\"시계열 DB (InfluxDB)\"]\n    end<br><br>    P1 -->|\"Publish: plant/press/temp\"| B\n    P2 -->|\"Publish: plant/press/vib\"| B\n    B -->|\"Subscribe: plant/+/temp\"| S1\n    B -->|\"Subscribe: plant/#\"| S2\n    B -->|\"Subscribe: plant/#\"| S3\n</div><br><br><div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\"><strong>1. MQTT 발행/구독(Pub/Sub) 아키텍처의 동작 구조</strong>  </div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">데이터 송신자인 <strong>발행자(Publisher)</strong>와 수신자인 <strong>구독자(Subscriber)</strong>가 직접 IP 연결을 맺지 않고, 중앙의 <strong>메시지 브로커(Message Broker)</strong>를 중계자로 둡니다. 발행자는 특정 주제 분류 체계인 <strong>토픽(Topic)</strong>에 메시지를 게시(Publish)하고, 브로커는 해당 토픽을 사전에 구독(Subscribe)하고 있는 모든 클라이언트에게 메시지를 전달(1:N 브로드캐스트/멀티캐스트)하는 비동기 메시징 구조입니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> <strong>2. 3대 디커플링 (Decoupling, 결합도 분리) 이점</strong></div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">1. <strong>공간적 분리 (Space Decoupling)</strong>: 발행자와 구독자는 서로의 IP 주소나 포트 번호를 전혀 알 필요가 없으며, 오직 브로커의 주소만 알면 됩니다. 장비의 네트워크 위치가 변경되거나 교체되어도 전체 시스템에 아무런 영향이 없습니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">2. <strong>시간적 분리 (Time Decoupling)</strong>: 발행자와 구독자가 동시에 네트워크에 온라인 상태로 활성화되어 있을 필요가 없습니다. 브로커가 메시지를 버퍼링(QoS 1/2 또는 Retain 메시지)하여 구독자가 추후 접속했을 때 안전하게 전달할 수 있습니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">3. <strong>동기화 분리 (Synchronization Decoupling)</strong>: 발행자는 메시지를 브로커로 던진 직후 구독자의 처리 완료를 기다리지 않고 곧바로 자신의 다음 작업을 비동기적으로 수행합니다. 수신 측의 처리 지연이 송신 설비의 공정 지연으로 전파되지 않습니다.</div><br><br>---"}, {"id": 57, "type": "essay", "week": "5주차", "topic": "MQTT QoS 0/1/2 핸드셰이크와 공정별 시나리오", "question": "MQTT의 3단계 서비스 품질(QoS 0, QoS 1, QoS 2)의 패킷 핸드셰이크 메커니즘을 비교하고, 각 레벨이 스마트 팩토리 제조 공정의 어떤 데이터 수집 환경에 가장 적합한지 구체적 시나리오를 들어 서술하시오.", "answer": "> **1. MQTT QoS 3단계 핸드셰이크 메커니즘**\n> - **QoS 0 (At most once, 최대 1회)**: 송신자가 `PUBLISH` 패킷을 1회 전송하면 끝납니다. 확인 응답(ACK)이 없으므로 네트워크가 끊기면 유실됩니다.\n> - **QoS 1 (At least once, 최소 1회)**: 송신자가 `PUBLISH`를 보내고, 수신자는 수신 완료 확인인 `PUBACK`을 회신합니다. 타임아웃 내에 `PUBACK`이 오지 않으면 재전송하므로 유실은 없으나, 네트워크 지연 시 **중복 수신**이 발생할 수 있습니다.\n> - **QoS 2 (Exactly once, 정확히 1회)**: 4단계 핸드셰이크를 거칩니다.\n>   1. 송신자 $\\rightarrow$ 수신자: `PUBLISH` 전송\n>   2. 수신자 $\\rightarrow$ 송신자: 수신 등록 확인인 `PUBREC` (Publish Received) 회신\n>   3. 송신자 $\\rightarrow$ 수신자: 메시지 방출 확인인 `PUBREL` (Publish Release) 전송\n>   4. 수신자 $\\rightarrow$ 송신자: 최종 처리 완료인 `PUBCOMP` (Publish Complete) 회신\n>   $\\rightarrow$ 메시지 식별자(Packet ID)를 양측에서 추적하여 **손실과 중복을 완벽히 방지**합니다.\n>\n> **2. 스마트 팩토리 공정별 적용 시나리오**\n> - **QoS 0 적용**: **고주기 단순 센서 모니터링 (온도, 습도, 기압 등)**. 데이터가 초당 수십 회씩 올라오므로 1~2개 패킷이 유실되어도 곧바로 다음 최신 값이 들어오며, 네트워크 대역폭 절약이 최우선일 때 적합합니다.\n> - **QoS 1 적용**: **일반 설비 가동 상태 로그 및 생산 수량 카운팅**. 데이터 유실은 절대 허용되지 않으나, 수신 측(DB 또는 앱)에서 타임스탬프나 시퀀스 번호로 중복을 쉽게 필터링(Deduplication)할 수 있는 경우에 적합합니다.\n> - **QoS 2 적용**: **비상 긴급 정지 명령, 설비 레시피 파라미터 변경, 작업 지시 오더, 불량품 배출 밸브 제어**. 중복 실행 시 기계가 오작동하거나 2중 결제가 발생하면 치명적인 손실이 일어나는 필수 제어 명령에 적용합니다.\n\n---", "explanation": "배점 20~25점 고배점 핵심 문항입니다. 구조도, 비교표, 필수 기술 키워드를 서술형 답안에 빠짐없이 작성해야 합니다.", "rendered_answer": "<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\"><strong>1. MQTT QoS 3단계 핸드셰이크 메커니즘</strong></div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>QoS 0 (At most once, 최대 1회)</strong>: 송신자가 `PUBLISH` 패킷을 1회 전송하면 끝납니다. 확인 응답(ACK)이 없으므로 네트워크가 끊기면 유실됩니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>QoS 1 (At least once, 최소 1회)</strong>: 송신자가 `PUBLISH`를 보내고, 수신자는 수신 완료 확인인 `PUBACK`을 회신합니다. 타임아웃 내에 `PUBACK`이 오지 않으면 재전송하므로 유실은 없으나, 네트워크 지연 시 <strong>중복 수신</strong>이 발생할 수 있습니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>QoS 2 (Exactly once, 정확히 1회)</strong>: 4단계 핸드셰이크를 거칩니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">1. 송신자 $\\rightarrow$ 수신자: `PUBLISH` 전송</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">2. 수신자 $\\rightarrow$ 송신자: 수신 등록 확인인 `PUBREC` (Publish Received) 회신</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">3. 송신자 $\\rightarrow$ 수신자: 메시지 방출 확인인 `PUBREL` (Publish Release) 전송</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">4. 수신자 $\\rightarrow$ 송신자: 최종 처리 완료인 `PUBCOMP` (Publish Complete) 회신</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">$\\rightarrow$ 메시지 식별자(Packet ID)를 양측에서 추적하여 <strong>손실과 중복을 완벽히 방지</strong>합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> <strong>2. 스마트 팩토리 공정별 적용 시나리오</strong></div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>QoS 0 적용</strong>: <strong>고주기 단순 센서 모니터링 (온도, 습도, 기압 등)</strong>. 데이터가 초당 수십 회씩 올라오므로 1~2개 패킷이 유실되어도 곧바로 다음 최신 값이 들어오며, 네트워크 대역폭 절약이 최우선일 때 적합합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>QoS 1 적용</strong>: <strong>일반 설비 가동 상태 로그 및 생산 수량 카운팅</strong>. 데이터 유실은 절대 허용되지 않으나, 수신 측(DB 또는 앱)에서 타임스탬프나 시퀀스 번호로 중복을 쉽게 필터링(Deduplication)할 수 있는 경우에 적합합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>QoS 2 적용</strong>: <strong>비상 긴급 정지 명령, 설비 레시피 파라미터 변경, 작업 지시 오더, 불량품 배출 밸브 제어</strong>. 중복 실행 시 기계가 오작동하거나 2중 결제가 발생하면 치명적인 손실이 일어나는 필수 제어 명령에 적용합니다.</div><br><br>---"}, {"id": 58, "type": "essay", "week": "6주차", "topic": "OPC Classic 3대 한계와 OPC UA 아키텍처 혁신", "question": "산업 자동화의 기존 통신 표준인 'OPC Classic'의 3대 한계점을 기술하고, 이를 'OPC UA(Unified Architecture)'가 어떠한 아키텍처 혁신을 통해 극복했는지 비교 서술하시오.", "answer": "> **1. OPC Classic의 3대 기술적 한계**\n> 1. **MS Windows DCOM 종속성**: 마이크로소프트 윈도우 OS의 독점 RPC 기술인 DCOM(Distributed COM)에 기반을 두어, 리눅스, 안드로이드, 임베디드 PLC, 클라우드 환경에서는 동작이 불가능했습니다.\n> 2. **보안 취약성 및 방화벽 통과 불가**: DCOM은 135번 포트 접속 후 동적으로 수천 번대 포트를 무작위 협상하여 사용하므로 방화벽 포트를 거의 전면 개방해야 했고, 암호화나 인증 메커니즘이 없어 현대 사이버 보안 기준을 충족하지 못했습니다.\n> 3. **단순 태그(Tag) 기반의 의미론적(Semantic) 정보 부재**: 데이터가 단순한 평면적 이름과 값(Tag: `Pressure_01 = 12.5`)으로만 전달되어, 이것이 어떤 설비의 어떤 부품에서 측정된 것인지, 물리 단위가 무엇인지 구조적 의미를 상위 시스템이 스스로 해석할 수 없었습니다.\n>\n> **2. OPC UA의 아키텍처 혁신 및 해결 방안**\n> 1. **완벽한 크로스 플랫폼 독립성**: DCOM을 완전히 제거하고 C/C++, Java, Python, .NET 등 다양한 언어로 재작성된 통신 스택을 지원하여 Windows뿐만 아니라 Linux, 실시간 OS(RTOS), 임베디드 칩셋에서도 동일하게 동작합니다.\n> 2. **단일 포트 바이너리 통신 및 다계층 통합 보안**: 기본적으로 단일 정적 포트(기본 `4840` 포트)의 TCP 바이너리(`opc.tcp://`) 및 HTTPS 웹소켓을 지원하여 방화벽 친화적입니다. 또한 X.509 전자서명 인증서 기반 장비 인증, 사용자 인증, TLS/AES-256 종단간 메시지 암호화를 내장하여 강력한 보안을 제공합니다.\n> 3. **객체 지향적 정보 모델링 (Information Modeling)**: 단순 태그를 넘어 노드(Node)와 참조(Reference)로 구성된 주소 공간(Address Space)을 제공하여, 설비의 상속, 구조, 데이터 타입, 물리 단위, 제어 메서드를 하나의 통합된 객체 그래프로 상위 AI/IT 시스템에 풍부하게 노출할 수 있습니다.\n\n---", "explanation": "배점 20~25점 고배점 핵심 문항입니다. 구조도, 비교표, 필수 기술 키워드를 서술형 답안에 빠짐없이 작성해야 합니다.", "rendered_answer": "<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\"><strong>1. OPC Classic의 3대 기술적 한계</strong></div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">1. <strong>MS Windows DCOM 종속성</strong>: 마이크로소프트 윈도우 OS의 독점 RPC 기술인 DCOM(Distributed COM)에 기반을 두어, 리눅스, 안드로이드, 임베디드 PLC, 클라우드 환경에서는 동작이 불가능했습니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">2. <strong>보안 취약성 및 방화벽 통과 불가</strong>: DCOM은 135번 포트 접속 후 동적으로 수천 번대 포트를 무작위 협상하여 사용하므로 방화벽 포트를 거의 전면 개방해야 했고, 암호화나 인증 메커니즘이 없어 현대 사이버 보안 기준을 충족하지 못했습니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">3. <strong>단순 태그(Tag) 기반의 의미론적(Semantic) 정보 부재</strong>: 데이터가 단순한 평면적 이름과 값(Tag: `Pressure_01 = 12.5`)으로만 전달되어, 이것이 어떤 설비의 어떤 부품에서 측정된 것인지, 물리 단위가 무엇인지 구조적 의미를 상위 시스템이 스스로 해석할 수 없었습니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> <strong>2. OPC UA의 아키텍처 혁신 및 해결 방안</strong></div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">1. <strong>완벽한 크로스 플랫폼 독립성</strong>: DCOM을 완전히 제거하고 C/C++, Java, Python, .NET 등 다양한 언어로 재작성된 통신 스택을 지원하여 Windows뿐만 아니라 Linux, 실시간 OS(RTOS), 임베디드 칩셋에서도 동일하게 동작합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">2. <strong>단일 포트 바이너리 통신 및 다계층 통합 보안</strong>: 기본적으로 단일 정적 포트(기본 `4840` 포트)의 TCP 바이너리(`opc.tcp://`) 및 HTTPS 웹소켓을 지원하여 방화벽 친화적입니다. 또한 X.509 전자서명 인증서 기반 장비 인증, 사용자 인증, TLS/AES-256 종단간 메시지 암호화를 내장하여 강력한 보안을 제공합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">3. <strong>객체 지향적 정보 모델링 (Information Modeling)</strong>: 단순 태그를 넘어 노드(Node)와 참조(Reference)로 구성된 주소 공간(Address Space)을 제공하여, 설비의 상속, 구조, 데이터 타입, 물리 단위, 제어 메서드를 하나의 통합된 객체 그래프로 상위 AI/IT 시스템에 풍부하게 노출할 수 있습니다.</div><br><br>---"}, {"id": 59, "type": "essay", "week": "7주차", "topic": "OPC UA 정보 모델 (주소공간, 8대 노드클래스, 참조)", "question": "OPC UA 정보 모델(Information Model)의 핵심 요소인 ① 주소 공간(Address Space), ② 기본 8대 노드 클래스(NodeClass)의 인스턴스-타입 관계, ③ 참조(Reference)의 역할을 체계적으로 설명하시오.", "answer": "> **1. 주소 공간 (Address Space)**  \n> OPC UA 서버가 외부 클라이언트에게 제공하는 가상의 객체 지향 데이터베이스입니다. 서버 내부의 물리적 장비, 가공 공정, 센서 값, 실행 메서드 등 모든 자산이 **노드(Node)**라는 표준 블록으로 추상화되어 그물망(Network/Graph) 형태로 상호 연결된 논리적 집합체입니다.\n>\n> **2. 기본 8대 노드 클래스 (NodeClass)의 인스턴스-타입 관계**  \n> 노드는 기능과 메타데이터 정의에 따라 8가지 클래스로 엄격히 분류됩니다:\n>\n> | 구분 | 4대 인스턴스 노드 (Instance Nodes) | 4대 타입 노드 (Type Definition Nodes) |\n> | :--- | :--- | :--- |\n> | **객체** | **Object**<br>(실제 물리 설비, 센서 모듈, 폴더 등 복합 엔티티) | **ObjectType**<br>(객체의 설계 템플릿/클래스, 예: `PumpType`, `MotorType`) |\n> | **데이터** | **Variable**<br>(실제 측정값이나 설정 파라미터, 예: `Temperature=85.2`) | **VariableType**<br>(변수의 속성 정의 템플릿, 예: `AnalogItemType`) |\n> | **기능/관계** | **Method**<br>(클라이언트가 원격 호출하는 실행 함수, 예: `Start()`) | **ReferenceType**<br>(노드 간 관계의 종류 정의, 예: `HasComponent`, `Organizes`) |\n> | **뷰/타입** | **View**<br>(주소공간 전체 중 특정 목적을 위해 필터링한 부분 집합) | **DataType**<br>(변수 값의 원시 데이터 타입 정의, 예: `Int32`, `Float`, `String`) |\n>\n> $\\rightarrow$ 인스턴스 노드는 `HasTypeDefinition` 참조를 통해 반드시 자신의 뼈대가 되는 타입 노드와 연결되어 객체지향적 타입 안전성을 보장합니다.\n>\n> **3. 참조 (Reference)의 역할**  \n> 주소 공간 내의 노드와 노드를 의미론적으로 이어주는 관계선(Link)입니다.\n> - **참조의 특성**: 방향성(Source $\\rightarrow$ Target)을 가지며, 반대 방향(Inverse) 이름도 함께 정의됩니다.\n> - **계층적 참조 (Hierarchical)**: 부모-자식의 포함 관계를 나타냅니다 (예: 폴더 안의 파일 관계는 `Organizes`, 설비와 그 부품 센서의 관계는 `HasComponent`, 설비와 그 상태 변수의 관계는 `HasProperty`).\n> - **비계층적 참조 (Non-Hierarchical)**: 수평적 관계나 흐름을 나타냅니다 (예: 인스턴스와 타입의 연결 `HasTypeDefinition`, 파이프 라인 연결 등).\n\n---", "explanation": "배점 20~25점 고배점 핵심 문항입니다. 구조도, 비교표, 필수 기술 키워드를 서술형 답안에 빠짐없이 작성해야 합니다.", "rendered_answer": "<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\"><strong>1. 주소 공간 (Address Space)</strong>  </div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">OPC UA 서버가 외부 클라이언트에게 제공하는 가상의 객체 지향 데이터베이스입니다. 서버 내부의 물리적 장비, 가공 공정, 센서 값, 실행 메서드 등 모든 자산이 <strong>노드(Node)</strong>라는 표준 블록으로 추상화되어 그물망(Network/Graph) 형태로 상호 연결된 논리적 집합체입니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> <strong>2. 기본 8대 노드 클래스 (NodeClass)의 인스턴스-타입 관계</strong>  </div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">노드는 기능과 메타데이터 정의에 따라 8가지 클래스로 엄격히 분류됩니다:</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> | 구분 | 4대 인스턴스 노드 (Instance Nodes) | 4대 타입 노드 (Type Definition Nodes) |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| :--- | :--- | :--- |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>객체</strong> | <strong>Object</strong><br>(실제 물리 설비, 센서 모듈, 폴더 등 복합 엔티티) | <strong>ObjectType</strong><br>(객체의 설계 템플릿/클래스, 예: `PumpType`, `MotorType`) |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>데이터</strong> | <strong>Variable</strong><br>(실제 측정값이나 설정 파라미터, 예: `Temperature=85.2`) | <strong>VariableType</strong><br>(변수의 속성 정의 템플릿, 예: `AnalogItemType`) |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>기능/관계</strong> | <strong>Method</strong><br>(클라이언트가 원격 호출하는 실행 함수, 예: `Start()`) | <strong>ReferenceType</strong><br>(노드 간 관계의 종류 정의, 예: `HasComponent`, `Organizes`) |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>뷰/타입</strong> | <strong>View</strong><br>(주소공간 전체 중 특정 목적을 위해 필터링한 부분 집합) | <strong>DataType</strong><br>(변수 값의 원시 데이터 타입 정의, 예: `Int32`, `Float`, `String`) |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> $\\rightarrow$ 인스턴스 노드는 `HasTypeDefinition` 참조를 통해 반드시 자신의 뼈대가 되는 타입 노드와 연결되어 객체지향적 타입 안전성을 보장합니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> <strong>3. 참조 (Reference)의 역할</strong>  </div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">주소 공간 내의 노드와 노드를 의미론적으로 이어주는 관계선(Link)입니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>참조의 특성</strong>: 방향성(Source $\\rightarrow$ Target)을 가지며, 반대 방향(Inverse) 이름도 함께 정의됩니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>계층적 참조 (Hierarchical)</strong>: 부모-자식의 포함 관계를 나타냅니다 (예: 폴더 안의 파일 관계는 `Organizes`, 설비와 그 부품 센서의 관계는 `HasComponent`, 설비와 그 상태 변수의 관계는 `HasProperty`).</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>비계층적 참조 (Non-Hierarchical)</strong>: 수평적 관계나 흐름을 나타냅니다 (예: 인스턴스와 타입의 연결 `HasTypeDefinition`, 파이프 라인 연결 등).</div><br><br>---"}, {"id": 60, "type": "essay", "week": "7주차 (실습과제)", "topic": "사출성형기 OPC UA 주소공간 노드 객체 모델링 설계", "question": "[실습 과제 연계 출제 / 고배점 설계형] 스마트 팩토리의 '사출 성형기(Injection Molding Machine)'를 OPC UA 주소 공간 상에 표준 객체 정보 모델로 구현하고자 한다. 설비의 최상위 객체(Object), 센서 변수(Variable), 제어 메서드(Method), 그리고 이들 간의 계층적 참조(Reference: HasComponent, Organizes 등)를 포함하는 주소 공간 노드 구조도를 그리고, 각 노드의 핵심 속성(NodeId, BrowseName, DataType, Value)을 명세하시오.", "answer": "```mermaid\ngraph TD\n    Root[\"Root (i=84)\"] -->|\"Organizes\"| Objects[\"ObjectsFolder (i=85)\"]\n    Objects -->|\"Organizes\"| Machine[\"InjectionMoldingMachine1<br>[Object: ns=2;s=IMM1]\"]\n    \n    Machine -->|\"HasComponent\"| Temp[\"BarrelTemperature<br>[Variable: ns=2;s=IMM1.Temp]\"]\n    Machine -->|\"HasComponent\"| Pressure[\"InjectionPressure<br>[Variable: ns=2;s=IMM1.Pressure]\"]\n    Machine -->|\"HasComponent\"| State[\"MachineState<br>[Variable: ns=2;s=IMM1.State]\"]\n    Machine -->|\"HasComponent\"| StartMethod[\"StartInjection()<br>[Method: ns=2;s=IMM1.Start]\"]\n    Machine -->|\"HasComponent\"| StopMethod[\"EmergencyStop()<br>[Method: ns=2;s=IMM1.Stop]\"]\n    \n    Machine -.->|\"HasTypeDefinition\"| MachineType[\"InjectionMoldingMachineType<br>[ObjectType]\"]\n```\n\n> **1. 노드별 상세 설계 명세서**\n>\n> | 노드 명칭 (BrowseName) | NodeClass | NodeId (규격 예시) | DataType | 초기값/설명 | 부모 노드와의 참조 관계 (Reference) |\n> | :--- | :---: | :--- | :---: | :--- | :--- |\n> | **Objects** | Object | `ns=0;i=85` | - | 최상위 표준 객체 폴더 | `Root` 노드와 `Organizes` 관계 |\n> | **InjectionMoldingMachine1** | **Object** | `ns=2;s=Factory.Line1.IMM1` | - | 1호 사출성형기 설비 본체 인스턴스 | `Objects` 폴더와 `Organizes` 관계<br>(타입: `HasTypeDefinition` $\\rightarrow$ `IMMType`) |\n> | **BarrelTemperature** | **Variable** | `ns=2;s=IMM1.BarrelTemp` | `Double` | 현재 배럴 온도 (`210.5` ℃) | `IMM1`과 **`HasComponent`** 관계 |\n> | **InjectionPressure** | **Variable** | `ns=2;s=IMM1.Pressure` | `Double` | 현재 사출 압력 (`140.2` bar) | `IMM1`과 **`HasComponent`** 관계 |\n> | **MachineState** | **Variable** | `ns=2;s=IMM1.State` | `String` | 설비 동작 상태 (`\"RUNNING\"`) | `IMM1`과 **`HasComponent`** 관계 |\n> | **StartInjection** | **Method** | `ns=2;s=IMM1.Start` | - | 사출 공정 개시 원격 함수 (입력: `CycleCount`, 출력: `Success`) | `IMM1`과 **`HasComponent`** 관계 |\n> | **EmergencyStop** | **Method** | `ns=2;s=IMM1.EmergencyStop` | - | 비상 정지 원격 제어 함수 | `IMM1`과 **`HasComponent`** 관계 |\n>\n> **2. 설계 구조 설명 및 배점 포인트**\n> - **계층 구조 형성**: 설비 객체인 `InjectionMoldingMachine1`을 부모로 두고, 물리적 센서 측정값 변수(`BarrelTemperature`, `InjectionPressure`, `MachineState`)와 제어 함수(`StartInjection`, `EmergencyStop`)를 모두 하위 컴포넌트인 **`HasComponent`** 참조로 묶어 완벽한 객체지향 캡슐화를 달성했습니다.\n> - **식별성 확보**: 각 노드는 네임스페이스(`ns=2`)와 고유 문자열 키(`s=...`) 기반의 명확한 `NodeId`를 부여하여 외부 클라이언트나 상위 AI 시스템이 주소공간 탐색(Browse) 및 구독(Subscription)을 손쉽게 수행할 수 있도록 설계했습니다.", "explanation": "배점 20~25점 고배점 핵심 문항입니다. 구조도, 비교표, 필수 기술 키워드를 서술형 답안에 빠짐없이 작성해야 합니다.", "rendered_answer": "<div class=\"mermaid\">\ngraph TD\n    Root[\"Root (i=84)\"] -->|\"Organizes\"| Objects[\"ObjectsFolder (i=85)\"]\n    Objects -->|\"Organizes\"| Machine[\"InjectionMoldingMachine1<br>[Object: ns=2;s=IMM1]\"]\n    \n    Machine -->|\"HasComponent\"| Temp[\"BarrelTemperature<br>[Variable: ns=2;s=IMM1.Temp]\"]\n    Machine -->|\"HasComponent\"| Pressure[\"InjectionPressure<br>[Variable: ns=2;s=IMM1.Pressure]\"]\n    Machine -->|\"HasComponent\"| State[\"MachineState<br>[Variable: ns=2;s=IMM1.State]\"]\n    Machine -->|\"HasComponent\"| StartMethod[\"StartInjection()<br>[Method: ns=2;s=IMM1.Start]\"]\n    Machine -->|\"HasComponent\"| StopMethod[\"EmergencyStop()<br>[Method: ns=2;s=IMM1.Stop]\"]\n    \n    Machine -.->|\"HasTypeDefinition\"| MachineType[\"InjectionMoldingMachineType<br>[ObjectType]\"]\n</div><br><br><div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\"><strong>1. 노드별 상세 설계 명세서</strong></div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> | 노드 명칭 (BrowseName) | NodeClass | NodeId (규격 예시) | DataType | 초기값/설명 | 부모 노드와의 참조 관계 (Reference) |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| :--- | :---: | :--- | :---: | :--- | :--- |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>Objects</strong> | Object | `ns=0;i=85` | - | 최상위 표준 객체 폴더 | `Root` 노드와 `Organizes` 관계 |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>InjectionMoldingMachine1</strong> | <strong>Object</strong> | `ns=2;s=Factory.Line1.IMM1` | - | 1호 사출성형기 설비 본체 인스턴스 | `Objects` 폴더와 `Organizes` 관계<br>(타입: `HasTypeDefinition` $\\rightarrow$ `IMMType`) |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>BarrelTemperature</strong> | <strong>Variable</strong> | `ns=2;s=IMM1.BarrelTemp` | `Double` | 현재 배럴 온도 (`210.5` ℃) | `IMM1`과 <strong>`HasComponent`</strong> 관계 |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>InjectionPressure</strong> | <strong>Variable</strong> | `ns=2;s=IMM1.Pressure` | `Double` | 현재 사출 압력 (`140.2` bar) | `IMM1`과 <strong>`HasComponent`</strong> 관계 |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>MachineState</strong> | <strong>Variable</strong> | `ns=2;s=IMM1.State` | `String` | 설비 동작 상태 (`\"RUNNING\"`) | `IMM1`과 <strong>`HasComponent`</strong> 관계 |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>StartInjection</strong> | <strong>Method</strong> | `ns=2;s=IMM1.Start` | - | 사출 공정 개시 원격 함수 (입력: `CycleCount`, 출력: `Success`) | `IMM1`과 <strong>`HasComponent`</strong> 관계 |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">| <strong>EmergencyStop</strong> | <strong>Method</strong> | `ns=2;s=IMM1.EmergencyStop` | - | 비상 정지 원격 제어 함수 | `IMM1`과 <strong>`HasComponent`</strong> 관계 |</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">> <strong>2. 설계 구조 설명 및 배점 포인트</strong></div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>계층 구조 형성</strong>: 설비 객체인 `InjectionMoldingMachine1`을 부모로 두고, 물리적 센서 측정값 변수(`BarrelTemperature`, `InjectionPressure`, `MachineState`)와 제어 함수(`StartInjection`, `EmergencyStop`)를 모두 하위 컴포넌트인 <strong>`HasComponent`</strong> 참조로 묶어 완벽한 객체지향 캡슐화를 달성했습니다.</div>\n<div class=\"pl-4 border-l-4 border-indigo-400 my-2 text-slate-700 bg-indigo-50/50 py-1.5 rounded-r\">- <strong>식별성 확보</strong>: 각 노드는 네임스페이스(`ns=2`)와 고유 문자열 키(`s=...`) 기반의 명확한 `NodeId`를 부여하여 외부 클라이언트나 상위 AI 시스템이 주소공간 탐색(Browse) 및 구독(Subscription)을 손쉽게 수행할 수 있도록 설계했습니다.</div>"}];
+    let currentQuestions = [...rawQuestions];
+    let userState = {
+      answered: {}, // id: { userAns: string, isCorrect: boolean }
+      bookmarks: {} // id: boolean
+    };
+
+    // Load from localStorage
+    function loadSavedState() {
+      try {
+        const saved = localStorage.getItem('iot_exam_study_state');
+        if (saved) {
+          userState = JSON.parse(saved);
+        }
+      } catch (e) {
+        console.error("Failed to load local storage state", e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('iot_exam_study_state', JSON.stringify(userState));
+      } catch (e) {}
+      updateDashboard();
+    }
+
+    // Web Audio Sound Chimes
+    function playSound(type) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+          // High chime
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.35);
+        } else if (type === 'wrong') {
+          // Low buzz
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+          osc.frequency.setValueAtTime(174.61, audioCtx.currentTime + 0.15);
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.3);
+        }
+      } catch (e) {}
+    }
+
+    // Filter States
+    let activeType = 'all';
+    let searchQuery = '';
+    let selectedWeek = 'all';
+    let onlyBookmarks = false;
+    let globalReveal = false;
+
+    function renderQuestions() {
+      const container = document.getElementById('questionsContainer');
+      const noResults = document.getElementById('noResults');
+
+      // Filter logic
+      const filtered = rawQuestions.filter(q => {
+        if (activeType !== 'all' && q.type !== activeType) return false;
+        if (onlyBookmarks && !userState.bookmarks[q.id]) return false;
+        if (selectedWeek !== 'all') {
+          if (selectedWeek === '1' && !(q.week.includes('1') || q.week.includes('2'))) return false;
+          if (selectedWeek === '3' && !q.week.includes('3')) return false;
+          if (selectedWeek === '4' && !q.week.includes('4')) return false;
+          if (selectedWeek === '5' && !q.week.includes('5')) return false;
+          if (selectedWeek === '6' && !(q.week.includes('6') || q.week.includes('7'))) return false;
+        }
+        if (searchQuery) {
+          const term = searchQuery.toLowerCase();
+          const matchQ = q.question.toLowerCase().includes(term);
+          const matchA = q.answer.toLowerCase().includes(term);
+          const matchT = q.topic.toLowerCase().includes(term);
+          if (!matchQ && !matchA && !matchT) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        noResults.classList.remove('hidden');
+        return;
+      }
+      noResults.classList.add('hidden');
+
+      container.innerHTML = filtered.map(q => renderCard(q)).join('');
+      
+      // Re-trigger mermaid if essays with mermaid are present
+      setTimeout(() => {
+        mermaid.run({ querySelector: '.mermaid' });
+      }, 50);
+    }
+
+    function renderCard(q) {
+      const isBookmarked = !!userState.bookmarks[q.id];
+      const state = userState.answered[q.id] || null;
+
+      // Badges
+      let typeBadge = '';
+      if (q.type === 'blank') {
+        typeBadge = '<span class="bg-blue-100 text-blue-700 font-bold px-2.5 py-0.5 rounded-md text-[11px] border border-blue-200">✏️ 빈칸 채우기</span>';
+      } else if (q.type === 'ox') {
+        typeBadge = '<span class="bg-emerald-100 text-emerald-700 font-bold px-2.5 py-0.5 rounded-md text-[11px] border border-emerald-200">⭕❌ OX 퀴즈</span>';
+      } else {
+        typeBadge = '<span class="bg-rose-100 text-rose-700 font-bold px-2.5 py-0.5 rounded-md text-[11px] border border-rose-200">📑 서술/설계형 (고배점)</span>';
+      }
+
+      // Interaction markup based on question type
+      let interactiveSection = '';
+      if (q.type === 'blank') {
+        const revealedClass = globalReveal ? 'revealed' : '';
+        interactiveSection = `
+          <div class="mt-4 pt-3 border-t border-slate-100 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="text-xs font-semibold text-slate-500">
+                <i class="fa-solid fa-keyboard mr-1"></i>직접 입력하여 채점하거나 클릭하여 정답을 확인하세요
+              </div>
+              <button onclick="toggleCardAnswer(${q.id})" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition">
+                <i class="fa-solid fa-eye mr-1"></i>정답 토글
+              </button>
+            </div>
+
+            <!-- Input & Check Form -->
+            <div class="flex gap-2">
+              <input type="text" id="input-${q.id}" onkeydown="if(event.key==='Enter') checkBlankAnswer(${q.id})" placeholder="정답 키워드 입력..." class="flex-1 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <button onclick="checkBlankAnswer(${q.id})" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-2xs">
+                채점
+              </button>
+            </div>
+
+            <!-- Feedback & Revealed Answer -->
+            <div id="feedback-${q.id}" class="${state ? '' : 'hidden'} p-3 rounded-xl text-xs sm:text-sm ${state && state.isCorrect ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-slate-50 border border-slate-200 text-slate-800'}">
+              <div class="font-bold flex items-center gap-1.5 mb-1">
+                <span class="${state && state.isCorrect ? 'text-emerald-600' : 'text-indigo-600'}">
+                  ${state && state.isCorrect ? '🎉 정답입니다!' : '📌 정답:'}
+                </span>
+                <span class="font-mono font-bold bg-white px-2 py-0.5 rounded border border-slate-200 text-indigo-900">${q.answer}</span>
+              </div>
+              <div class="text-slate-600 leading-relaxed text-xs">
+                <strong>[해설]</strong> ${q.explanation}
+              </div>
+            </div>
+
+            <!-- Click to reveal pill box -->
+            <div id="spoiler-${q.id}" onclick="toggleCardAnswer(${q.id})" class="spoiler-text ${revealedClass} p-3 rounded-xl bg-indigo-50/80 border border-indigo-100 text-xs sm:text-sm text-indigo-950 font-bold select-none cursor-pointer">
+              정답: ${q.answer} <span class="text-xs font-normal text-slate-500 ml-2">(${q.explanation})</span>
+            </div>
+          </div>
+        `;
+      } else if (q.type === 'ox') {
+        const isAnswered = state !== null;
+        interactiveSection = `
+          <div class="mt-4 pt-3 border-t border-slate-100 space-y-3">
+            <div class="flex items-center gap-3">
+              <button onclick="checkOXAnswer(${q.id}, 'O')" class="ox-btn flex-1 py-2.5 rounded-xl border font-black text-sm flex items-center justify-center gap-2 transition ${isAnswered && state.userAns === 'O' ? (state.isCorrect ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-rose-600 text-white border-rose-600 shadow-md') : 'bg-slate-50 border-slate-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300'}">
+                <i class="fa-regular fa-circle text-base"></i> 참 (O)
+              </button>
+              <button onclick="checkOXAnswer(${q.id}, 'X')" class="ox-btn flex-1 py-2.5 rounded-xl border font-black text-sm flex items-center justify-center gap-2 transition ${isAnswered && state.userAns === 'X' ? (state.isCorrect ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-rose-600 text-white border-rose-600 shadow-md') : 'bg-slate-50 border-slate-200 text-rose-700 hover:bg-rose-50 hover:border-rose-300'}">
+                <i class="fa-solid fa-xmark text-base"></i> 거짓 (X)
+              </button>
+            </div>
+
+            <!-- Feedback Box -->
+            <div id="feedback-${q.id}" class="${isAnswered || globalReveal ? '' : 'hidden'} p-3.5 rounded-xl text-xs sm:text-sm ${isAnswered && state.isCorrect ? 'bg-emerald-50 border border-emerald-200 text-emerald-900' : 'bg-slate-100 border border-slate-200 text-slate-800'}">
+              <div class="font-bold flex items-center gap-2 mb-1.5">
+                <span class="text-xs px-2 py-0.5 rounded ${q.answer === 'O' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}">정답: ${q.answer}</span>
+                <span class="font-semibold text-slate-700">${isAnswered ? (state.isCorrect ? '✅ 정확합니다!' : '❌ 오답입니다!') : ''}</span>
+              </div>
+              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">${q.explanation}</p>
+            </div>
+          </div>
+        `;
+      } else {
+        // Essay Card
+        const isRevealed = globalReveal;
+        interactiveSection = `
+          <div class="mt-4 pt-3 border-t border-slate-100 space-y-3">
+            <button onclick="toggleEssayAnswer(${q.id})" class="w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs">
+              <i class="fa-solid fa-file-lines"></i>
+              <span id="essay-btn-text-${q.id}">💡 모범 서술 답안 & 채점 포인트 확인</span>
+            </button>
+
+            <div id="essay-ans-${q.id}" class="${isRevealed ? '' : 'hidden'} bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 text-xs sm:text-sm text-slate-800 space-y-3 leading-relaxed">
+              <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span class="font-bold text-indigo-900 flex items-center gap-1.5">
+                  <i class="fa-solid fa-award text-amber-500"></i> 교수님 채점 기준 및 모범 답안
+                </span>
+                <span class="text-[11px] text-slate-400 font-mono font-medium">배점 20~25점</span>
+              </div>
+              <div class="prose prose-sm max-w-none text-slate-700">
+                ${q.rendered_answer || q.answer}
+              </div>
+              <div class="pt-2 border-t border-slate-200 text-[11px] text-slate-500 flex items-center gap-1">
+                <i class="fa-solid fa-circle-info text-indigo-500"></i>
+                <span>${q.explanation}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Format Question text
+      let displayQuestion = q.question;
+      if (q.type === 'blank') {
+        displayQuestion = displayQuestion.replace(/\[\s*\]/g, '<span class="bg-amber-100 border-b-2 border-amber-500 text-amber-900 px-2 py-0.5 rounded font-mono font-bold">[ &nbsp; &nbsp; &nbsp; &nbsp; ]</span>');
+      }
+
+      return `
+        <div id="card-${q.id}" class="card-transition bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 hover:border-indigo-300 relative group">
+          <!-- Card Header Meta -->
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-black text-sm sm:text-base text-indigo-950 font-mono">#${q.id.toString().padStart(2, '0')}</span>
+              ${typeBadge}
+              <span class="bg-slate-100 text-slate-600 font-medium px-2 py-0.5 rounded text-[11px]">${q.week}</span>
+              <span class="text-slate-400 text-xs hidden sm:inline">•</span>
+              <span class="text-slate-500 text-xs font-semibold hidden sm:inline">${q.topic}</span>
+            </div>
+
+            <!-- Bookmark Star -->
+            <button onclick="toggleBookmark(${q.id})" class="text-base p-1.5 rounded-lg hover:bg-slate-100 transition ${isBookmarked ? 'text-amber-400' : 'text-slate-300 hover:text-slate-400'}" title="북마크">
+              <i class="fa-solid fa-star"></i>
+            </button>
+          </div>
+
+          <!-- Question Body -->
+          <div class="text-sm sm:text-base font-medium text-slate-900 leading-relaxed">
+            ${displayQuestion}
+          </div>
+
+          <!-- Interactive Area -->
+          ${interactiveSection}
+        </div>
+      `;
+    }
+
+    // Check Blank Answers
+    function checkBlankAnswer(id) {
+      const input = document.getElementById(`input-${id}`);
+      const val = input.value.trim();
+      const q = rawQuestions.find(item => item.id === id);
+      if (!val || !q) return;
+
+      const normalize = s => s.toLowerCase().replace(/[\s\(\)\/_\-]/g, '');
+      const userNorm = normalize(val);
+      const ansNorm = normalize(q.answer);
+
+      // Check inclusion or match
+      const isCorrect = ansNorm.includes(userNorm) || userNorm.includes(ansNorm) || (q.answer.includes(',') && q.answer.split(',').some(p => normalize(p) === userNorm));
+
+      userState.answered[id] = { userAns: val, isCorrect };
+      saveState();
+
+      if (isCorrect) {
+        playSound('correct');
+      } else {
+        playSound('wrong');
+      }
+
+      // Reveal feedback
+      const fb = document.getElementById(`feedback-${id}`);
+      if (fb) fb.classList.remove('hidden');
+      renderQuestions();
+    }
+
+    // Check OX Answers
+    function checkOXAnswer(id, choice) {
+      const q = rawQuestions.find(item => item.id === id);
+      if (!q) return;
+
+      const isCorrect = (choice === q.answer);
+      userState.answered[id] = { userAns: choice, isCorrect };
+      saveState();
+
+      if (isCorrect) {
+        playSound('correct');
+      } else {
+        playSound('wrong');
+      }
+
+      renderQuestions();
+    }
+
+    // Toggle Single Answer
+    function toggleCardAnswer(id) {
+      const spoiler = document.getElementById(`spoiler-${id}`);
+      if (spoiler) {
+        spoiler.classList.toggle('revealed');
+      }
+      const fb = document.getElementById(`feedback-${id}`);
+      if (fb) {
+        fb.classList.toggle('hidden');
+      }
+    }
+
+    function toggleEssayAnswer(id) {
+      const ansDiv = document.getElementById(`essay-ans-${id}`);
+      if (ansDiv) {
+        ansDiv.classList.toggle('hidden');
+        if (!ansDiv.classList.contains('hidden')) {
+          mermaid.run({ querySelector: `#essay-ans-${id} .mermaid` });
+        }
+      }
+    }
+
+    // Toggle All Answers
+    function toggleAllAnswers() {
+      globalReveal = !globalReveal;
+      const btnText = document.getElementById('toggleAllText');
+      btnText.innerText = globalReveal ? '정답 전체 가리기' : '전체 정답 보기';
+      renderQuestions();
+    }
+
+    // Bookmark Toggle
+    function toggleBookmark(id) {
+      userState.bookmarks[id] = !userState.bookmarks[id];
+      saveState();
+      renderQuestions();
+    }
+
+    // Filter Handlers
+    function setTypeFilter(type) {
+      activeType = type;
+      document.querySelectorAll('.type-btn').forEach(btn => {
+        if (btn.getAttribute('data-type') === type) {
+          btn.classList.add('bg-indigo-600', 'text-white', 'shadow-xs');
+          btn.classList.remove('bg-slate-100', 'text-slate-600');
+        } else {
+          btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-xs');
+          btn.classList.add('bg-slate-100', 'text-slate-600');
+        }
+      });
+      renderQuestions();
+    }
+
+    function handleSearch() {
+      searchQuery = document.getElementById('searchInput').value.trim();
+      renderQuestions();
+    }
+
+    function handleWeekFilter() {
+      selectedWeek = document.getElementById('weekSelect').value;
+      renderQuestions();
+    }
+
+    function handleBookmarkFilter() {
+      onlyBookmarks = document.getElementById('onlyBookmarksCheckbox').checked;
+      renderQuestions();
+    }
+
+    function resetFilters() {
+      activeType = 'all';
+      searchQuery = '';
+      selectedWeek = 'all';
+      onlyBookmarks = false;
+      document.getElementById('searchInput').value = '';
+      document.getElementById('weekSelect').value = 'all';
+      document.getElementById('onlyBookmarksCheckbox').checked = false;
+      setTypeFilter('all');
+    }
+
+    function resetAllProgress() {
+      if (confirm('모든 풀이 기록과 점수를 초기화하시겠습니까?')) {
+        userState = { answered: {}, bookmarks: {} };
+        saveState();
+        renderQuestions();
+      }
+    }
+
+    // Update Dashboard Numbers
+    function updateDashboard() {
+      const answeredList = Object.values(userState.answered);
+      const totalAnswered = answeredList.length;
+      const correct = answeredList.filter(a => a.isCorrect).length;
+      const incorrect = totalAnswered - correct;
+      const bookmarks = Object.values(userState.bookmarks).filter(Boolean).length;
+      const pct = Math.round((totalAnswered / 60) * 100);
+
+      document.getElementById('answeredCount').innerText = totalAnswered;
+      document.getElementById('correctCount').innerText = correct;
+      document.getElementById('incorrectCount').innerText = incorrect;
+      document.getElementById('bookmarkCount').innerText = bookmarks;
+      document.getElementById('progressPercent').innerText = `(${pct}%)`;
+      document.getElementById('progressBar').style.width = `${pct}%`;
+    }
+
+    // Init
+    loadSavedState();
+    updateDashboard();
+    renderQuestions();
+  </script>
+</body>
+</html>
